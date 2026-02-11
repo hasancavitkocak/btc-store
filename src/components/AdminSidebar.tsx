@@ -30,7 +30,7 @@ export default function AdminSidebar() {
       <nav className="space-y-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
+          const isActive = pathname === item.path || pathname?.startsWith(item.path + '/');
 
           return (
             <Link
