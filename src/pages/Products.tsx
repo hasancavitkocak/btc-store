@@ -1,6 +1,9 @@
+'use client';
+
 import { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Section from '../components/Section';
@@ -8,11 +11,11 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 
 export default function Products() {
-  const { t } = useTranslation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const t = useTranslations();
+  const searchParams = useSearchParams();
   const { products, categories } = useStore();
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    searchParams.get('category') || 'all'
+    searchParams?.get('category') || 'all'
   );
 
   const activeProducts = products.filter((p) => p.active);
@@ -27,10 +30,15 @@ export default function Products() {
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    if (categoryId === 'all') {
-      setSearchParams({});
-    } else {
-      setSearchParams({ category: categoryId });
+    // Next.js'de URL'yi güncellemek için router.push kullanılır
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (categoryId === 'all') {
+        url.searchParams.delete('category');
+      } else {
+        url.searchParams.set('category', categoryId);
+      }
+      window.history.pushState({}, '', url);
     }
   };
 
@@ -74,7 +82,7 @@ export default function Products() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-            <Link key={product.id} to={`/products/${product.id}`}>
+            <Link key={product.id} href={`/products/${product.id}`}>
               <Card hover className="group overflow-hidden h-full flex flex-col">
                 <div className="aspect-video overflow-hidden">
                   <img

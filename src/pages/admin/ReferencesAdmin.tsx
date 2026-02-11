@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { Edit2, Trash2, Plus, Save, X } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
@@ -11,7 +13,7 @@ import Modal from '../../components/Modal';
 import Toast from '../../components/Toast';
 
 export default function ReferencesAdmin() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { references } = useStore();
   const [editingRef, setEditingRef] = useState<any>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

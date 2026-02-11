@@ -1,11 +1,13 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Phone, Mail, MapPin } from 'lucide-react';
 import Container from './Container';
 import { useStore } from '../store/useStore';
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { header } = useStore();
 
   return (
@@ -28,15 +30,18 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">{t('menu.products')}</h4>
             <nav className="flex flex-col gap-2">
-              {header.menuItems.map((item) => (
-                <Link
-                  key={item.id}
-                  to={item.path}
-                  className="hover:text-white transition-colors"
-                >
-                  {t(item.labelKey)}
-                </Link>
-              ))}
+              {header.menuItems?.map((item) => {
+                if (!item?.path) return null;
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.path}
+                    className="hover:text-white transition-colors"
+                  >
+                    {t(item.labelKey)}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
 

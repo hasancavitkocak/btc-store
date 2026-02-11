@@ -1,6 +1,8 @@
+'use client';
+
 import { useState, FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Section from '../components/Section';
@@ -14,8 +16,8 @@ import RichContentRenderer from '../components/RichContentRenderer';
 import Toast from '../components/Toast';
 
 export default function CallRequest() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const t = useTranslations();
+  const router = useRouter();
   const { kvkk, addCallRequest } = useStore();
   const [showKvkkModal, setShowKvkkModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -48,7 +50,7 @@ export default function CallRequest() {
     setShowToast(true);
 
     setTimeout(() => {
-      navigate('/');
+      router.push('/');
     }, 2000);
   };
 

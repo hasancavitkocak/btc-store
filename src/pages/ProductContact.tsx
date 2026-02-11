@@ -1,6 +1,9 @@
+'use client';
+
 import { useState, FormEvent } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { ArrowLeft } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
@@ -15,9 +18,10 @@ import RichContentRenderer from '../components/RichContentRenderer';
 import Toast from '../components/Toast';
 
 export default function ProductContact() {
-  const { id } = useParams();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const t = useTranslations();
+  const router = useRouter();
   const { products, addProductContactForm, kvkk } = useStore();
   const [showToast, setShowToast] = useState(false);
   const [showKvkkModal, setShowKvkkModal] = useState(false);
@@ -54,7 +58,7 @@ export default function ProductContact() {
     setShowToast(true);
 
     setTimeout(() => {
-      navigate(`/products/${id}`);
+      router.push(`/products/${id}`);
     }, 2000);
   };
 
@@ -64,7 +68,7 @@ export default function ProductContact() {
         <Container>
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Product not found</h1>
-            <Link to="/products">
+            <Link href="/products">
               <Button>Back to Products</Button>
             </Link>
           </div>
@@ -77,7 +81,7 @@ export default function ProductContact() {
     <Section>
       <Container>
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => router.back()}
           className="flex items-center gap-2 text-gray-600 hover:text-blue-900 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />

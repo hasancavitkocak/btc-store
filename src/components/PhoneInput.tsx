@@ -1,6 +1,8 @@
+'use client';
+
 import PhoneInputWithCountry from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { useTranslation } from 'react-i18next';
+import { useLocale } from 'next-intl';
 
 interface PhoneInputProps {
   value: string;
@@ -11,11 +13,11 @@ interface PhoneInputProps {
 }
 
 export default function PhoneInput({ value, onChange, label, required, error }: PhoneInputProps) {
-  const { i18n } = useTranslation();
+  const locale = useLocale();
   
   // Dile göre varsayılan ülke
   const getDefaultCountry = () => {
-    switch (i18n.language) {
+    switch (locale) {
       case 'tr': return 'TR';
       case 'de': return 'DE';
       case 'fr': return 'FR';

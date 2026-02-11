@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { Edit2, Save, X } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -11,7 +13,7 @@ import Toast from '../../components/Toast';
 import { kvkkData } from '../../mock/kvkk';
 
 export default function KVKK() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const [isEditing, setIsEditing] = useState(false);
   const [htmlContent, setHtmlContent] = useState(kvkkData.htmlContent);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);

@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { Edit2, Trash2, Plus, Save, X } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
@@ -13,7 +15,7 @@ import Toast from '../../components/Toast';
 import RichTextEditor from '../../components/RichTextEditor';
 
 export default function ProductsAdmin() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { products, categories } = useStore();
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

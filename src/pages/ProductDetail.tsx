@@ -1,15 +1,19 @@
+'use client';
+
 import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { ArrowLeft, ChevronLeft, ChevronRight, Check, MessageCircle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Button from '../components/Button';
 
 export default function ProductDetail() {
-  const { id } = useParams();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const t = useTranslations();
+  const router = useRouter();
   const { products, categories } = useStore();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -22,7 +26,7 @@ export default function ProductDetail() {
         <Container>
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Product not found</h1>
-            <Link to="/products">
+            <Link href="/products">
               <Button>Back to Products</Button>
             </Link>
           </div>
@@ -48,7 +52,7 @@ export default function ProductDetail() {
         <Container>
           <div className="py-4">
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => router.back()}
               className="flex items-center gap-2 text-gray-600 hover:text-blue-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -161,7 +165,7 @@ export default function ProductDetail() {
                   </div>
 
                   <div className="mt-6">
-                    <Link to={`/products/${product.id}/contact`}>
+                    <Link href={`/products/${product.id}/contact`}>
                       <Button
                         fullWidth
                         size="lg"

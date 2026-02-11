@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Phone, Menu, X, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
@@ -8,7 +10,7 @@ import Button from './Button';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Header() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { header, categories } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
@@ -21,7 +23,7 @@ export default function Header() {
           style={{ backgroundColor: header.topBanner.bgColor }}
         >
           {header.topBanner.link ? (
-            <Link to={header.topBanner.link} className="hover:underline">
+            <Link href={header.topBanner.link} className="hover:underline">
               {t(header.topBanner.textKey)}
             </Link>
           ) : (
@@ -34,7 +36,7 @@ export default function Header() {
         <Container>
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-8">
-              <Link to="/" className="flex items-center">
+              <Link href="/" className="flex items-center">
                 <img 
                   src="/ChatGPT_Image_11_Sub_2026_09_47_39.png" 
                   alt="BTC Store" 
@@ -44,7 +46,8 @@ export default function Header() {
             </div>
 
             <nav className="hidden md:flex items-center gap-6">
-              {header.menuItems.map((item) => {
+              {header.menuItems?.map((item) => {
+                if (!item?.path) return null;
                 if (item.path === '/products') {
                   return (
                     <div
@@ -54,7 +57,7 @@ export default function Header() {
                       onMouseLeave={() => setProductsDropdownOpen(false)}
                     >
                       <Link
-                        to={item.path}
+                        href={item.path}
                         className="text-gray-700 hover:text-blue-900 transition-colors font-medium flex items-center gap-1"
                       >
                         {t(item.labelKey)}
@@ -66,7 +69,7 @@ export default function Header() {
                           {categories.map((category) => (
                             <Link
                               key={category.id}
-                              to={`/products?category=${category.id}`}
+                              href={`/products?category=${category.id}`}
                               className="block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition-colors"
                               onClick={() => setProductsDropdownOpen(false)}
                             >
@@ -80,7 +83,7 @@ export default function Header() {
                 return (
                   <Link
                     key={item.id}
-                    to={item.path}
+                    href={item.path}
                     className="text-gray-700 hover:text-blue-900 transition-colors font-medium"
                   >
                     {t(item.labelKey)}
@@ -99,7 +102,7 @@ export default function Header() {
                 </a>
               </div>
 
-              <Link to="/call-request" className="hidden sm:block">
+              <Link href="/call-request" className="hidden sm:block">
                 <Button size="sm" className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800">
                   <Phone className="w-4 h-4" />
                   {t('callRequest.title')}
@@ -117,7 +120,8 @@ export default function Header() {
 
           {mobileMenuOpen && (
             <nav className="md:hidden pb-4 flex flex-col gap-3">
-              {header.menuItems.map((item) => {
+              {header.menuItems?.map((item) => {
+                if (!item?.path) return null;
                 if (item.path === '/products') {
                   return (
                     <div key={item.id}>
@@ -134,7 +138,7 @@ export default function Header() {
                           {categories.map((category) => (
                             <Link
                               key={category.id}
-                              to={`/products?category=${category.id}`}
+                              href={`/products?category=${category.id}`}
                              className="text-gray-600 hover:text-blue-900 transition-colors py-2"
                               onClick={() => {
                                 setMobileMenuOpen(false);
@@ -151,7 +155,7 @@ export default function Header() {
                 return (
                   <Link
                     key={item.id}
-                    to={item.path}
+                    href={item.path}
                     className="text-gray-700 hover:text-blue-900 transition-colors font-medium py-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -159,7 +163,7 @@ export default function Header() {
                   </Link>
                 );
               })}
-              <Link to="/call-request" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/call-request" onClick={() => setMobileMenuOpen(false)}>
                 <Button size="sm" fullWidth className="flex items-center justify-center gap-2">
                   <Phone className="w-4 h-4" />
                   {t('callRequest.title')}

@@ -1,5 +1,8 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useState, useTransition } from 'react';
+import { useLocale } from 'next-intl';
+import { useRouter, usePathname } from 'next/navigation';
 import { ChevronDown } from 'lucide-react';
 import { TR } from 'country-flag-icons/react/3x2';
 import { GB } from 'country-flag-icons/react/3x2';
@@ -18,16 +21,21 @@ const languages = [
 ];
 
 export default function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
 
   const changeLanguage = (code: string) => {
-    i18n.changeLanguage(code);
-    localStorage.setItem('language', code);
-    setIsOpen(false);
+    startTransition(() => {
+      const newPathname = pathname.replace(`/${locale}`, `/${code}`);
+      router.push(newPathname);
+      setIsOpen(false);
+    });
   };
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  const currentLanguage = languages.find(lang => lang.code === locale) || languages[0];
   const CurrentFlag = currentLanguage.Flag;
 
   return (
@@ -51,7 +59,7 @@ export default function LanguageSwitcher() {
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-20 overflow-hidden">
             {languages.map((lang) => {
               const LangFlag = lang.Flag;
-              const isActive = i18n.language === lang.code;
+              const isActive = locale === lang.code;
               return (
                 <button
                   key={lang.code}

@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { Mail, Eye, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
@@ -11,7 +13,7 @@ import Modal from '../../components/Modal';
 type FormStatus = 'new' | 'inProgress' | 'completed';
 
 export default function Forms() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { callRequests, productContactForms, products } = useStore();
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { Edit, Trash2, Plus } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
@@ -11,7 +13,7 @@ import Input from '../../components/Input';
 import Toast from '../../components/Toast';
 
 export default function Banners() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { banners, addBanner, updateBanner, deleteBanner } = useStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<any>(null);

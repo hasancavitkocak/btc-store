@@ -1,5 +1,7 @@
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { LayoutDashboard, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
@@ -7,7 +9,7 @@ import Section from '../../components/Section';
 import Card from '../../components/Card';
 
 export default function Dashboard() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { banners, categories, products, references, stories, callRequests, productContactForms } = useStore();
 
   const stats = [
@@ -33,7 +35,7 @@ export default function Dashboard() {
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <Link key={stat.label} to={stat.link}>
+              <Link key={stat.label} href={stat.link}>
                 <Card hover className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="bg-blue-100 p-3 rounded-xl">
@@ -53,7 +55,7 @@ export default function Dashboard() {
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('admin.quickActions')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Link to="/admin/forms">
+            <Link href="/admin/forms">
               <Card hover className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {t('admin.viewForms')}
@@ -63,7 +65,7 @@ export default function Dashboard() {
                 </p>
               </Card>
             </Link>
-            <Link to="/admin/header">
+            <Link href="/admin/header">
               <Card hover className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {t('admin.updateHeader')}

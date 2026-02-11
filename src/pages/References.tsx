@@ -1,10 +1,12 @@
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Section from '../components/Section';
 
 export default function References() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { references } = useStore();
 
   const activeReferences = references.filter((r) => r.active).sort((a, b) => a.order - b.order);

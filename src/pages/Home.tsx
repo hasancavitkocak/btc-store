@@ -1,5 +1,7 @@
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import * as Icons from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
@@ -9,7 +11,7 @@ import Carousel from '../components/Carousel';
 import ZigzagSection from '../components/ZigzagSection';
 
 export default function Home() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { banners, categories, references, partners } = useStore();
 
   const activeBanners = banners.filter((b) => b.active).sort((a, b) => a.order - b.order);
@@ -37,7 +39,7 @@ export default function Home() {
                     {t(banner.subtitleKey)}
                   </p>
                   {banner.buttonTextKey && banner.buttonLink && (
-                    <Link to={banner.buttonLink}>
+                    <Link href={banner.buttonLink}>
                       <Button size="lg" className="text-lg px-8 py-6 shadow-2xl hover:shadow-3xl transition-all bg-blue-900 hover:bg-blue-800">
                         {t(banner.buttonTextKey)}
                       </Button>
@@ -114,7 +116,7 @@ export default function Home() {
               <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
                 {t(category.descriptionKey)}
               </p>
-              <Link to={`/products?category=${category.id}`}>
+              <Link href={`/products?category=${category.id}`}>
                 <Button size="lg" variant="outline" className="text-lg shadow-lg hover:shadow-xl transition-all border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white hover:border-blue-900 group">
                   <span className="group-hover:text-white transition-colors">{t('common.learnMore')}</span>
                 </Button>
@@ -153,7 +155,7 @@ export default function Home() {
 
           {activeReferences.length > 4 && (
             <div className="text-center mt-16">
-              <Link to="/references">
+              <Link href="/references">
                 <Button size="lg" variant="outline" className="text-lg shadow-lg hover:shadow-xl transition-all border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white hover:border-blue-900">
                   {t('common.learnMore')}
                 </Button>

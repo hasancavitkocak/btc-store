@@ -1,5 +1,8 @@
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+'use client';
+
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { ArrowLeft } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
@@ -8,9 +11,10 @@ import Button from '../components/Button';
 import RichContentRenderer from '../components/RichContentRenderer';
 
 export default function StoryDetail() {
-  const { id } = useParams();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const t = useTranslations();
+  const router = useRouter();
   const { stories } = useStore();
 
   const story = stories.find((s) => s.id === id);
@@ -21,7 +25,7 @@ export default function StoryDetail() {
         <Container>
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Story not found</h1>
-            <Link to="/stories">
+            <Link href="/stories">
               <Button>Back to Stories</Button>
             </Link>
           </div>
@@ -34,7 +38,7 @@ export default function StoryDetail() {
     <Section>
       <Container>
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => router.back()}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />

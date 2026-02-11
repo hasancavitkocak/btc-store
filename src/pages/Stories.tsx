@@ -1,12 +1,14 @@
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Trophy, ArrowRight } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Section from '../components/Section';
 
 export default function Stories() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { stories } = useStore();
 
   const activeStories = stories.filter((s) => s.active).sort((a, b) => a.order - b.order);
@@ -28,7 +30,7 @@ export default function Stories() {
             {activeStories.map((story) => (
               <Link 
                 key={story.id} 
-                to={`/stories/${story.id}`}
+                href={`/stories/${story.id}`}
                 className="group"
               >
                 <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col">

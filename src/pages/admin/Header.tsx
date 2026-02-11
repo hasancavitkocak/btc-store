@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -9,7 +11,7 @@ import Button from '../../components/Button';
 import Toast from '../../components/Toast';
 
 export default function Header() {
-  const { t } = useTranslation();
+  const t = useTranslations();
   const { header, updateHeader } = useStore();
   const [logo, setLogo] = useState(header.logo);
   const [phone, setPhone] = useState(header.phone);
