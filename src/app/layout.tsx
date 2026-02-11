@@ -1,3 +1,5 @@
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '../index.css';
@@ -6,21 +8,27 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Btc Store - Business Software Solutions',
-  description: 'Professional business software solutions',
-  metadataBase: new URL('https://btcstore.com'),
-  openGraph: {
-    images: ['/og-image.png'],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    images: ['/og-image.png'],
-  },
+  description: 'Professional business software solutions for your business',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  const locale = await getLocale();
+  const messages = await getMessages();
+
+  return (
+    <html lang={locale} translate="no">
+      <head>
+        <meta name="google" content="notranslate" />
+      </head>
+      <body className={inter.className}>
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
 }

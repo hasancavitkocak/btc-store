@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { ChevronDown } from 'lucide-react';
 import { TR } from 'country-flag-icons/react/3x2';
 import { GB } from 'country-flag-icons/react/3x2';
@@ -23,16 +23,16 @@ const languages = [
 export default function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
-  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
 
   const changeLanguage = (code: string) => {
     startTransition(() => {
-      if (!pathname) return;
-      const newPathname = pathname.replace(`/${locale}`, `/${code}`);
-      router.push(newPathname);
+      // Set locale cookie
+      document.cookie = `NEXT_LOCALE=${code}; path=/; max-age=31536000; SameSite=Lax`;
       setIsOpen(false);
+      // Refresh to apply new locale
+      router.refresh();
     });
   };
 
@@ -65,11 +65,12 @@ export default function LanguageSwitcher() {
                 <button
                   key={lang.code}
                   onClick={() => changeLanguage(lang.code)}
+                  disabled={isPending}
                   className={`w-full px-3 py-2.5 text-left transition-colors flex items-center gap-3 ${
                     isActive 
                       ? 'bg-blue-50 text-blue-900' 
                       : 'text-gray-700 hover:bg-gray-50'
-                  }`}
+                  } ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <LangFlag className="w-6 h-4 rounded-sm shadow-sm ring-1 ring-black/5 flex-shrink-0" />
                   <span className={`text-sm flex-1 ${isActive ? 'font-medium' : ''}`}>
@@ -87,5 +88,4 @@ export default function LanguageSwitcher() {
     </div>
   );
 }
-
 

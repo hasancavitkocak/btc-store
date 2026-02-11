@@ -1,12 +1,20 @@
-import createMiddleware from 'next-intl/middleware';
-import { locales } from './i18n/request';
+import { NextRequest, NextResponse } from 'next/server';
 
-export default createMiddleware({
-  locales,
-  defaultLocale: 'tr',
-  localePrefix: 'as-needed'
-});
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+  
+  // Eğer NEXT_LOCALE cookie'si yoksa, default olarak 'tr' set et
+  if (!request.cookies.has('NEXT_LOCALE')) {
+    response.cookies.set('NEXT_LOCALE', 'tr', {
+      path: '/',
+      maxAge: 31536000,
+      sameSite: 'lax'
+    });
+  }
+  
+  return response;
+}
 
 export const config = {
-  matcher: ['/', '/(tr|en|de|fr|es|ar)/:path*', '/((?!_next|_vercel|.*\\..*).*)']
+  matcher: ['/((?!_next|_vercel|.*\\..*).*)']
 };

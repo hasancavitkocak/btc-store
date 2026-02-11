@@ -1,13 +1,17 @@
 import { getRequestConfig } from 'next-intl/server';
-import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 
 export const locales = ['tr', 'en', 'de', 'fr', 'es', 'ar'] as const;
 export type Locale = (typeof locales)[number];
 
-export default getRequestConfig(async ({ requestLocale }) => {
-  let locale = await requestLocale;
+export default getRequestConfig(async () => {
+  // Cookie'den locale oku
+  const cookieStore = cookies();
+  const localeCookie = cookieStore.get('NEXT_LOCALE');
+  let locale = localeCookie?.value || 'tr';
   
-  if (!locale || !locales.includes(locale as Locale)) {
+  // Geçerli bir locale değilse, default kullan
+  if (!locales.includes(locale as Locale)) {
     locale = 'tr';
   }
 
