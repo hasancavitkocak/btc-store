@@ -1,0 +1,125 @@
+import { useState, FormEvent } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeft } from 'lucide-react';
+import { useStore } from '../store/useStore';
+import Container from '../components/Container';
+import Section from '../components/Section';
+import Card from '../components/Card';
+import Input from '../components/Input';
+import Textarea from '../components/Textarea';
+import Button from '../components/Button';
+import Toast from '../components/Toast';
+
+export default function ProductContact() {
+  const { id } = useParams();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { products, addProductContactForm } = useStore();
+  const [showToast, setShowToast] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    surname: '',
+    email: ''
+  });
+
+  const product = products.find((p) => p.id === id);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const submission = {
+      id: Date.now().toString(),
+      productId: id!,
+      ...formData,
+      createdAt: new Date().toISOString()
+    };
+
+    addProductContactForm(submission);
+    console.log('Product Contact Form Submitted:', submission);
+
+    setShowToast(true);
+
+    setTimeout(() => {
+      navigate(`/products/${id}`);
+    }, 2000);
+  };
+
+  if (!product) {
+    return (
+      <Section>
+        <Container>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Product not found</h1>
+            <Link to="/products">
+              <Button>Back to Products</Button>
+            </Link>
+          </div>
+        </Container>
+      </Section>
+    );
+  }
+
+  return (
+    <Section>
+      <Container>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-600 hover:text-blue-900 mb-8 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="font-medium">Back</span>
+        </button>
+
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              {t('productContact.title')}
+            </h1>
+            <p className="text-xl text-gray-600">
+              {t(product.nameKey)}
+            </p>
+          </div>
+
+          <Card className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <Input
+                label={t('productContact.name')}
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+
+              <Input
+                label={t('productContact.surname')}
+                value={formData.surname}
+                onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
+                required
+              />
+
+              <Input
+                label={t('productContact.email')}
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+
+              <Button type="submit" fullWidth className="bg-blue-900 hover:bg-blue-800">
+                {t('productContact.submit')}
+              </Button>
+            </form>
+          </Card>
+        </div>
+
+        {showToast && (
+          <Toast
+            message={t('productContact.success')}
+            onClose={() => setShowToast(false)}
+          />
+        )}
+      </Container>
+    </Section>
+  );
+}

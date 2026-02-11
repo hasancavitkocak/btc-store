@@ -1,0 +1,184 @@
+{
+  "menu": {
+    "home": "Startseite",
+    "products": "Produkte",
+    "references": "Referenzen",
+    "stories": "Erfolgsgeschichten",
+    "contact": "Kontakt"
+  },
+  "banner": {
+    "campaign": "🎉 Neue Saisonkampagnen haben begonnen! Klicken Sie hier",
+    "hero": {
+      "title": "Beste Lösungen für Ihr Unternehmen",
+      "subtitle": "Wachsen Sie mit professionellen Softwarelösungen",
+      "button": "Produkte erkunden"
+    },
+    "secondary": {
+      "title": "Erfolgsgeschichten",
+      "subtitle": "Entdecken Sie die Erfahrungen unserer Kunden",
+      "button": "Geschichten lesen"
+    }
+  },
+  "category": {
+    "crm": {
+      "name": "CRM-Systeme",
+      "description": "Kundenbeziehungen verwalten, Verkäufe steigern"
+    },
+    "finance": {
+      "name": "Finanzverwaltung",
+      "description": "Steuern Sie Ihre Finanzoperationen auf einer Plattform"
+    },
+    "hr": {
+      "name": "Personalwesen",
+      "description": "Personalverwaltung vereinfachen"
+    },
+    "marketing": {
+      "name": "Marketing-Automatisierung",
+      "description": "Automatisieren Sie Ihre Marketingkampagnen"
+    },
+    "warehouse": {
+      "name": "Lagerverwaltung",
+      "description": "Optimieren Sie Lager- und Bestandsvorgänge"
+    }
+  },
+  "product": {
+    "crmPro": {
+      "name": "CRM Pro",
+      "shortDesc": "Fortgeschrittenes Kundenbeziehungsmanagement",
+      "feature1": "360-Grad-Kundenansicht",
+      "feature2": "Verkaufspipeline-Management",
+      "feature3": "Marketing-Automatisierung",
+      "content": "Verwalten Sie Kundenbeziehungen effektiv mit CRM Pro"
+    },
+    "financeSuite": {
+      "name": "Finance Suite",
+      "shortDesc": "Umfassendes Finanzverwaltungspaket",
+      "feature1": "Hauptbuch",
+      "feature2": "Kreditoren-/Debitorenbuchhaltung",
+      "feature3": "Budgetplanung",
+      "content": "Optimieren Sie Ihre Finanzoperationen"
+    },
+    "hrManager": {
+      "name": "HR Manager",
+      "shortDesc": "Personalverwaltungssystem",
+      "feature1": "Mitarbeiterdatenbank",
+      "feature2": "Anwesenheitsverfolgung",
+      "feature3": "Urlaubsverwaltung",
+      "content": "Verwalten Sie Ihre Belegschaft effizient"
+    },
+    "marketingHub": {
+      "name": "Marketing Hub",
+      "shortDesc": "Marketing-Automatisierungsplattform",
+      "feature1": "E-Mail-Kampagnen",
+      "feature2": "Social-Media-Management",
+      "feature3": "Lead-Bewertung",
+      "content": "Wachsen Sie mit leistungsstarken Marketing-Tools"
+    },
+    "warehouseSystem": {
+      "name": "Lagersystem",
+      "shortDesc": "Lagerverwaltungssystem",
+      "feature1": "Bestandsverfolgung",
+      "feature2": "Auftragsverwaltung",
+      "feature3": "Barcode-Scannen",
+      "content": "Optimieren Sie Ihr Inventar"
+    },
+    "crmLite": {
+      "name": "CRM Lite",
+      "shortDesc": "CRM für kleine Unternehmen",
+      "feature1": "Grundlegende Kundenverwaltung",
+      "feature2": "Einfache Berichterstattung",
+      "content": "Starten Sie mit CRM zu einem erschwinglichen Preis"
+    },
+    "viewDetails": "Details anzeigen",
+    "contactForProduct": "Kontakt über Produkt",
+    "contactDescription": "Kontaktieren Sie unser Team, um mehr über dieses Produkt zu erfahren und wie es Ihrem Unternehmen helfen kann."
+  },
+  "home": {
+    "categories": {
+      "title": "Unsere Lösungen",
+      "subtitle": "Softwarelösungen speziell für Ihr Unternehmen entwickelt"
+    },
+    "partners": {
+      "title": "Unsere Partner",
+      "subtitle": "Führende Technologieunternehmen, mit denen wir zusammenarbeiten"
+    },
+    "references": {
+      "title": "Unsere Referenzen",
+      "subtitle": "Unternehmen, die uns vertrauen"
+    }
+  },
+  "references": {
+    "title": "Unsere Referenzen",
+    "subtitle": "Unternehmen, die unsere Lösungen nutzen und uns vertrauen"
+  },
+  "stories": {
+    "title": "Erfolgsgeschichten",
+    "subtitle": "Kundenerfahrungen und Erfolgsgeschichten"
+  },
+  "story": {
+    "techcorp": {
+      "title": "TechCorp steigerte Verkäufe um 150%",
+      "content": "TechCorps Erfolgsgeschichte"
+    },
+    "globalsoft": {
+      "title": "GlobalSoft optimierte HR-Prozesse",
+      "content": "GlobalSofts Erfolgsgeschichte"
+    },
+    "innovatelab": {
+      "title": "InnovateLab skalierte Marketing",
+      "content": "InnovateLabs Erfolgsgeschichte"
+    }
+  },
+  "callRequest": {
+    "title": "Rückrufanfrage",
+    "subtitle": "Hinterlassen Sie Ihre Informationen, wir melden uns in Kürze",
+    "name": "Ihr Name",
+    "surname": "Ihr Nachname",
+    "phone": "Ihre Telefonnummer",
+    "kvkk": "Ich habe die Datenschutzerklärung gelesen und akzeptiere sie",
+    "submit": "Absenden",
+    "success": "Ihre Anfrage wurde empfangen. Wir melden uns bald bei Ihnen.",
+    "viewKvkk": "Datenschutzerklärung anzeigen"
+  },
+  "productContact": {
+    "title": "Kontakt über Produkt",
+    "name": "Ihr Name",
+    "surname": "Ihr Nachname",
+    "phone": "Ihre Telefonnummer",
+    "email": "Ihre E-Mail",
+    "message": "Ihre Nachricht",
+    "submit": "Absenden",
+    "success": "Ihre Nachricht wurde gesendet. Wir melden uns bald bei Ihnen."
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "contactUs": "Rückrufanfrage",
+    "learnMore": "Mehr erfahren",
+    "close": "Schließen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "all": "Alle"
+  },
+  "kvkk": {
+    "title": "Datenschutzerklärung",
+    "text": "Datenschutzerklärung"
+  },
+  "admin": {
+    "title": "Admin-Panel",
+    "dashboard": "Dashboard",
+    "header": "Header-Einstellungen",
+    "banners": "Banner-Verwaltung",
+    "categories": "Kategorie-Verwaltung",
+    "products": "Produkt-Verwaltung",
+    "references": "Referenz-Verwaltung",
+    "stories": "Erfolgsgeschichten",
+    "kvkk": "Datenschutzerklärung",
+    "forms": "Formulareinreichungen",
+    "logout": "Abmelden"
+  }
+}

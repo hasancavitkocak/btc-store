@@ -1,0 +1,184 @@
+{
+  "menu": {
+    "home": "Ana Sayfa",
+    "products": "Ürünler",
+    "references": "Referanslar",
+    "stories": "Başarı Hikayeleri",
+    "contact": "İletişim"
+  },
+  "banner": {
+    "campaign": "🎉 Yeni sezon kampanyaları başladı! İncelemek için tıklayın",
+    "hero": {
+      "title": "İşletmeniz için En İyi Çözümler",
+      "subtitle": "Profesyonel yazılım çözümleriyle işinizi büyütün",
+      "button": "Ürünleri İncele"
+    },
+    "secondary": {
+      "title": "Başarı Hikayeleri",
+      "subtitle": "Müşterilerimizin deneyimlerini keşfedin",
+      "button": "Hikayeleri Okuyun"
+    }
+  },
+  "category": {
+    "crm": {
+      "name": "CRM Sistemleri",
+      "description": "Müşteri ilişkilerinizi yönetin, satışlarınızı artırın"
+    },
+    "finance": {
+      "name": "Finans Yönetimi",
+      "description": "Mali işlemlerinizi tek platformda kontrol edin"
+    },
+    "hr": {
+      "name": "İnsan Kaynakları",
+      "description": "Personel yönetimini kolaylaştırın"
+    },
+    "marketing": {
+      "name": "Pazarlama Otomasyon",
+      "description": "Pazarlama kampanyalarınızı otomatikleştirin"
+    },
+    "warehouse": {
+      "name": "Depo Yönetimi",
+      "description": "Stok ve depo operasyonlarını optimize edin"
+    }
+  },
+  "product": {
+    "crmPro": {
+      "name": "CRM Pro",
+      "shortDesc": "Gelişmiş müşteri ilişkileri yönetim sistemi",
+      "feature1": "360 derece müşteri görünümü",
+      "feature2": "Satış pipeline yönetimi",
+      "feature3": "Pazarlama otomasyonu",
+      "content": "CRM Pro ile müşteri ilişkilerinizi etkin bir şekilde yönetin"
+    },
+    "financeSuite": {
+      "name": "Finans Suite",
+      "shortDesc": "Kapsamlı finans yönetim paketi",
+      "feature1": "Genel muhasebe",
+      "feature2": "Alacak/Borç yönetimi",
+      "feature3": "Bütçe planlama",
+      "content": "Mali operasyonlarınızı kolaylaştırın"
+    },
+    "hrManager": {
+      "name": "HR Manager",
+      "shortDesc": "İnsan kaynakları yönetim sistemi",
+      "feature1": "Personel veritabanı",
+      "feature2": "Devam takibi",
+      "feature3": "İzin yönetimi",
+      "content": "İş gücünüzü verimli bir şekilde yönetin"
+    },
+    "marketingHub": {
+      "name": "Marketing Hub",
+      "shortDesc": "Pazarlama otomasyon platformu",
+      "feature1": "E-posta kampanyaları",
+      "feature2": "Sosyal medya yönetimi",
+      "feature3": "Lead skorlama",
+      "content": "Güçlü pazarlama araçlarıyla büyüyün"
+    },
+    "warehouseSystem": {
+      "name": "Depo Sistemi",
+      "shortDesc": "Depo yönetim sistemi",
+      "feature1": "Stok takibi",
+      "feature2": "Sipariş yönetimi",
+      "feature3": "Barkod okuma",
+      "content": "Envanterinizi optimize edin"
+    },
+    "crmLite": {
+      "name": "CRM Lite",
+      "shortDesc": "Küçük işletmeler için CRM",
+      "feature1": "Temel müşteri yönetimi",
+      "feature2": "Basit raporlama",
+      "content": "Uygun fiyata CRM'e başlayın"
+    },
+    "viewDetails": "Detaylı İncele",
+    "contactForProduct": "Ürün Hakkında İletişime Geçin",
+    "contactDescription": "Ekibimizle iletişime geçin, bu ürün ve işletmenize nasıl fayda sağlayacağı hakkında daha fazla bilgi alın."
+  },
+  "home": {
+    "categories": {
+      "title": "Çözümlerimiz",
+      "subtitle": "İşletmeniz için özel olarak tasarlanmış yazılım çözümleri"
+    },
+    "partners": {
+      "title": "Partnerlerimiz",
+      "subtitle": "İş birliği yaptığımız lider teknoloji şirketleri"
+    },
+    "references": {
+      "title": "Referanslarımız",
+      "subtitle": "Bize güvenen firmalar"
+    }
+  },
+  "references": {
+    "title": "Referanslarımız",
+    "subtitle": "Çözümlerimizi kullanan ve bize güvenen firmalar"
+  },
+  "stories": {
+    "title": "Başarı Hikayeleri",
+    "subtitle": "Müşterilerimizin deneyimleri ve başarı öyküleri"
+  },
+  "story": {
+    "techcorp": {
+      "title": "TechCorp Satışlarını %150 Artırdı",
+      "content": "TechCorp'un başarı hikayesi"
+    },
+    "globalsoft": {
+      "title": "GlobalSoft İK Süreçlerini Hızlandırdı",
+      "content": "GlobalSoft'un başarı hikayesi"
+    },
+    "innovatelab": {
+      "title": "InnovateLab Pazarlamayı Ölçeklendirdi",
+      "content": "InnovateLab'ın başarı hikayesi"
+    }
+  },
+  "callRequest": {
+    "title": "Sizi Arayalım",
+    "subtitle": "Bilgilerinizi bırakın, en kısa sürede size ulaşalım",
+    "name": "Adınız",
+    "surname": "Soyadınız",
+    "phone": "Telefon Numaranız",
+    "kvkk": "KVKK metnini okudum, kabul ediyorum",
+    "submit": "Gönder",
+    "success": "Talebiniz başarıyla alındı. En kısa sürede size dönüş yapacağız.",
+    "viewKvkk": "KVKK Metnini Görüntüle"
+  },
+  "productContact": {
+    "title": "Ürün Hakkında İletişime Geçin",
+    "name": "Adınız",
+    "surname": "Soyadınız",
+    "phone": "Telefon Numaranız",
+    "email": "E-posta Adresiniz",
+    "message": "Mesajınız",
+    "submit": "Gönder",
+    "success": "Mesajınız başarıyla gönderildi. En kısa sürede size dönüş yapacağız."
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "contactUs": "İletişime Geç",
+    "learnMore": "Daha Fazla",
+    "close": "Kapat",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "add": "Ekle",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "all": "Tümü"
+  },
+  "kvkk": {
+    "title": "Kişisel Verilerin Korunması",
+    "text": "KVKK metni"
+  },
+  "admin": {
+    "title": "Yönetim Paneli",
+    "dashboard": "Kontrol Paneli",
+    "header": "Başlık Ayarları",
+    "banners": "Banner Yönetimi",
+    "categories": "Kategori Yönetimi",
+    "products": "Ürün Yönetimi",
+    "references": "Referans Yönetimi",
+    "stories": "Başarı Hikayeleri",
+    "kvkk": "KVKK Metni",
+    "forms": "Form Başvuruları",
+    "logout": "Çıkış"
+  }
+}

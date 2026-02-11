@@ -1,0 +1,184 @@
+{
+  "menu": {
+    "home": "Accueil",
+    "products": "Produits",
+    "references": "Références",
+    "stories": "Histoires de Succès",
+    "contact": "Contact"
+  },
+  "banner": {
+    "campaign": "🎉 Les campagnes de nouvelle saison ont commencé! Cliquez pour explorer",
+    "hero": {
+      "title": "Meilleures Solutions pour Votre Entreprise",
+      "subtitle": "Développez votre entreprise avec des solutions logicielles professionnelles",
+      "button": "Explorer les Produits"
+    },
+    "secondary": {
+      "title": "Histoires de Succès",
+      "subtitle": "Découvrez les expériences de nos clients",
+      "button": "Lire les Histoires"
+    }
+  },
+  "category": {
+    "crm": {
+      "name": "Systèmes CRM",
+      "description": "Gérer les relations clients, augmenter les ventes"
+    },
+    "finance": {
+      "name": "Gestion Financière",
+      "description": "Contrôlez vos opérations financières sur une plateforme"
+    },
+    "hr": {
+      "name": "Ressources Humaines",
+      "description": "Simplifier la gestion du personnel"
+    },
+    "marketing": {
+      "name": "Automatisation Marketing",
+      "description": "Automatisez vos campagnes marketing"
+    },
+    "warehouse": {
+      "name": "Gestion d'Entrepôt",
+      "description": "Optimiser les opérations d'inventaire et d'entrepôt"
+    }
+  },
+  "product": {
+    "crmPro": {
+      "name": "CRM Pro",
+      "shortDesc": "Système avancé de gestion de la relation client",
+      "feature1": "Vue client à 360 degrés",
+      "feature2": "Gestion du pipeline de vente",
+      "feature3": "Automatisation marketing",
+      "content": "Gérez efficacement les relations clients avec CRM Pro"
+    },
+    "financeSuite": {
+      "name": "Finance Suite",
+      "shortDesc": "Package complet de gestion financière",
+      "feature1": "Grand livre",
+      "feature2": "Comptabilité fournisseurs/clients",
+      "feature3": "Planification budgétaire",
+      "content": "Rationalisez vos opérations financières"
+    },
+    "hrManager": {
+      "name": "HR Manager",
+      "shortDesc": "Système de gestion des ressources humaines",
+      "feature1": "Base de données des employés",
+      "feature2": "Suivi de présence",
+      "feature3": "Gestion des congés",
+      "content": "Gérez efficacement votre personnel"
+    },
+    "marketingHub": {
+      "name": "Marketing Hub",
+      "shortDesc": "Plateforme d'automatisation marketing",
+      "feature1": "Campagnes par e-mail",
+      "feature2": "Gestion des médias sociaux",
+      "feature3": "Notation des prospects",
+      "content": "Stimulez la croissance avec des outils marketing puissants"
+    },
+    "warehouseSystem": {
+      "name": "Système d'Entrepôt",
+      "shortDesc": "Système de gestion d'entrepôt",
+      "feature1": "Suivi des stocks",
+      "feature2": "Gestion des commandes",
+      "feature3": "Lecture de codes-barres",
+      "content": "Optimisez votre inventaire"
+    },
+    "crmLite": {
+      "name": "CRM Lite",
+      "shortDesc": "CRM pour petites entreprises",
+      "feature1": "Gestion client de base",
+      "feature2": "Rapports simples",
+      "content": "Commencez avec CRM à un prix abordable"
+    },
+    "viewDetails": "Voir les Détails",
+    "contactForProduct": "Contacter pour le Produit",
+    "contactDescription": "Contactez notre équipe pour en savoir plus sur ce produit et comment il peut aider votre entreprise."
+  },
+  "home": {
+    "categories": {
+      "title": "Nos Solutions",
+      "subtitle": "Solutions logicielles conçues spécifiquement pour votre entreprise"
+    },
+    "partners": {
+      "title": "Nos Partenaires",
+      "subtitle": "Entreprises technologiques leaders avec lesquelles nous collaborons"
+    },
+    "references": {
+      "title": "Nos Références",
+      "subtitle": "Entreprises qui nous font confiance"
+    }
+  },
+  "references": {
+    "title": "Nos Références",
+    "subtitle": "Entreprises utilisant nos solutions et nous faisant confiance"
+  },
+  "stories": {
+    "title": "Histoires de Succès",
+    "subtitle": "Expériences clients et histoires de succès"
+  },
+  "story": {
+    "techcorp": {
+      "title": "TechCorp a Augmenté les Ventes de 150%",
+      "content": "Histoire de succès de TechCorp"
+    },
+    "globalsoft": {
+      "title": "GlobalSoft a Rationalisé les Processus RH",
+      "content": "Histoire de succès de GlobalSoft"
+    },
+    "innovatelab": {
+      "title": "InnovateLab a Étendu le Marketing",
+      "content": "Histoire de succès d'InnovateLab"
+    }
+  },
+  "callRequest": {
+    "title": "Demander un Rappel",
+    "subtitle": "Laissez vos informations, nous vous contacterons bientôt",
+    "name": "Votre Nom",
+    "surname": "Votre Prénom",
+    "phone": "Votre Numéro de Téléphone",
+    "kvkk": "J'ai lu et j'accepte la politique de confidentialité",
+    "submit": "Soumettre",
+    "success": "Votre demande a été reçue. Nous vous répondrons bientôt.",
+    "viewKvkk": "Voir la Politique de Confidentialité"
+  },
+  "productContact": {
+    "title": "Contacter pour le Produit",
+    "name": "Votre Nom",
+    "surname": "Votre Prénom",
+    "phone": "Votre Numéro de Téléphone",
+    "email": "Votre E-mail",
+    "message": "Votre Message",
+    "submit": "Soumettre",
+    "success": "Votre message a été envoyé. Nous vous répondrons bientôt."
+  },
+  "common": {
+    "loading": "Chargement...",
+    "contactUs": "Demander un Rappel",
+    "learnMore": "En Savoir Plus",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "all": "Tous"
+  },
+  "kvkk": {
+    "title": "Politique de Confidentialité",
+    "text": "Texte de politique de confidentialité"
+  },
+  "admin": {
+    "title": "Panneau d'Administration",
+    "dashboard": "Tableau de Bord",
+    "header": "Paramètres d'En-tête",
+    "banners": "Gestion des Bannières",
+    "categories": "Gestion des Catégories",
+    "products": "Gestion des Produits",
+    "references": "Gestion des Références",
+    "stories": "Histoires de Succès",
+    "kvkk": "Politique de Confidentialité",
+    "forms": "Soumissions de Formulaires",
+    "logout": "Déconnexion"
+  }
+}

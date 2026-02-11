@@ -1,0 +1,184 @@
+{
+  "menu": {
+    "home": "Home",
+    "products": "Products",
+    "references": "References",
+    "stories": "Success Stories",
+    "contact": "Contact"
+  },
+  "banner": {
+    "campaign": "🎉 New season campaigns have started! Click to explore",
+    "hero": {
+      "title": "Best Solutions for Your Business",
+      "subtitle": "Grow your business with professional software solutions",
+      "button": "Explore Products"
+    },
+    "secondary": {
+      "title": "Success Stories",
+      "subtitle": "Discover our customers' experiences",
+      "button": "Read Stories"
+    }
+  },
+  "category": {
+    "crm": {
+      "name": "CRM Systems",
+      "description": "Manage customer relationships, increase sales"
+    },
+    "finance": {
+      "name": "Finance Management",
+      "description": "Control your financial operations in one platform"
+    },
+    "hr": {
+      "name": "Human Resources",
+      "description": "Simplify personnel management"
+    },
+    "marketing": {
+      "name": "Marketing Automation",
+      "description": "Automate your marketing campaigns"
+    },
+    "warehouse": {
+      "name": "Warehouse Management",
+      "description": "Optimize inventory and warehouse operations"
+    }
+  },
+  "product": {
+    "crmPro": {
+      "name": "CRM Pro",
+      "shortDesc": "Advanced customer relationship management system",
+      "feature1": "360-degree customer view",
+      "feature2": "Sales pipeline management",
+      "feature3": "Marketing automation",
+      "content": "Manage customer relationships effectively with CRM Pro"
+    },
+    "financeSuite": {
+      "name": "Finance Suite",
+      "shortDesc": "Comprehensive finance management package",
+      "feature1": "General ledger",
+      "feature2": "Accounts Payable/Receivable",
+      "feature3": "Budget planning",
+      "content": "Streamline your financial operations"
+    },
+    "hrManager": {
+      "name": "HR Manager",
+      "shortDesc": "Human resources management system",
+      "feature1": "Employee database",
+      "feature2": "Attendance tracking",
+      "feature3": "Leave management",
+      "content": "Manage your workforce efficiently"
+    },
+    "marketingHub": {
+      "name": "Marketing Hub",
+      "shortDesc": "Marketing automation platform",
+      "feature1": "Email campaigns",
+      "feature2": "Social media management",
+      "feature3": "Lead scoring",
+      "content": "Drive growth with powerful marketing tools"
+    },
+    "warehouseSystem": {
+      "name": "Warehouse System",
+      "shortDesc": "Warehouse management system",
+      "feature1": "Inventory tracking",
+      "feature2": "Order management",
+      "feature3": "Barcode scanning",
+      "content": "Optimize your inventory"
+    },
+    "crmLite": {
+      "name": "CRM Lite",
+      "shortDesc": "CRM for small businesses",
+      "feature1": "Basic customer management",
+      "feature2": "Simple reporting",
+      "content": "Get started with CRM at an affordable price"
+    },
+    "viewDetails": "View Details",
+    "contactForProduct": "Contact About Product",
+    "contactDescription": "Get in touch with our team to learn more about this product and how it can help your business."
+  },
+  "home": {
+    "categories": {
+      "title": "Our Solutions",
+      "subtitle": "Software solutions designed specifically for your business"
+    },
+    "partners": {
+      "title": "Our Partners",
+      "subtitle": "Leading technology companies we collaborate with"
+    },
+    "references": {
+      "title": "Our References",
+      "subtitle": "Companies that trust us"
+    }
+  },
+  "references": {
+    "title": "Our References",
+    "subtitle": "Companies using our solutions and trusting us"
+  },
+  "stories": {
+    "title": "Success Stories",
+    "subtitle": "Customer experiences and success stories"
+  },
+  "story": {
+    "techcorp": {
+      "title": "TechCorp Increased Sales by 150%",
+      "content": "TechCorp's success story"
+    },
+    "globalsoft": {
+      "title": "GlobalSoft Streamlined HR Processes",
+      "content": "GlobalSoft's success story"
+    },
+    "innovatelab": {
+      "title": "InnovateLab Scaled Marketing",
+      "content": "InnovateLab's success story"
+    }
+  },
+  "callRequest": {
+    "title": "Request a Call",
+    "subtitle": "Leave your information, we'll reach you shortly",
+    "name": "Your Name",
+    "surname": "Your Surname",
+    "phone": "Your Phone Number",
+    "kvkk": "I have read and accept the privacy policy",
+    "submit": "Submit",
+    "success": "Your request has been received. We'll get back to you soon.",
+    "viewKvkk": "View Privacy Policy"
+  },
+  "productContact": {
+    "title": "Contact About Product",
+    "name": "Your Name",
+    "surname": "Your Surname",
+    "phone": "Your Phone Number",
+    "email": "Your Email",
+    "message": "Your Message",
+    "submit": "Submit",
+    "success": "Your message has been sent. We'll get back to you soon."
+  },
+  "common": {
+    "loading": "Loading...",
+    "contactUs": "Request a Call",
+    "learnMore": "Learn More",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All"
+  },
+  "kvkk": {
+    "title": "Privacy Policy",
+    "text": "Privacy policy text"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "dashboard": "Dashboard",
+    "header": "Header Settings",
+    "banners": "Banner Management",
+    "categories": "Category Management",
+    "products": "Product Management",
+    "references": "Reference Management",
+    "stories": "Success Stories",
+    "kvkk": "Privacy Policy",
+    "forms": "Form Submissions",
+    "logout": "Logout"
+  }
+}
