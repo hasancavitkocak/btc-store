@@ -6,6 +6,8 @@ import Container from '../components/Container';
 import Section from '../components/Section';
 import Card from '../components/Card';
 import Input from '../components/Input';
+import PhoneInput from '../components/PhoneInput';
+import Textarea from '../components/Textarea';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import RichContentRenderer from '../components/RichContentRenderer';
@@ -22,6 +24,7 @@ export default function CallRequest() {
     name: '',
     surname: '',
     phone: '',
+    message: '',
     kvkkAccepted: false
   });
 
@@ -62,43 +65,49 @@ export default function CallRequest() {
             </p>
           </div>
 
-          <Card className="p-8 md:p-12 shadow-2xl bg-gradient-to-br from-white to-gray-50">
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <Input
-                label={t('callRequest.name')}
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-                className="text-lg"
-              />
+          <Card className="p-8 md:p-12 shadow-2xl bg-white border border-gray-100">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  label={t('callRequest.name')}
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
 
-              <Input
-                label={t('callRequest.surname')}
-                value={formData.surname}
-                onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-                required
-                className="text-lg"
-              />
+                <Input
+                  label={t('callRequest.surname')}
+                  value={formData.surname}
+                  onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
+                  required
+                />
+              </div>
 
-              <Input
+              <PhoneInput
                 label={t('callRequest.phone')}
-                type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(value) => setFormData({ ...formData, phone: value })}
                 required
-                className="text-lg"
               />
 
-              <div className="flex items-start gap-3 bg-blue-50 p-4 rounded-xl">
+              <Textarea
+                label={t('callRequest.message')}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                rows={4}
+                placeholder={t('callRequest.messagePlaceholder')}
+              />
+
+              <div className="flex items-start gap-3 bg-blue-50 p-5 rounded-xl border border-blue-100">
                 <input
                   type="checkbox"
                   id="kvkk"
                   checked={formData.kvkkAccepted}
                   onChange={(e) => setFormData({ ...formData, kvkkAccepted: e.target.checked })}
                   required
-                  className="mt-1 w-5 h-5 text-blue-900 rounded focus:ring-2 focus:ring-blue-900"
+                  className="mt-1 w-5 h-5 text-blue-900 border-gray-300 rounded focus:ring-2 focus:ring-blue-900"
                 />
-                <label htmlFor="kvkk" className="text-sm text-gray-700 flex-1">
+                <label htmlFor="kvkk" className="text-sm text-gray-700 flex-1 leading-relaxed">
                   {t('callRequest.kvkk')}
                   <button
                     type="button"
@@ -110,7 +119,7 @@ export default function CallRequest() {
                 </label>
               </div>
 
-              <Button type="submit" fullWidth size="lg" className="text-lg shadow-lg hover:shadow-xl transition-all">
+              <Button type="submit" fullWidth size="lg" className="text-lg shadow-lg hover:shadow-xl transition-all bg-blue-900 hover:bg-blue-800">
                 {t('callRequest.submit')}
               </Button>
             </form>

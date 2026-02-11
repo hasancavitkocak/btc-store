@@ -18,10 +18,12 @@ import ProductsAdmin from './pages/admin/ProductsAdmin';
 import ReferencesAdmin from './pages/admin/ReferencesAdmin';
 import StoriesAdmin from './pages/admin/StoriesAdmin';
 import KVKK from './pages/admin/KVKK';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />

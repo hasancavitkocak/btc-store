@@ -26,7 +26,7 @@ export default function Dashboard() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             {t('admin.dashboard')}
           </h1>
-          <p className="text-gray-600">Welcome to the admin panel</p>
+          <p className="text-gray-600">{t('admin.welcome')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -51,25 +51,25 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('admin.quickActions')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Link to="/admin/forms">
               <Card hover className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  View Form Submissions
+                  {t('admin.viewForms')}
                 </h3>
                 <p className="text-gray-600">
-                  {callRequests.length + productContactForms.length} total submissions
+                  {callRequests.length + productContactForms.length} {t('admin.totalSubmissions')}
                 </p>
               </Card>
             </Link>
             <Link to="/admin/header">
               <Card hover className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Update Header Settings
+                  {t('admin.updateHeader')}
                 </h3>
                 <p className="text-gray-600">
-                  Manage logo, phone, and menu items
+                  {t('admin.manageLogoPhone')}
                 </p>
               </Card>
             </Link>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ChevronLeft, ChevronRight, Check, Phone, Mail, MessageCircle } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Check, MessageCircle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Button from '../components/Button';
@@ -60,12 +60,12 @@ export default function ProductDetail() {
 
       {/* Main Product Section */}
       <div className="py-8">
-        <Container noPadding>
-          <div className="flex min-h-[80vh]">
-            {/* Left Side - Large Product Image (75% width) */}
-            <div className="w-3/4 pr-8 pl-8">
+        <div className="px-4 lg:px-8 max-w-[1600px] mx-auto">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 relative">
+            {/* Left Side - Large Product Image */}
+            <div className="w-full lg:w-[70%] order-1 lg:order-1 relative z-0">
               {/* Main Large Image */}
-              <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden group h-[70vh] mb-6">
+              <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden group aspect-video lg:aspect-auto lg:h-[75vh] mb-6">
                 <img
                   src={productImages[currentImageIndex]}
                   alt={t(product.nameKey)}
@@ -77,24 +77,24 @@ export default function ProductDetail() {
                   <>
                     <button
                       onClick={prevImage}
-                      className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white text-gray-800 p-4 rounded-full shadow-xl transition-all opacity-0 group-hover:opacity-100 hover:scale-110"
+                      className="absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white text-gray-800 p-2 lg:p-4 rounded-full shadow-xl transition-all opacity-0 group-hover:opacity-100 hover:scale-110"
                     >
-                      <ChevronLeft className="w-8 h-8" />
+                      <ChevronLeft className="w-5 h-5 lg:w-8 lg:h-8" />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white text-gray-800 p-4 rounded-full shadow-xl transition-all opacity-0 group-hover:opacity-100 hover:scale-110"
+                      className="absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white text-gray-800 p-2 lg:p-4 rounded-full shadow-xl transition-all opacity-0 group-hover:opacity-100 hover:scale-110"
                     >
-                      <ChevronRight className="w-8 h-8" />
+                      <ChevronRight className="w-5 h-5 lg:w-8 lg:h-8" />
                     </button>
 
                     {/* Carousel Indicators */}
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+                    <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 lg:gap-3">
                       {productImages.map((_, index) => (
                         <button
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
-                          className={`w-3 h-3 rounded-full transition-all ${
+                          className={`w-2 h-2 lg:w-3 lg:h-3 rounded-full transition-all ${
                             index === currentImageIndex
                               ? 'bg-white scale-125 shadow-lg'
                               : 'bg-white/60 hover:bg-white/80'
@@ -108,12 +108,12 @@ export default function ProductDetail() {
 
               {/* Thumbnail Images */}
               {productImages.length > 1 && (
-                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                <div className="flex gap-3 lg:gap-4 overflow-x-auto pb-2 scrollbar-hide">
                   {productImages.map((img, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 w-32 h-24 rounded-xl overflow-hidden border-3 transition-all hover:scale-105 ${
+                      className={`flex-shrink-0 w-20 h-16 lg:w-32 lg:h-24 rounded-lg lg:rounded-xl overflow-hidden border-2 lg:border-3 transition-all hover:scale-105 ${
                         index === currentImageIndex
                           ? 'border-blue-600 shadow-xl ring-2 ring-blue-200'
                           : 'border-gray-200 hover:border-blue-300'
@@ -130,19 +130,19 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {/* Right Side - Contact Section (25% width) */}
-            <div className="w-1/4 pr-8">
-              <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-8">
+            {/* Right Side - Contact Section */}
+            <div className="w-full lg:w-[30%] order-2 lg:order-2 relative z-0">
+              <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8 relative lg:sticky lg:top-8">
                 {/* Product Info */}
                 {category && (
                   <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mb-4">
                     {t(category.nameKey)}
                   </span>
                 )}
-                <h1 className="text-2xl font-bold text-gray-900 mb-3">
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
                   {t(product.nameKey)}
                 </h1>
-                <p className="text-gray-600 mb-6 text-sm">
+                <p className="text-gray-600 mb-6">
                   {t(product.shortDescKey)}
                 </p>
 
@@ -153,10 +153,10 @@ export default function ProductDetail() {
                       <MessageCircle className="w-6 h-6 text-blue-600" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">
-                      Ürün Hakkında İletişime Geçin
+                      {t('product.contactForProduct')}
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      Bu ürün hakkında detaylı bilgi almak için bizimle iletişime geçin.
+                      {t('product.contactDescription')}
                     </p>
                   </div>
 
@@ -164,9 +164,10 @@ export default function ProductDetail() {
                     <Link to={`/products/${product.id}/contact`}>
                       <Button
                         fullWidth
-                        className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all font-bold"
+                        size="lg"
+                        className="bg-blue-900 hover:bg-blue-800 text-white shadow-lg hover:shadow-xl transition-all font-bold"
                       >
-                        İletişime Geç
+                        {t('common.contactUs')}
                       </Button>
                     </Link>
                   </div>
@@ -174,23 +175,23 @@ export default function ProductDetail() {
               </div>
             </div>
           </div>
-        </Container>
+        </div>
       </div>
 
       {/* Product Features - Full Width Below */}
-      <div className="py-8 bg-white">
+      <div className="py-8 lg:py-12 bg-white">
         <Container>
           <div className="mb-8">
-            <h3 className="text-3xl font-bold text-gray-900 mb-6 text-center">
-              Ürün Özellikleri
+            <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 text-center">
+              {t('product.features')}
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               {product.features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-4 p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
+                <div key={index} className="flex items-center gap-3 lg:gap-4 p-4 lg:p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
                   <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                     <Check className="w-5 h-5 text-green-600" />
                   </div>
-                  <span className="text-gray-700 font-medium text-lg">{t(feature)}</span>
+                  <span className="text-gray-700 font-medium">{t(feature)}</span>
                 </div>
               ))}
             </div>
@@ -198,8 +199,8 @@ export default function ProductDetail() {
 
           {/* Product Content */}
           {product.htmlContent && (
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <div className="prose prose-lg max-w-none text-gray-700">
+            <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
+              <div className="prose prose-sm lg:prose-lg max-w-none text-gray-700">
                 <div dangerouslySetInnerHTML={{ __html: product.htmlContent }} />
               </div>
             </div>

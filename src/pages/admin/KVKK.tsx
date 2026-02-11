@@ -5,7 +5,7 @@ import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
-import Textarea from '../../components/Textarea';
+import RichTextEditor from '../../components/RichTextEditor';
 import RichContentRenderer from '../../components/RichContentRenderer';
 import Toast from '../../components/Toast';
 import { kvkkData } from '../../mock/kvkk';
@@ -17,7 +17,7 @@ export default function KVKK() {
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
   const handleSave = () => {
-    setToast({ message: 'KVKK content updated successfully!', type: 'success' });
+    setToast({ message: t('admin.kvkkUpdated'), type: 'success' });
     setIsEditing(false);
   };
 
@@ -29,7 +29,7 @@ export default function KVKK() {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
               {t('admin.kvkk')}
             </h1>
-            <p className="text-gray-600">Manage KVKK content</p>
+            <p className="text-gray-600">{t('admin.manageKvkk')}</p>
           </div>
           {!isEditing && (
             <Button
@@ -37,24 +37,23 @@ export default function KVKK() {
               className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800"
             >
               <Edit2 className="w-5 h-5" />
-              Edit Content
+              {t('common.edit')}
             </Button>
           )}
         </div>
 
         {isEditing ? (
           <Card className="p-8">
-            <Textarea
-              label="HTML Content"
+            <RichTextEditor
+              label="KVKK İçeriği"
               value={htmlContent}
-              onChange={(e) => setHtmlContent(e.target.value)}
-              rows={20}
-              className="font-mono text-sm"
+              onChange={setHtmlContent}
+              placeholder="KVKK metnini buraya yazın..."
             />
             <div className="flex gap-2 mt-6">
               <Button onClick={handleSave} className="flex-1 bg-blue-900 hover:bg-blue-800">
                 <Save className="w-4 h-4 mr-2" />
-                Save Changes
+                {t('common.save')}
               </Button>
               <Button
                 variant="outline"
@@ -65,7 +64,7 @@ export default function KVKK() {
                 className="flex-1"
               >
                 <X className="w-4 h-4 mr-2" />
-                Cancel
+                {t('common.cancel')}
               </Button>
             </div>
           </Card>

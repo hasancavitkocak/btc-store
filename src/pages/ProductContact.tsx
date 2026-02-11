@@ -7,27 +7,39 @@ import Container from '../components/Container';
 import Section from '../components/Section';
 import Card from '../components/Card';
 import Input from '../components/Input';
+import PhoneInput from '../components/PhoneInput';
 import Textarea from '../components/Textarea';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
+import RichContentRenderer from '../components/RichContentRenderer';
 import Toast from '../components/Toast';
 
 export default function ProductContact() {
   const { id } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { products, addProductContactForm } = useStore();
+  const { products, addProductContactForm, kvkk } = useStore();
   const [showToast, setShowToast] = useState(false);
+  const [showKvkkModal, setShowKvkkModal] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
     surname: '',
-    email: ''
+    phone: '',
+    email: '',
+    message: '',
+    kvkkAccepted: false
   });
 
   const product = products.find((p) => p.id === id);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
+    if (!formData.kvkkAccepted) {
+      alert(t('callRequest.kvkk'));
+      return;
+    }
 
     const submission = {
       id: Date.now().toString(),
@@ -69,7 +81,7 @@ export default function ProductContact() {
           className="flex items-center gap-2 text-gray-600 hover:text-blue-900 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span className="font-medium">Back</span>
+          <span className="font-medium">{t('common.back')}</span>
         </button>
 
         <div className="max-w-2xl mx-auto">
@@ -98,6 +110,13 @@ export default function ProductContact() {
                 required
               />
 
+              <PhoneInput
+                label={t('productContact.phone')}
+                value={formData.phone}
+                onChange={(value) => setFormData({ ...formData, phone: value })}
+                required
+              />
+
               <Input
                 label={t('productContact.email')}
                 type="email"
@@ -106,12 +125,52 @@ export default function ProductContact() {
                 required
               />
 
-              <Button type="submit" fullWidth className="bg-blue-900 hover:bg-blue-800">
+              <Textarea
+                label={t('productContact.message')}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                rows={4}
+                placeholder={t('productContact.messagePlaceholder')}
+              />
+
+              <div className="flex items-start gap-3 bg-blue-50 p-4 rounded-xl">
+                <input
+                  type="checkbox"
+                  id="kvkk"
+                  checked={formData.kvkkAccepted}
+                  onChange={(e) => setFormData({ ...formData, kvkkAccepted: e.target.checked })}
+                  required
+                  className="mt-1 w-5 h-5 text-blue-900 rounded focus:ring-2 focus:ring-blue-900"
+                />
+                <label htmlFor="kvkk" className="text-sm text-gray-700 flex-1">
+                  {t('callRequest.kvkk')}
+                  <button
+                    type="button"
+                    onClick={() => setShowKvkkModal(true)}
+                    className="text-blue-900 hover:underline ml-2 font-semibold"
+                  >
+                    ({t('callRequest.viewKvkk')})
+                  </button>
+                </label>
+              </div>
+
+              <Button type="submit" fullWidth size="lg" className="bg-blue-900 hover:bg-blue-800">
                 {t('productContact.submit')}
               </Button>
             </form>
           </Card>
         </div>
+
+        <Modal
+          isOpen={showKvkkModal}
+          onClose={() => setShowKvkkModal(false)}
+          title={t('kvkk.title')}
+          size="lg"
+        >
+          <div className="p-6">
+            <RichContentRenderer htmlContent={kvkk.htmlContent} />
+          </div>
+        </Modal>
 
         {showToast && (
           <Toast

@@ -12,11 +12,14 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
+    "country-flag-icons": "^1.6.13",
     "i18next": "^25.8.4",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^16.5.4",
+    "react-phone-number-input": "^3.4.14",
+    "react-quill": "^2.0.0",
     "react-router-dom": "^7.13.0",
     "zustand": "^5.0.11"
   },

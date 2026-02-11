@@ -41,13 +41,6 @@ export default function Header() {
                   className="h-12 w-auto"
                 />
               </Link>
-
-              <div className="hidden lg:flex items-center gap-2 text-gray-600">
-                <Phone className="w-4 h-4" />
-                <a href={`tel:${header.phone}`} className="hover:text-blue-600 transition-colors">
-                  {header.phone}
-                </a>
-              </div>
             </div>
 
             <nav className="hidden md:flex items-center gap-6">
@@ -99,8 +92,15 @@ export default function Header() {
             <div className="flex items-center gap-4">
               <LanguageSwitcher />
 
+              <div className="hidden lg:flex items-center gap-2 text-gray-700">
+                <Phone className="w-4 h-4" />
+                <a href={`tel:${header.phone}`} className="hover:text-blue-900 transition-colors font-medium">
+                  {header.phone}
+                </a>
+              </div>
+
               <Link to="/call-request" className="hidden sm:block">
-                <Button size="sm" className="flex items-center gap-2">
+                <Button size="sm" className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800">
                   <Phone className="w-4 h-4" />
                   {t('callRequest.title')}
                 </Button>

@@ -10,6 +10,7 @@ import Input from '../../components/Input';
 import Textarea from '../../components/Textarea';
 import Modal from '../../components/Modal';
 import Toast from '../../components/Toast';
+import RichTextEditor from '../../components/RichTextEditor';
 
 export default function ProductsAdmin() {
   const { t } = useTranslation();
@@ -43,18 +44,18 @@ export default function ProductsAdmin() {
   };
 
   const handleSave = () => {
-    setToast({ message: 'Product updated successfully!', type: 'success' });
+    setToast({ message: t('admin.productUpdated'), type: 'success' });
     setEditingProduct(null);
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      setToast({ message: 'Product deleted successfully!', type: 'success' });
+    if (confirm(t('admin.deleteConfirm'))) {
+      setToast({ message: t('admin.productDeleted'), type: 'success' });
     }
   };
 
   const handleAdd = () => {
-    setToast({ message: 'Product added successfully!', type: 'success' });
+    setToast({ message: t('admin.productAdded'), type: 'success' });
     setIsAddModalOpen(false);
     setFormData({
       nameKey: '',
@@ -76,7 +77,7 @@ export default function ProductsAdmin() {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
               {t('admin.products')}
             </h1>
-            <p className="text-gray-600">Manage your products</p>
+            <p className="text-gray-600">{t('admin.manageProducts')}</p>
           </div>
           <Button
             onClick={() => setIsAddModalOpen(true)}
@@ -99,7 +100,7 @@ export default function ProductsAdmin() {
               <p className="text-sm text-gray-600">{t(product.shortDescKey)}</p>
               <div className="mt-2 mb-3">
                 <span className={`text-xs px-2 py-1 rounded ${product.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
-                  {product.active ? 'Active' : 'Inactive'}
+                  {product.active ? t('admin.active') : t('admin.inactive')}
                 </span>
               </div>
               <div className="flex gap-2">
@@ -110,7 +111,7 @@ export default function ProductsAdmin() {
                   className="flex-1 flex items-center justify-center gap-2 border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white"
                 >
                   <Edit2 className="w-4 h-4" />
-                  Edit
+                  {t('common.edit')}
                 </Button>
                 <Button
                   size="sm"
@@ -126,8 +127,8 @@ export default function ProductsAdmin() {
         </div>
 
         {editingProduct && (
-          <Modal isOpen={true} onClose={() => setEditingProduct(null)} title="Edit Product">
-            <div className="space-y-4">
+          <Modal isOpen={true} onClose={() => setEditingProduct(null)} title={t('admin.editProduct')} size="lg">
+            <div className="space-y-4 p-6 max-h-[80vh] overflow-y-auto">
               <Input
                 label="Name Key"
                 value={formData.nameKey}
@@ -167,11 +168,11 @@ export default function ProductsAdmin() {
                 onChange={(e) => setFormData({...formData, features: e.target.value})}
                 rows={4}
               />
-              <Textarea
+              <RichTextEditor
                 label="HTML Content"
                 value={formData.htmlContent}
-                onChange={(e) => setFormData({...formData, htmlContent: e.target.value})}
-                rows={6}
+                onChange={(value) => setFormData({...formData, htmlContent: value})}
+                placeholder="Ürün detaylı açıklamasını buraya yazın..."
               />
               <div className="flex items-center gap-2">
                 <input
@@ -185,11 +186,11 @@ export default function ProductsAdmin() {
               <div className="flex gap-2 pt-4">
                 <Button onClick={handleSave} className="flex-1 bg-blue-900 hover:bg-blue-800">
                   <Save className="w-4 h-4 mr-2" />
-                  Save Changes
+                  {t('common.save')}
                 </Button>
                 <Button variant="outline" onClick={() => setEditingProduct(null)} className="flex-1">
                   <X className="w-4 h-4 mr-2" />
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
               </div>
             </div>
@@ -197,8 +198,8 @@ export default function ProductsAdmin() {
         )}
 
         {isAddModalOpen && (
-          <Modal isOpen={true} onClose={() => setIsAddModalOpen(false)} title="Add New Product">
-            <div className="space-y-4">
+          <Modal isOpen={true} onClose={() => setIsAddModalOpen(false)} title={t('admin.addProduct')} size="lg">
+            <div className="space-y-4 p-6 max-h-[80vh] overflow-y-auto">
               <Input
                 label="Name Key"
                 value={formData.nameKey}
@@ -243,20 +244,20 @@ export default function ProductsAdmin() {
                 rows={4}
                 placeholder="product.newProduct.feature1&#10;product.newProduct.feature2"
               />
-              <Textarea
+              <RichTextEditor
                 label="HTML Content"
                 value={formData.htmlContent}
-                onChange={(e) => setFormData({...formData, htmlContent: e.target.value})}
-                rows={6}
+                onChange={(value) => setFormData({...formData, htmlContent: value})}
+                placeholder="Ürün detaylı açıklamasını buraya yazın..."
               />
               <div className="flex gap-2 pt-4">
                 <Button onClick={handleAdd} className="flex-1 bg-blue-900 hover:bg-blue-800">
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Product
+                  {t('admin.addProduct')}
                 </Button>
                 <Button variant="outline" onClick={() => setIsAddModalOpen(false)} className="flex-1">
                   <X className="w-4 h-4 mr-2" />
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
               </div>
             </div>
