@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Edit2, Trash2, Plus, Save, X } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -12,7 +13,11 @@ import Input from '../../components/Input';
 import Textarea from '../../components/Textarea';
 import Modal from '../../components/Modal';
 import Toast from '../../components/Toast';
-import RichTextEditor from '../../components/RichTextEditor';
+
+const RichTextEditor = dynamic(() => import('../../components/RichTextEditor'), {
+  ssr: false,
+  loading: () => <div className="h-64 bg-gray-50 animate-pulse rounded-lg" />
+});
 
 export default function ProductsAdmin() {
   const t = useTranslations();

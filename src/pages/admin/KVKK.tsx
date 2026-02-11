@@ -3,14 +3,19 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Edit2, Save, X } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
-import RichTextEditor from '../../components/RichTextEditor';
 import RichContentRenderer from '../../components/RichContentRenderer';
 import Toast from '../../components/Toast';
 import { kvkkData } from '../../mock/kvkk';
+
+const RichTextEditor = dynamic(() => import('../../components/RichTextEditor'), {
+  ssr: false,
+  loading: () => <div className="h-64 bg-gray-50 animate-pulse rounded-lg" />
+});
 
 export default function KVKK() {
   const t = useTranslations();
