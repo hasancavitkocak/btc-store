@@ -9,7 +9,7 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Toast from '../../components/Toast';
 import ImageUpload from '../../components/ImageUpload';
-import FileUpload from '../../components/FileUpload';
+import MultiFileUpload from '../../components/MultiFileUpload';
 
 interface DocumentFormProps {
   documentId?: string;
@@ -23,11 +23,21 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
   const isEditing = !!documentId;
   const document = isEditing ? documents.find(d => d.id === documentId) : null;
 
+  // Dosya uzantısından tip belirle
+  const getFileType = (url: string): 'pdf' | 'pptx' | 'docx' | 'xlsx' | 'image' => {
+    const ext = url.split('.').pop()?.toLowerCase();
+    if (ext === 'pdf') return 'pdf';
+    if (ext === 'pptx' || ext === 'ppt') return 'pptx';
+    if (ext === 'docx' || ext === 'doc') return 'docx';
+    if (ext === 'xlsx' || ext === 'xls') return 'xlsx';
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '')) return 'image';
+    return 'pdf'; // default
+  };
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    fileUrl: '',
-    fileType: 'pdf' as 'pdf' | 'pptx' | 'docx' | 'xlsx' | 'image',
+    fileUrls: [] as string[],
     productId: '',
     categoryId: '',
     thumbnail: '',
@@ -40,8 +50,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
       setFormData({
         title: document.title,
         description: document.description,
-        fileUrl: document.fileUrl,
-        fileType: document.fileType,
+        fileUrls: document.fileUrl ? [document.fileUrl] : [],
         productId: document.productId || '',
         categoryId: document.categoryId || '',
         thumbnail: document.thumbnail || '',
@@ -52,35 +61,43 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
   }, [document]);
 
   const handleSave = () => {
-    if (!formData.title || !formData.fileUrl) {
+    if (!formData.title || formData.fileUrls.length === 0) {
       setToast({ message: 'Lütfen zorunlu alanları doldurun!', type: 'error' });
       return;
     }
 
-    const documentData = {
-      title: formData.title,
-      description: formData.description,
-      fileUrl: formData.fileUrl,
-      fileType: formData.fileType,
-      productId: formData.productId || undefined,
-      categoryId: formData.categoryId || undefined,
-      thumbnail: formData.thumbnailImage[0] || formData.thumbnail || undefined,
-      uploadDate: document?.uploadDate || new Date().toISOString(),
-      active: formData.active,
-      order: document?.order || documents.length + 1
-    };
-
-    if (isEditing && documentId) {
-      updateDocument(documentId, documentData);
-      setToast({ message: 'Doküman güncellendi!', type: 'success' });
-    } else {
-      const newDocument = {
-        ...documentData,
-        id: Date.now().toString()
+    // Her dosya için ayrı doküman kaydı oluştur
+    formData.fileUrls.forEach((fileUrl, index) => {
+      const documentData = {
+        title: formData.fileUrls.length > 1 ? `${formData.title} (${index + 1})` : formData.title,
+        description: formData.description,
+        fileUrl: fileUrl,
+        fileType: getFileType(fileUrl),
+        productId: formData.productId || undefined,
+        categoryId: formData.categoryId || undefined,
+        thumbnail: formData.thumbnailImage[0] || formData.thumbnail || undefined,
+        uploadDate: new Date().toISOString(),
+        active: formData.active,
+        order: documents.length + index + 1
       };
-      addDocument(newDocument as any);
-      setToast({ message: 'Doküman eklendi!', type: 'success' });
-    }
+
+      if (isEditing && documentId && index === 0) {
+        // İlk dosya için mevcut kaydı güncelle
+        updateDocument(documentId, documentData);
+      } else {
+        // Yeni kayıt oluştur
+        const newDocument = {
+          ...documentData,
+          id: `${Date.now()}-${index}`
+        };
+        addDocument(newDocument as any);
+      }
+    });
+
+    setToast({ 
+      message: isEditing ? 'Doküman güncellendi!' : `${formData.fileUrls.length} doküman eklendi!`, 
+      type: 'success' 
+    });
 
     setTimeout(() => {
       router.push('/admin/documents');
@@ -129,29 +146,16 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
               />
             </div>
 
-            <FileUpload
-              file={formData.fileUrl}
-              onChange={(file) => setFormData({...formData, fileUrl: file})}
-              label="Dosya"
+            <MultiFileUpload
+              files={formData.fileUrls}
+              onChange={(files) => setFormData({...formData, fileUrls: files})}
+              label="Dosyalar"
               accept=".pdf,.pptx,.docx,.xlsx,.png,.jpg,.jpeg"
+              maxFiles={20}
             />
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Dosya Tipi
-              </label>
-              <select
-                value={formData.fileType}
-                onChange={(e) => setFormData({...formData, fileType: e.target.value as any})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="pdf">PDF</option>
-                <option value="pptx">PowerPoint</option>
-                <option value="docx">Word</option>
-                <option value="xlsx">Excel</option>
-                <option value="image">Görsel</option>
-              </select>
-            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              Birden fazla dosya yükleyebilirsiniz. Her dosya için ayrı doküman kaydı oluşturulacak.
+            </p>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

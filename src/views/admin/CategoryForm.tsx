@@ -33,7 +33,14 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
     imageFile: [] as string[],
     icon: '',
     showOnHome: true,
-    order: 0
+    order: 0,
+    bgColor: '#EFF6FF',
+    iconBgColor: '#0EA5E9',
+    showButton: true,
+    buttonText: '',
+    buttonBgColor: '#0EA5E9',
+    buttonTextColor: '#FFFFFF',
+    buttonBorderColor: '#0EA5E9'
   });
 
   useEffect(() => {
@@ -45,7 +52,14 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
         imageFile: category.image ? [category.image] : [],
         icon: category.icon,
         showOnHome: category.showOnHome,
-        order: category.order
+        order: category.order,
+        bgColor: category.bgColor || '#EFF6FF',
+        iconBgColor: category.iconBgColor || '#0EA5E9',
+        showButton: category.showButton !== false,
+        buttonText: category.buttonText || '',
+        buttonBgColor: category.buttonBgColor || '#0EA5E9',
+        buttonTextColor: category.buttonTextColor || '#FFFFFF',
+        buttonBorderColor: category.buttonBorderColor || '#0EA5E9'
       });
     } else {
       setFormData(prev => ({ ...prev, order: categories.length + 1 }));
@@ -59,7 +73,14 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
       image: formData.imageFile[0] || formData.image,
       icon: formData.icon,
       showOnHome: formData.showOnHome,
-      order: formData.order
+      order: formData.order,
+      bgColor: formData.bgColor,
+      iconBgColor: formData.iconBgColor,
+      showButton: formData.showButton,
+      buttonText: formData.buttonText,
+      buttonBgColor: formData.buttonBgColor,
+      buttonTextColor: formData.buttonTextColor,
+      buttonBorderColor: formData.buttonBorderColor
     };
 
     if (isEditing && categoryId) {
@@ -139,12 +160,6 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                 />
                 
                 <Input
-                  label="Icon Name (Lucide React)"
-                  value={formData.icon}
-                  onChange={(e) => setFormData({...formData, icon: e.target.value})}
-                  placeholder="Users"
-                />
-                <Input
                   label="Sıra"
                   type="number"
                   value={formData.order.toString()}
@@ -152,9 +167,143 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                 />
               </div>
             </Card>
+
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Renk Ayarları</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Arka Plan Rengi
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={formData.bgColor}
+                      onChange={(e) => setFormData({...formData, bgColor: e.target.value})}
+                      className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
+                    />
+                    <Input
+                      value={formData.bgColor}
+                      onChange={(e) => setFormData({...formData, bgColor: e.target.value})}
+                      placeholder="#EFF6FF"
+                    />
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Buton Ayarları</h2>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="showButton"
+                    checked={formData.showButton}
+                    onChange={(e) => setFormData({...formData, showButton: e.target.checked})}
+                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="showButton" className="text-sm font-medium text-gray-700">
+                    Butonu Göster
+                  </label>
+                </div>
+
+                {formData.showButton && (
+                  <>
+                    <Input
+                      label="Buton Metni (opsiyonel, boş bırakılırsa 'Daha Fazla' kullanılır)"
+                      value={formData.buttonText}
+                      onChange={(e) => setFormData({...formData, buttonText: e.target.value})}
+                      placeholder="Daha Fazla Bilgi"
+                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Buton Arka Plan Rengi
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="color"
+                          value={formData.buttonBgColor}
+                          onChange={(e) => setFormData({...formData, buttonBgColor: e.target.value})}
+                          className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
+                        />
+                        <Input
+                          value={formData.buttonBgColor}
+                          onChange={(e) => setFormData({...formData, buttonBgColor: e.target.value})}
+                          placeholder="#0EA5E9"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Buton Yazı Rengi
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="color"
+                          value={formData.buttonTextColor}
+                          onChange={(e) => setFormData({...formData, buttonTextColor: e.target.value})}
+                          className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
+                        />
+                        <Input
+                          value={formData.buttonTextColor}
+                          onChange={(e) => setFormData({...formData, buttonTextColor: e.target.value})}
+                          placeholder="#FFFFFF"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Buton Çerçeve Rengi
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="color"
+                          value={formData.buttonBorderColor}
+                          onChange={(e) => setFormData({...formData, buttonBorderColor: e.target.value})}
+                          className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
+                        />
+                        <Input
+                          value={formData.buttonBorderColor}
+                          onChange={(e) => setFormData({...formData, buttonBorderColor: e.target.value})}
+                          placeholder="#0EA5E9"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Card>
           </div>
 
           <div className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Önizleme</h2>
+              <div 
+                className="rounded-lg p-6 min-h-[200px] flex items-center justify-center"
+                style={{ backgroundColor: formData.bgColor }}
+              >
+                <div className="text-center space-y-4">
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {formData.nameKey ? t(formData.nameKey) : 'Kategori Adı'}
+                  </h3>
+                  {formData.showButton && (
+                    <button
+                      className="px-6 py-2 rounded-lg font-medium transition-all shadow-lg"
+                      style={{
+                        backgroundColor: formData.buttonBgColor,
+                        color: formData.buttonTextColor,
+                        borderWidth: '2px',
+                        borderColor: formData.buttonBorderColor
+                      }}
+                    >
+                      {formData.buttonText || t('common.learnMore')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </Card>
+
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Görünürlük</h2>
               <div className="flex items-center gap-3">

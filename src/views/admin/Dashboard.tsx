@@ -21,8 +21,8 @@ export default function Dashboard() {
       // Store'u sıfırla
       resetToDefaults();
       
-      // Auth store'u da sıfırla (localStorage'dan sil)
-      localStorage.removeItem('auth-store');
+      // Tüm localStorage'ı temizle
+      localStorage.clear();
       
       setToast({ message: 'Veriler başarıyla sıfırlandı! Sayfa yenileniyor...', type: 'success' });
       setTimeout(() => {

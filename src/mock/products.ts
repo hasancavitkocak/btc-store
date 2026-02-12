@@ -5,6 +5,7 @@ export interface Product {
   categoryId: string;
   image: string;
   images?: string[];
+  documents?: string[]; // Ürüne ait dokümanlar
   features: string[];
   contentKey: string;
   htmlContent?: string;

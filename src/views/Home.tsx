@@ -2,7 +2,6 @@
 
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import * as Icons from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Section from '../components/Section';
@@ -95,32 +94,40 @@ export default function Home() {
 
       <div className="space-y-0">
         {homeCategories.map((category, index) => {
-          const IconComponent = Icons[category.icon as keyof typeof Icons] as React.ComponentType<{ className?: string }>;
           return (
             <ZigzagSection
               key={category.id}
               image={category.image}
               imageAlt={t(category.nameKey)}
               reverse={index % 2 === 1}
+              bgColor={category.bgColor || '#F9FAFB'}
             >
-              <div className="flex items-center gap-4 mb-6">
-                {IconComponent && (
-                  <div className="w-16 h-16 bg-blue-900 rounded-2xl flex items-center justify-center shadow-lg">
-                    <IconComponent className="w-8 h-8 text-white" />
-                  </div>
-                )}
-                <h3 className="text-4xl md:text-5xl font-bold text-gray-900">
+              <div className="space-y-4">
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
                   {t(category.nameKey)}
                 </h3>
+                <p className="text-base md:text-lg text-gray-600 leading-relaxed">
+                  {t(category.descriptionKey)}
+                </p>
+                {category.showButton !== false && (
+                  <div className="pt-1">
+                    <Link href={`/products?category=${category.id}`}>
+                      <button
+                        className="px-6 py-2.5 text-sm md:text-base rounded-lg font-semibold shadow-md hover:shadow-lg transition-all hover:scale-105"
+                        style={{
+                          backgroundColor: category.buttonBgColor || '#0EA5E9',
+                          color: category.buttonTextColor || '#FFFFFF',
+                          borderWidth: '2px',
+                          borderStyle: 'solid',
+                          borderColor: category.buttonBorderColor || '#0EA5E9'
+                        }}
+                      >
+                        {category.buttonText || t('common.learnMore')}
+                      </button>
+                    </Link>
+                  </div>
+                )}
               </div>
-              <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-                {t(category.descriptionKey)}
-              </p>
-              <Link href={`/products?category=${category.id}`}>
-                <Button size="lg" variant="outline" className="text-lg shadow-lg hover:shadow-xl transition-all border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white hover:border-blue-900 group">
-                  <span className="group-hover:text-white transition-colors">{t('common.learnMore')}</span>
-                </Button>
-              </Link>
             </ZigzagSection>
           );
         })}
