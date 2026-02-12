@@ -10,6 +10,7 @@ export interface Product {
   htmlContent?: string;
   order: number;
   active: boolean;
+  responsibleUserId?: string;
 }
 
 export const products: Product[] = [

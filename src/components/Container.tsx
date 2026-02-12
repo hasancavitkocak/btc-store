@@ -8,7 +8,7 @@ interface ContainerProps {
 
 export default function Container({ children, className = '', noPadding = false }: ContainerProps) {
   return (
-    <div className={`max-w-7xl mx-auto ${noPadding ? '' : 'px-4 sm:px-6 lg:px-8'} ${className}`}>
+    <div className={`w-full mx-auto ${noPadding ? '' : 'px-4 sm:px-6 lg:px-8'} ${className}`}>
       {children}
     </div>
   );

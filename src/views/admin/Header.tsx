@@ -45,7 +45,7 @@ export default function Header() {
           <p className="text-gray-600">{t('admin.manageHeader')}</p>
         </div>
 
-        <div className="space-y-6 max-w-2xl">
+        <div className="space-y-6">
           <Card className="p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Genel Ayarlar</h2>
             <div className="space-y-4">

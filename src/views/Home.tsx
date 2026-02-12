@@ -16,7 +16,7 @@ export default function Home() {
 
   const activeBanners = banners.filter((b) => b.active).sort((a, b) => a.order - b.order);
   const homeCategories = categories.filter((c) => c.showOnHome).sort((a, b) => a.order - b.order);
-  const activeReferences = references.filter((r) => r.active).sort((a, b) => a.order - b.order);
+  const activeReferences = references.filter((r) => r.active && r.showOnHome).sort((a, b) => a.order - b.order);
   const activePartners = partners.filter((p) => p.active).sort((a, b) => a.order - b.order);
 
   return (
@@ -127,7 +127,6 @@ export default function Home() {
       </div>
 
       <Section>
-
         <Container>
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6">
@@ -138,28 +137,46 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
-            {activeReferences.slice(0, 4).map((ref) => (
-              <div
-                key={ref.id}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center h-32 group"
-              >
-                <img
-                  src={ref.logo}
-                  alt={ref.name}
-                  className="max-w-full max-h-full object-contain grayscale hover:grayscale-0 transition-all duration-300 group-hover:scale-110"
-                />
+          {activeReferences.length > 0 ? (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+                {activeReferences.map((ref) => (
+                  <div
+                    key={ref.id}
+                    className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center h-32 group"
+                  >
+                    {ref.logo ? (
+                      <img
+                        src={ref.logo}
+                        alt={ref.name}
+                        className="max-w-full max-h-full object-contain grayscale hover:grayscale-0 transition-all duration-300 group-hover:scale-110"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `<div class="text-gray-600 font-semibold text-center">${ref.name}</div>`;
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="text-gray-600 font-semibold text-center">{ref.name}</div>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {activeReferences.length > 4 && (
-            <div className="text-center mt-16">
-              <Link href="/references">
-                <Button size="lg" variant="outline" className="text-lg shadow-lg hover:shadow-xl transition-all border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white hover:border-blue-900">
-                  {t('common.learnMore')}
-                </Button>
-              </Link>
+              <div className="text-center mt-16">
+                <Link href="/references">
+                  <Button size="lg" variant="outline" className="text-lg shadow-lg hover:shadow-xl transition-all border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white hover:border-blue-900">
+                    {t('common.learnMore')}
+                  </Button>
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">Referanslar yükleniyor...</p>
             </div>
           )}
         </Container>

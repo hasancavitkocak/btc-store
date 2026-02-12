@@ -8,7 +8,10 @@ import { stories as defaultStories, Story } from '../mock/stories';
 import { partners as defaultPartners, Partner } from '../mock/partners';
 import { kvkkData as defaultKvkkData, KVKKData } from '../mock/kvkk';
 import { headerData as defaultHeaderData, HeaderData } from '../mock/header';
+import { documents as defaultDocuments, Document } from '../mock/documents';
 import { CallRequest, ProductContactForm } from '../mock/forms';
+import { sendEmail, createProductContactEmailBody, createCallRequestEmailBody } from '../lib/email';
+import { useAuthStore } from './useAuthStore';
 
 interface StoreState {
   header: HeaderData;
@@ -18,6 +21,7 @@ interface StoreState {
   references: Reference[];
   partners: Partner[];
   stories: Story[];
+  documents: Document[];
   kvkk: KVKKData;
   callRequests: CallRequest[];
   productContactForms: ProductContactForm[];
@@ -39,6 +43,12 @@ interface StoreState {
   updateStory: (id: string, story: Partial<Story>) => void;
   deleteStory: (id: string) => void;
   updateKvkk: (kvkk: KVKKData) => void;
+  addPartner: (partner: Partner) => void;
+  updatePartner: (id: string, partner: Partial<Partner>) => void;
+  deletePartner: (id: string) => void;
+  addDocument: (document: Document) => void;
+  updateDocument: (id: string, document: Partial<Document>) => void;
+  deleteDocument: (id: string) => void;
   addCallRequest: (request: CallRequest) => void;
   addProductContactForm: (form: ProductContactForm) => void;
   resetToDefaults: () => void;
@@ -54,6 +64,7 @@ export const useStore = create<StoreState>()(
       references: defaultReferences,
       partners: defaultPartners,
       stories: defaultStories,
+      documents: defaultDocuments,
       kvkk: defaultKvkkData,
       callRequests: [],
       productContactForms: [],
@@ -115,13 +126,68 @@ export const useStore = create<StoreState>()(
           stories: state.stories.filter((s) => s.id !== id)
         })),
 
+      addPartner: (partner) =>
+        set((state) => ({ partners: [...state.partners, partner] })),
+      updatePartner: (id, partner) =>
+        set((state) => ({
+          partners: state.partners.map((p) => (p.id === id ? { ...p, ...partner } : p))
+        })),
+      deletePartner: (id) =>
+        set((state) => ({
+          partners: state.partners.filter((p) => p.id !== id)
+        })),
+
+      addDocument: (document) =>
+        set((state) => ({ documents: [...state.documents, document] })),
+      updateDocument: (id, document) =>
+        set((state) => ({
+          documents: state.documents.map((d) => (d.id === id ? { ...d, ...document } : d))
+        })),
+      deleteDocument: (id) =>
+        set((state) => ({
+          documents: state.documents.filter((d) => d.id !== id)
+        })),
+
       updateKvkk: (kvkk) => set({ kvkk }),
 
       addCallRequest: (request) =>
         set((state) => ({ callRequests: [...state.callRequests, request] })),
 
       addProductContactForm: (form) =>
-        set((state) => ({ productContactForms: [...state.productContactForms, form] })),
+        set((state) => {
+          // Ürünü bul
+          const product = state.products.find(p => p.id === form.productId);
+          
+          // Eğer ürünün sorumlusu varsa, ona mail gönder
+          if (product?.responsibleUserId) {
+            const users = useAuthStore.getState().users;
+            const responsible = users.find(u => u.id === product.responsibleUserId);
+            
+            if (responsible?.email) {
+              const emailBody = createProductContactEmailBody({
+                productName: product.nameKey,
+                customerName: form.name,
+                customerSurname: form.surname,
+                customerPhone: form.phone,
+                customerEmail: form.email,
+                message: form.message
+              });
+
+              sendEmail({
+                to: responsible.email,
+                subject: `Yeni Ürün İletişim Formu - ${product.nameKey}`,
+                body: emailBody,
+                productName: product.nameKey,
+                customerName: `${form.name} ${form.surname}`,
+                customerPhone: form.phone,
+                customerEmail: form.email,
+                message: form.message
+              });
+            }
+          }
+
+          return { productContactForms: [...state.productContactForms, form] };
+        }),
 
       resetToDefaults: () =>
         set({
@@ -132,6 +198,7 @@ export const useStore = create<StoreState>()(
           references: defaultReferences,
           partners: defaultPartners,
           stories: defaultStories,
+          documents: defaultDocuments,
           kvkk: defaultKvkkData,
           callRequests: [],
           productContactForms: []

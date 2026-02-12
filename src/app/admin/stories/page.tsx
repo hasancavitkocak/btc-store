@@ -1,9 +1,9 @@
 'use client';
 
-import StoriesAdmin from '@/views/admin/StoriesAdmin';
+import StoriesAdminList from '@/views/admin/StoriesAdminList';
 
 export const dynamic = 'force-dynamic';
 
 export default function StoriesAdminPage() {
-  return <StoriesAdmin />;
+  return <StoriesAdminList />;
 }

@@ -1,16 +1,35 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { LayoutDashboard, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, RefreshCw } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
+import Button from '../../components/Button';
+import Toast from '../../components/Toast';
 
 export default function Dashboard() {
   const t = useTranslations();
-  const { banners, categories, products, references, stories, callRequests, productContactForms } = useStore();
+  const { banners, categories, products, references, stories, callRequests, productContactForms, resetToDefaults } = useStore();
+  const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  const handleReset = () => {
+    if (confirm('Tüm veriler varsayılan değerlere sıfırlanacak. Emin misiniz?')) {
+      // Store'u sıfırla
+      resetToDefaults();
+      
+      // Auth store'u da sıfırla (localStorage'dan sil)
+      localStorage.removeItem('auth-store');
+      
+      setToast({ message: 'Veriler başarıyla sıfırlandı! Sayfa yenileniyor...', type: 'success' });
+      setTimeout(() => {
+        window.location.href = '/admin/login';
+      }, 1500);
+    }
+  };
 
   const stats = [
     { icon: Image, label: t('admin.banners'), count: banners.length, link: '/admin/banners' },
@@ -24,11 +43,21 @@ export default function Dashboard() {
   return (
     <Section>
       <Container>
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {t('admin.dashboard')}
-          </h1>
-          <p className="text-gray-600">{t('admin.welcome')}</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              {t('admin.dashboard')}
+            </h1>
+            <p className="text-gray-600">{t('admin.welcome')}</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleReset}
+            className="flex items-center gap-2 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Verileri Sıfırla
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -77,6 +106,14 @@ export default function Dashboard() {
             </Link>
           </div>
         </div>
+
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
       </Container>
     </Section>
   );
