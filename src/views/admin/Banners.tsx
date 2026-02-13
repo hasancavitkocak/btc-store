@@ -87,7 +87,7 @@ export default function Banners() {
             <p className="text-gray-500 mb-4">Henüz banner eklenmemiş</p>
             <Button onClick={() => router.push('/admin/banners/new')} className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
-              İlk Banner'ı Ekle
+              İlk Banner&apos;ı Ekle
             </Button>
           </Card>
         )}

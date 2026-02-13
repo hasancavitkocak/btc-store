@@ -132,7 +132,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
                   </label>
                 </div>
                 <p className="text-xs text-gray-500 ml-8">
-                  Ana sayfada sadece 4 referans gösterilir. Sıralama "order" değerine göre yapılır.
+                  Ana sayfada sadece 4 referans gösterilir. Sıralama &quot;order&quot; değerine göre yapılır.
                 </p>
               </div>
             </div>
