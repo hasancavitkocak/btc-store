@@ -11,6 +11,21 @@ export function middleware(request: NextRequest) {
       sameSite: 'lax'
     });
   }
+
+  // Admin route protection
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    // Login sayfasına izin ver
+    if (request.nextUrl.pathname === '/admin/login') {
+      return response;
+    }
+
+    // Token kontrolü
+    const accessToken = request.cookies.get('accessToken');
+    
+    if (!accessToken) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+  }
   
   return response;
 }

@@ -21,15 +21,12 @@ export default function AdminLoginPage() {
     setError('');
     setIsLoading(true);
 
-    // Simulate loading for better UX
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    const success = login(username, password);
+    const result = await login(username, password);
     
-    if (success) {
+    if (result.success) {
       router.push('/admin');
     } else {
-      setError('Kullanıcı adı veya şifre hatalı');
+      setError(result.error || 'Kullanıcı adı veya şifre hatalı');
       setIsLoading(false);
     }
   };

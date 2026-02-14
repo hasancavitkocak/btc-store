@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { apiClient, AuthToken } from '@/lib/api';
+import { setCookie, deleteCookie } from '@/lib/cookies';
 
 export type Permission = 
   | 'view_dashboard'
@@ -30,14 +32,25 @@ export interface User {
   createdAt: string;
 }
 
+export interface CurrentUser {
+  username: string;
+  firstName: string;
+  lastName: string;
+  language: string;
+  picture: string;
+  userGroups: string[];
+}
+
 interface AuthState {
-  currentUser: User | null;
+  currentUser: CurrentUser | null;
   users: User[];
   roles: Role[];
   isAuthenticated: boolean;
+  isLoading: boolean;
   
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
+  setCurrentUser: (user: CurrentUser | null) => void;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
   updateUser: (id: string, user: Partial<User>) => void;
   deleteUser: (id: string) => void;
@@ -45,6 +58,7 @@ interface AuthState {
   updateRole: (id: string, role: Partial<Role>) => void;
   deleteRole: (id: string) => void;
   hasPermission: (permission: Permission) => boolean;
+  hasUserGroup: (group: string) => boolean;
 }
 
 const defaultRoles: Role[] = [
@@ -111,21 +125,62 @@ export const useAuthStore = create<AuthState>()(
       users: defaultUsers,
       roles: defaultRoles,
       isAuthenticated: false,
+      isLoading: false,
 
-      login: (username, password) => {
-        const user = get().users.find(
-          (u) => u.username === username && u.password === password
-        );
+      login: async (username, password) => {
+        set({ isLoading: true });
         
-        if (user) {
-          set({ currentUser: user, isAuthenticated: true });
-          return true;
+        try {
+          const response = await apiClient.login({ username, password });
+          
+          if (response.status === 'SUCCESS' && response.data) {
+            const authData = response.data as AuthToken;
+            
+            // Save tokens to cookies
+            setCookie('accessToken', authData.accessToken, 7);
+            setCookie('refreshToken', authData.refreshToken, 30);
+            
+            // Save user data to store
+            const currentUser: CurrentUser = {
+              username: authData.username,
+              firstName: authData.firstName,
+              lastName: authData.lastName,
+              language: authData.language,
+              picture: authData.picture,
+              userGroups: authData.userGroups,
+            };
+            
+            set({ 
+              currentUser, 
+              isAuthenticated: true,
+              isLoading: false 
+            });
+            
+            return { success: true };
+          } else {
+            set({ isLoading: false });
+            return { 
+              success: false, 
+              error: response.errorMessage || 'Giriş başarısız' 
+            };
+          }
+        } catch (error) {
+          set({ isLoading: false });
+          return { 
+            success: false, 
+            error: 'Bağlantı hatası oluştu' 
+          };
         }
-        return false;
       },
 
       logout: () => {
+        deleteCookie('accessToken');
+        deleteCookie('refreshToken');
         set({ currentUser: null, isAuthenticated: false });
+      },
+
+      setCurrentUser: (user) => {
+        set({ currentUser: user, isAuthenticated: !!user });
       },
 
       addUser: (userData) => {
@@ -169,16 +224,31 @@ export const useAuthStore = create<AuthState>()(
         }));
       },
 
-      hasPermission: (permission) => {
-        const { currentUser, roles } = get();
+      hasPermission: () => {
+        const { currentUser } = get();
         if (!currentUser) return false;
         
-        const userRole = roles.find((r) => r.id === currentUser.roleId);
-        return userRole?.permissions.includes(permission) || false;
+        // Backend'den gelen userGroups'a göre permission kontrolü
+        // Admin grubu varsa tüm izinler var
+        if (currentUser.userGroups?.includes('ADMIN')) return true;
+        
+        // Diğer grup bazlı kontroller buraya eklenebilir
+        return false;
+      },
+
+      hasUserGroup: (group) => {
+        const { currentUser } = get();
+        if (!currentUser) return false;
+        
+        return currentUser.userGroups?.includes(group) || false;
       }
     }),
     {
-      name: 'auth-store'
+      name: 'auth-store',
+      partialize: (state) => ({
+        currentUser: state.currentUser,
+        isAuthenticated: state.isAuthenticated,
+      })
     }
   )
 );
