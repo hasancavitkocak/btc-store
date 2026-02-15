@@ -139,3 +139,17 @@ export const documentService = {
   update: (id: string, data: any) => apiClient.put(`/v1/documents/${id}`, data),
   delete: (id: string) => apiClient.delete(`/v1/documents/${id}`),
 };
+
+// Sector servisleri
+export const sectorService = {
+  getAll: () => apiClient.get('/v1/sectors'),
+  getActive: () => apiClient.get('/v1/sectors/active'),
+  getByCode: (code: string) => apiClient.get(`/v1/sectors/${code}`),
+  save: (data: any) => {
+    const formData = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    formData.append('sectorData', jsonBlob);
+    return apiClient.upload('/v1/sectors', formData);
+  },
+  delete: (code: string) => apiClient.delete(`/v1/sectors/${code}`),
+};

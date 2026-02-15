@@ -24,7 +24,8 @@ const menuGroups = [
       { icon: BookOpen, labelKey: 'admin.stories', path: '/admin/stories' },
       { icon: Users, labelKey: 'admin.references', path: '/admin/references' },
       { icon: Users, labelKey: 'Partnerler', path: '/admin/partners' },
-      { icon: FileText, labelKey: 'Dokümanlar', path: '/admin/documents' }
+      { icon: FileText, labelKey: 'Dokümanlar', path: '/admin/documents' },
+      { icon: FolderTree, labelKey: 'Sektörler', path: '/admin/sectors' }
     ]
   },
   {
