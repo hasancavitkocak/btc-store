@@ -70,6 +70,26 @@ export const referenceService = {
   delete: (code: string) => apiClient.delete(`/v1/references/${code}`),
 };
 
+// Partner servisleri
+export const partnerService = {
+  getAll: () => apiClient.get('/v1/partners'),
+  getActive: () => apiClient.get('/v1/partners/active'),
+  getHomePagePartners: () => apiClient.get('/v1/partners/home'),
+  getByCode: (code: string) => apiClient.get(`/v1/partners/${code}`),
+  save: (data: any, mediaFile?: File, removeMedia?: boolean) => {
+    const formData = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    formData.append('partnerData', jsonBlob);
+    if (mediaFile) {
+      formData.append('media', mediaFile);
+    } else if (removeMedia) {
+      formData.append('removeMedia', 'true');
+    }
+    return apiClient.upload('/v1/partners', formData);
+  },
+  delete: (code: string) => apiClient.delete(`/v1/partners/${code}`),
+};
+
 // Story servisleri
 export const storyService = {
   getAll: () => apiClient.get('/v1/success-stories'),
