@@ -20,8 +20,8 @@ export interface SearchSortData {
 }
 
 export interface SearchFormData {
-  filters?: SearchFilter[]; // Backend expects Set but JSON array works
-  sort?: SearchSortData; // Single sort object, not array
+  filters?: SearchFilter[];
+  sort?: SearchSortData;
   totalCount?: number;
   headers?: string[];
 }
