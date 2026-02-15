@@ -53,10 +53,21 @@ export const productService = {
 // Reference servisleri
 export const referenceService = {
   getAll: () => apiClient.get('/v1/references'),
-  getById: (id: string) => apiClient.get(`/v1/references/${id}`),
-  create: (data: any) => apiClient.post('/v1/references', data),
-  update: (id: string, data: any) => apiClient.put(`/v1/references/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/v1/references/${id}`),
+  getActive: () => apiClient.get('/v1/references/active'),
+  getHomePageReferences: () => apiClient.get('/v1/references/home'),
+  getByCode: (code: string) => apiClient.get(`/v1/references/${code}`),
+  save: (data: any, mediaFile?: File, removeMedia?: boolean) => {
+    const formData = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    formData.append('referenceData', jsonBlob);
+    if (mediaFile) {
+      formData.append('media', mediaFile);
+    } else if (removeMedia) {
+      formData.append('removeMedia', 'true');
+    }
+    return apiClient.upload('/v1/references', formData);
+  },
+  delete: (code: string) => apiClient.delete(`/v1/references/${code}`),
 };
 
 // Story servisleri
