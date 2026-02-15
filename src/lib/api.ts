@@ -208,10 +208,9 @@ class ApiClient {
   // Upload helper
   async upload<T>(endpoint: string, formData: FormData, config?: RequestConfig): Promise<ApiResponse<T>> {
     const token = getCookie('accessToken');
-    const headers: Record<string, string> = {
-      ...(config?.headers as Record<string, string>),
-    };
+    const headers: Record<string, string> = {};
 
+    // Content-Type'ı ekleme - browser otomatik ekleyecek
     if (token && !config?.skipAuth) {
       headers.Authorization = `Bearer ${token}`;
     }
@@ -224,12 +223,27 @@ class ApiClient {
         credentials: 'include',
       });
 
-      const data = await response.json();
+      // Response'u parse et
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      try {
+        if (contentType?.includes('application/json')) {
+          data = await response.json();
+        } else {
+          const text = await response.text();
+          data = { message: text };
+        }
+      } catch (parseError) {
+        console.error('Response parse error:', parseError);
+        data = { message: 'Sunucu yanıtı okunamadı' };
+      }
 
       if (!response.ok) {
+        console.error('Upload failed:', response.status, data);
         return {
           status: 'ERROR',
-          errorMessage: data.errorMessage || 'Upload hatası oluştu',
+          errorMessage: data?.errorMessage || data?.message || `HTTP ${response.status}: Upload hatası`,
         };
       }
 
@@ -241,7 +255,7 @@ class ApiClient {
       console.error('Upload Error:', error);
       return {
         status: 'ERROR',
-        errorMessage: 'Upload sırasında hata oluştu',
+        errorMessage: error instanceof Error ? error.message : 'Upload sırasında bağlantı hatası oluştu',
       };
     }
   }

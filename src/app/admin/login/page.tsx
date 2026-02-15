@@ -21,12 +21,22 @@ export default function AdminLoginPage() {
     setError('');
     setIsLoading(true);
 
-    const result = await login(username, password);
-    
-    if (result.success) {
-      router.push('/admin');
-    } else {
-      setError(result.error || 'Kullanıcı adı veya şifre hatalı');
+    try {
+      const result = await login(username, password);
+      
+      if (result.success) {
+        // Başarılı giriş - state güncellensin diye kısa bir bekleme
+        setTimeout(() => {
+          router.push('/admin');
+          router.refresh(); // Router'ı yenile
+        }, 100);
+      } else {
+        setError(result.error || 'Kullanıcı adı veya şifre hatalı');
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Beklenmeyen bir hata oluştu');
       setIsLoading(false);
     }
   };

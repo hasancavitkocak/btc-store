@@ -9,9 +9,10 @@ interface ImageUploadProps {
   onChange: (images: string[]) => void;
   maxImages?: number;
   label?: string;
+  onImageClick?: (imageUrl: string) => void;
 }
 
-export default function ImageUpload({ images, onChange, maxImages = 5, label = 'Görseller' }: ImageUploadProps) {
+export default function ImageUpload({ images, onChange, maxImages = 5, label = 'Görseller', onImageClick }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -77,7 +78,8 @@ export default function ImageUpload({ images, onChange, maxImages = 5, label = '
             <img
               src={image}
               alt={`Görsel ${index + 1}`}
-              className="w-full h-32 object-cover rounded-lg border border-gray-300"
+              className="w-full h-32 object-cover rounded-lg border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => onImageClick?.(image)}
             />
             <button
               type="button"
@@ -100,14 +102,15 @@ export default function ImageUpload({ images, onChange, maxImages = 5, label = '
             type="button"
             onClick={handleButtonClick}
             disabled={uploading}
-            className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
           >
             {uploading ? (
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             ) : (
               <>
-                <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                <span className="text-sm text-gray-600">Görsel Ekle</span>
+                <img src="/no-image.svg" alt="No image" className="absolute inset-0 w-full h-full object-contain opacity-20" />
+                <Upload className="w-8 h-8 text-gray-400 mb-2 relative z-10" />
+                <span className="text-sm text-gray-600 relative z-10">Görsel Ekle</span>
               </>
             )}
           </button>

@@ -3,10 +3,18 @@ import { apiClient } from '@/lib/api';
 // Banner servisleri
 export const bannerService = {
   getAll: () => apiClient.get('/v1/banners'),
-  getById: (id: string) => apiClient.get(`/v1/banners/${id}`),
-  create: (data: any) => apiClient.post('/v1/banners', data),
-  update: (id: string, data: any) => apiClient.put(`/v1/banners/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/v1/banners/${id}`),
+  getActive: () => apiClient.get('/v1/banners/active'),
+  getByCode: (code: string) => apiClient.get(`/v1/banners/${code}`),
+  save: (data: any, mediaFile?: File) => {
+    const formData = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    formData.append('bannerData', jsonBlob);
+    if (mediaFile) {
+      formData.append('media', mediaFile);
+    }
+    return apiClient.upload('/v1/banners', formData);
+  },
+  delete: (code: string) => apiClient.delete(`/v1/banners/${code}`),
 };
 
 // Category servisleri
