@@ -154,6 +154,14 @@ export default function PartnersAdminList() {
         <Card className="p-12 text-center">
           <p className="text-gray-500">Yükleniyor...</p>
         </Card>
+      ) : partners.length === 0 ? (
+        <Card className="p-12 text-center">
+          <p className="text-gray-500 mb-4">Henüz partner eklenmemiş</p>
+          <Button onClick={() => router.push('/admin/partners/new')} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-2" />
+            İlk Partner'ı Ekle
+          </Button>
+        </Card>
       ) : (
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -237,16 +245,6 @@ export default function PartnersAdminList() {
               );
             })}
           </div>
-
-          {partners.length === 0 && (
-            <Card className="p-12 text-center">
-              <p className="text-gray-500 mb-4">Henüz partner eklenmemiş</p>
-              <Button onClick={() => router.push('/admin/partners/new')} className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4 mr-2" />
-                İlk Partner'ı Ekle
-              </Button>
-            </Card>
-          )}
 
           {totalPages > 1 && (
             <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">

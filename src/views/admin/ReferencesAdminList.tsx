@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Card from '../../components/Card';
@@ -155,6 +154,14 @@ export default function ReferencesAdminList() {
         <Card className="p-12 text-center">
           <p className="text-gray-500">Yükleniyor...</p>
         </Card>
+      ) : references.length === 0 ? (
+        <Card className="p-12 text-center">
+          <p className="text-gray-500 mb-4">Henüz referans eklenmemiş</p>
+          <Button onClick={() => router.push('/admin/references/new')} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="w-4 h-4 mr-2" />
+            İlk Referansı Ekle
+          </Button>
+        </Card>
       ) : (
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -240,16 +247,6 @@ export default function ReferencesAdminList() {
               );
             })}
           </div>
-
-          {references.length === 0 && (
-            <Card className="p-12 text-center">
-              <p className="text-gray-500 mb-4">Henüz referans eklenmemiş</p>
-              <Button onClick={() => router.push('/admin/references/new')} className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4 mr-2" />
-                İlk Referansı Ekle
-              </Button>
-            </Card>
-          )}
 
           {totalPages > 1 && (
             <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
