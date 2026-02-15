@@ -23,9 +23,9 @@ const menuGroups = [
       { icon: Package, labelKey: 'admin.products', path: '/admin/products' },
       { icon: BookOpen, labelKey: 'admin.stories', path: '/admin/stories' },
       { icon: Users, labelKey: 'admin.references', path: '/admin/references' },
-      { icon: Users, labelKey: 'Partnerler', path: '/admin/partners' },
-      { icon: FileText, labelKey: 'Dokümanlar', path: '/admin/documents' },
-      { icon: FolderTree, labelKey: 'Sektörler', path: '/admin/sectors' }
+      { icon: Users, labelKey: 'admin.partners', path: '/admin/partners' },
+      { icon: FileText, labelKey: 'admin.documents', path: '/admin/documents' },
+      { icon: FolderTree, labelKey: 'admin.sectors', path: '/admin/sectors' }
     ]
   },
   {

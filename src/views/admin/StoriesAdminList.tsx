@@ -16,7 +16,7 @@ import { storyService } from '../../services/admin.service';
 interface SuccessStory {
   code: string;
   company: string;
-  industry: string;
+  sector?: { code: string; name: { tr: string; en: string } };
   title: { tr: string; en: string };
   htmlContent: { tr: string; en: string };
   media?: { absolutePath: string };
@@ -152,7 +152,11 @@ export default function StoriesAdminList() {
                         <span className="text-sm font-semibold text-blue-900 bg-blue-50 px-2 py-1 rounded">
                           {story.company}
                         </span>
-                        <span className="text-xs text-gray-500">{story.industry}</span>
+                        {story.sector && (
+                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            {story.sector.name.tr || story.sector.name.en}
+                          </span>
+                        )}
                       </div>
                       
                       <h3 className="font-semibold text-lg mb-2">

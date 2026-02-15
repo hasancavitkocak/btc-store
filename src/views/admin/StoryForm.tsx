@@ -13,10 +13,16 @@ import Toast from '../../components/Toast';
 import ImageUpload from '../../components/ImageUpload';
 import RichTextEditor from '../../components/RichTextEditor';
 import ImageLightbox from '../../components/ImageLightbox';
-import { storyService } from '../../services/admin.service';
+import { storyService, sectorService } from '../../services/admin.service';
 
 interface StoryFormProps {
   storyId?: string;
+}
+
+interface Sector {
+  code: string;
+  name: { tr: string; en: string };
+  active: boolean;
 }
 
 export default function StoryForm({ storyId }: StoryFormProps) {
@@ -49,7 +55,7 @@ export default function StoryForm({ storyId }: StoryFormProps) {
     id: undefined as number | undefined,
     code: '',
     company: '',
-    industry: '',
+    sector: null as { code: string; name: { tr: string; en: string } } | null,
     title: { tr: '', en: '', de: '', fr: '', es: '', it: '' },
     htmlContent: { tr: '', en: '', de: '', fr: '', es: '', it: '' },
     videoUrl: '',
@@ -58,14 +64,48 @@ export default function StoryForm({ storyId }: StoryFormProps) {
     active: true
   });
 
+  const [sectors, setSectors] = useState<Sector[]>([]);
+  const [sectorSearchTerm, setSectorSearchTerm] = useState('');
+  const [isSectorDropdownOpen, setIsSectorDropdownOpen] = useState(false);
   const [resultInput, setResultInput] = useState('');
   const [activeHtmlTab, setActiveHtmlTab] = useState<'tr' | 'en' | 'de' | 'fr' | 'es' | 'it'>('tr');
 
   useEffect(() => {
+    loadSectors();
     if (storyId) {
       loadStory();
     }
   }, [storyId]);
+
+  // Dropdown dışına tıklandığında kapat
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (isSectorDropdownOpen && !target.closest('.sector-dropdown-container')) {
+        setIsSectorDropdownOpen(false);
+        setSectorSearchTerm('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isSectorDropdownOpen]);
+
+  const loadSectors = async () => {
+    try {
+      const response = await sectorService.getActive();
+      console.log('Sectors response:', response); // Debug için
+      if (response.status === 'SUCCESS' && response.data) {
+        // Backend'den gelen data: response.data.data içinde array var
+        const sectorsData = (response.data as any).data || response.data;
+        console.log('Parsed sectors:', sectorsData); // Debug için
+        setSectors(Array.isArray(sectorsData) ? sectorsData : []);
+      }
+    } catch (error) {
+      console.error('Error loading sectors:', error);
+      setSectors([]); // Hata durumunda boş array
+    }
+  };
 
   const loadStory = async () => {
     try {
@@ -79,7 +119,7 @@ export default function StoryForm({ storyId }: StoryFormProps) {
           id: storyData.id,
           code: storyData.code,
           company: storyData.company || '',
-          industry: storyData.industry || '',
+          sector: storyData.sector || null,
           title: storyData.title || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
           htmlContent: storyData.htmlContent || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
           videoUrl: storyData.videoUrl || '',
@@ -151,7 +191,7 @@ export default function StoryForm({ storyId }: StoryFormProps) {
         ...(formData.id && { id: formData.id }),
         code: formData.code || undefined,
         company: formData.company,
-        industry: formData.industry,
+        sector: formData.sector ? { code: formData.sector.code } : null,
         title: formData.title,
         htmlContent: formData.htmlContent,
         videoUrl: formData.videoUrl,
@@ -219,13 +259,98 @@ export default function StoryForm({ storyId }: StoryFormProps) {
                   placeholder="Company Inc."
                   required
                 />
-                <Input
-                  label="Sektör"
-                  value={formData.industry}
-                  onChange={(e) => setFormData({...formData, industry: e.target.value})}
-                  placeholder="Technology"
-                  required
-                />
+                
+                <div className="relative sector-dropdown-container">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sektör
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsSectorDropdownOpen(!isSectorDropdownOpen)}
+                      className="w-full px-4 py-2 text-left border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white flex items-center justify-between hover:border-gray-400 transition-colors"
+                    >
+                      <span className={formData.sector ? 'text-gray-900' : 'text-gray-500'}>
+                        {formData.sector ? (formData.sector.name.tr || formData.sector.name.en) : 'Sektör Seçin'}
+                      </span>
+                      <svg className={`w-5 h-5 text-gray-400 transition-transform ${isSectorDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    
+                    {isSectorDropdownOpen && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-hidden">
+                        <div className="p-2 border-b border-gray-200">
+                          <input
+                            type="text"
+                            placeholder="Sektör ara..."
+                            value={sectorSearchTerm}
+                            onChange={(e) => setSectorSearchTerm(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </div>
+                        <div className="overflow-y-auto max-h-48">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData({...formData, sector: null});
+                              setIsSectorDropdownOpen(false);
+                              setSectorSearchTerm('');
+                            }}
+                            className="w-full px-4 py-2 text-left hover:bg-gray-100 text-gray-500 text-sm border-b border-gray-100"
+                          >
+                            Sektör Seçilmedi
+                          </button>
+                          {sectors
+                            .filter(sector => {
+                              const searchLower = sectorSearchTerm.toLowerCase();
+                              return (sector.name.tr?.toLowerCase().includes(searchLower) || 
+                                      sector.name.en?.toLowerCase().includes(searchLower));
+                            })
+                            .map((sector) => (
+                              <button
+                                key={sector.code}
+                                type="button"
+                                onClick={() => {
+                                  setFormData({...formData, sector: sector});
+                                  setIsSectorDropdownOpen(false);
+                                  setSectorSearchTerm('');
+                                }}
+                                className={`w-full px-4 py-2 text-left hover:bg-blue-50 transition-colors flex items-center gap-2 ${
+                                  formData.sector?.code === sector.code ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
+                                }`}
+                              >
+                                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                                <span className="text-sm">{sector.name.tr || sector.name.en}</span>
+                                {formData.sector?.code === sector.code && (
+                                  <svg className="w-4 h-4 ml-auto text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                )}
+                              </button>
+                            ))}
+                          {sectors.filter(sector => {
+                            const searchLower = sectorSearchTerm.toLowerCase();
+                            return (sector.name.tr?.toLowerCase().includes(searchLower) || 
+                                    sector.name.en?.toLowerCase().includes(searchLower));
+                          }).length === 0 && (
+                            <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                              Sonuç bulunamadı
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {sectors.length === 0 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Henüz aktif sektör bulunmuyor. Önce sektör ekleyin.
+                    </p>
+                  )}
+                </div>
                 
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
