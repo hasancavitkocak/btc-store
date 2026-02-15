@@ -61,11 +61,21 @@ export const referenceService = {
 
 // Story servisleri
 export const storyService = {
-  getAll: () => apiClient.get('/v1/stories'),
-  getById: (id: string) => apiClient.get(`/v1/stories/${id}`),
-  create: (data: any) => apiClient.post('/v1/stories', data),
-  update: (id: string, data: any) => apiClient.put(`/v1/stories/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/v1/stories/${id}`),
+  getAll: () => apiClient.get('/v1/success-stories'),
+  getActive: () => apiClient.get('/v1/success-stories/active'),
+  getByCode: (code: string) => apiClient.get(`/v1/success-stories/${code}`),
+  save: (data: any, mediaFile?: File, removeMedia?: boolean) => {
+    const formData = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    formData.append('successStoryData', jsonBlob);
+    if (mediaFile) {
+      formData.append('media', mediaFile);
+    } else if (removeMedia) {
+      formData.append('removeMedia', 'true');
+    }
+    return apiClient.upload('/v1/success-stories', formData);
+  },
+  delete: (code: string) => apiClient.delete(`/v1/success-stories/${code}`),
 };
 
 // Media servisleri

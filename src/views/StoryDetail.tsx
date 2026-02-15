@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -9,6 +10,7 @@ import Container from '../components/Container';
 import Section from '../components/Section';
 import Button from '../components/Button';
 import RichContentRenderer from '../components/RichContentRenderer';
+import ImageLightbox from '../components/ImageLightbox';
 
 export default function StoryDetail() {
   const params = useParams();
@@ -16,6 +18,10 @@ export default function StoryDetail() {
   const t = useTranslations();
   const router = useRouter();
   const { stories } = useStore();
+  const [lightbox, setLightbox] = useState<{ isOpen: boolean; imageUrl: string }>({
+    isOpen: false,
+    imageUrl: ''
+  });
 
   const story = stories.find((s) => s.id === id);
 
@@ -47,7 +53,10 @@ export default function StoryDetail() {
 
         <article className="max-w-4xl mx-auto">
           {story.image && (
-            <div className="aspect-video overflow-hidden rounded-2xl shadow-xl mb-8">
+            <div 
+              className="aspect-video overflow-hidden rounded-2xl shadow-xl mb-8 cursor-pointer hover:opacity-95 transition-opacity"
+              onClick={() => setLightbox({ isOpen: true, imageUrl: story.image! })}
+            >
               <img
                 src={story.image}
                 alt={story.company}
@@ -75,13 +84,20 @@ export default function StoryDetail() {
           </div>
 
           <h1 className="text-4xl font-bold text-gray-900 mb-8">
-            {t(story.titleKey)}
+            {story.title[t('locale') as keyof typeof story.title] || story.title.tr}
           </h1>
 
           <div className="bg-white rounded-2xl p-8 shadow-lg">
-            <RichContentRenderer htmlContent={story.htmlContent} />
+            <RichContentRenderer htmlContent={story.htmlContent[t('locale') as keyof typeof story.htmlContent] || story.htmlContent.tr} />
           </div>
         </article>
+
+        <ImageLightbox
+          isOpen={lightbox.isOpen}
+          imageUrl={lightbox.imageUrl}
+          alt={story.company}
+          onClose={() => setLightbox({ isOpen: false, imageUrl: '' })}
+        />
       </Container>
     </Section>
   );

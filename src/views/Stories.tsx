@@ -67,7 +67,7 @@ export default function Stories() {
                     </div>
                     
                     <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-900 transition-colors">
-                      {t(story.titleKey)}
+                      {story.title[t('locale') as keyof typeof story.title] || story.title.tr}
                     </h3>
                     
                     <div className="mt-auto flex items-center text-blue-900 font-medium group-hover:gap-2 transition-all">

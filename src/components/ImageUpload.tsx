@@ -102,15 +102,14 @@ export default function ImageUpload({ images, onChange, maxImages = 5, label = '
             type="button"
             onClick={handleButtonClick}
             disabled={uploading}
-            className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+            className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {uploading ? (
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             ) : (
               <>
-                <img src="/no-image.svg" alt="No image" className="absolute inset-0 w-full h-full object-contain opacity-20" />
-                <Upload className="w-8 h-8 text-gray-400 mb-2 relative z-10" />
-                <span className="text-sm text-gray-600 relative z-10">Görsel Ekle</span>
+                <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                <span className="text-sm text-gray-600">Görsel Ekle</span>
               </>
             )}
           </button>
