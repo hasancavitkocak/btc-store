@@ -25,6 +25,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
   const [loading, setLoading] = useState(false);
   const [imageFiles, setImageFiles] = useState<string[]>([]);
   const [newMediaFile, setNewMediaFile] = useState<File | null>(null);
+  const [shouldRemoveMedia, setShouldRemoveMedia] = useState(false);
   const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
   const [lightbox, setLightbox] = useState<{ isOpen: boolean; imageUrl: string }>({
     isOpen: false,
@@ -96,13 +97,18 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
     
     if (images.length === 0) {
       setNewMediaFile(null);
+      setShouldRemoveMedia(true); // Resim kaldırıldı
     } else if (images[0].startsWith('data:')) {
+      setShouldRemoveMedia(false);
       fetch(images[0])
         .then(res => res.blob())
         .then(blob => {
           const file = new File([blob], 'banner-image.jpg', { type: 'image/jpeg' });
           setNewMediaFile(file);
         });
+    } else {
+      // Mevcut resim korunuyor
+      setShouldRemoveMedia(false);
     }
   };
 
@@ -121,7 +127,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
         active: formData.active
       };
 
-      const response = await bannerService.save(bannerData, newMediaFile || undefined);
+      const response = await bannerService.save(bannerData, newMediaFile || undefined, shouldRemoveMedia);
 
       if (response.status === 'ERROR') {
         setToast({ 

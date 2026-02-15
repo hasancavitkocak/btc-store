@@ -1,9 +1,9 @@
 'use client';
 
-import CategoriesAdmin from '@/views/admin/CategoriesAdmin';
+import Categories from '@/views/admin/Categories';
 
 export const dynamic = 'force-dynamic';
 
 export default function CategoriesPage() {
-  return <CategoriesAdmin />;
+  return <Categories />;
 }

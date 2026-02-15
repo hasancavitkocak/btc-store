@@ -5,12 +5,15 @@ export const bannerService = {
   getAll: () => apiClient.get('/v1/banners'),
   getActive: () => apiClient.get('/v1/banners/active'),
   getByCode: (code: string) => apiClient.get(`/v1/banners/${code}`),
-  save: (data: any, mediaFile?: File) => {
+  save: (data: any, mediaFile?: File, removeMedia?: boolean) => {
     const formData = new FormData();
     const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
     formData.append('bannerData', jsonBlob);
     if (mediaFile) {
       formData.append('media', mediaFile);
+    } else if (removeMedia) {
+      // Boş bir blob göndererek resim silme isteği gönderiyoruz
+      formData.append('removeMedia', 'true');
     }
     return apiClient.upload('/v1/banners', formData);
   },
@@ -20,10 +23,21 @@ export const bannerService = {
 // Category servisleri
 export const categoryService = {
   getAll: () => apiClient.get('/v1/categories'),
-  getById: (id: string) => apiClient.get(`/v1/categories/${id}`),
-  create: (data: any) => apiClient.post('/v1/categories', data),
-  update: (id: string, data: any) => apiClient.put(`/v1/categories/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/v1/categories/${id}`),
+  getActive: () => apiClient.get('/v1/categories/active'),
+  getByCode: (code: string) => apiClient.get(`/v1/categories/${code}`),
+  save: (data: any, mediaFile?: File, removeMedia?: boolean) => {
+    const formData = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    formData.append('categoryData', jsonBlob);
+    if (mediaFile) {
+      formData.append('media', mediaFile);
+    } else if (removeMedia) {
+      // Boş bir blob göndererek resim silme isteği gönderiyoruz
+      formData.append('removeMedia', 'true');
+    }
+    return apiClient.upload('/v1/categories', formData);
+  },
+  delete: (code: string) => apiClient.delete(`/v1/categories/${code}`),
 };
 
 // Product servisleri
