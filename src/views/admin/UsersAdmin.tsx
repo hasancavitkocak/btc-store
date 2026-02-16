@@ -160,7 +160,7 @@ export default function UsersAdmin() {
                             <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden shadow-sm">
                               {user.picture?.absolutePath ? (
                                 <img 
-                                  src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${user.picture.absolutePath}`}
+                                  src={user.picture.absolutePath}
                                   alt={user.username}
                                   className="w-full h-full object-cover"
                                 />
