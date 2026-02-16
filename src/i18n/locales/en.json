@@ -7,7 +7,7 @@
     "contact": "Contact"
   },
   "banner": {
-    "campaign": "🎉 New season campaigns have started! Click to explore",
+    "campaign": "🎉 New season campaigns have started! Click to review",
     "hero": {
       "title": "Best Solutions for Your Business",
       "subtitle": "Grow your business with professional software solutions",
@@ -22,11 +22,11 @@
   "category": {
     "crm": {
       "name": "CRM Systems",
-      "description": "Manage customer relationships, increase sales"
+      "description": "Manage your customer relationships, increase your sales"
     },
     "finance": {
       "name": "Finance Management",
-      "description": "Control your financial operations in one platform"
+      "description": "Control your financial transactions on a single platform"
     },
     "hr": {
       "name": "Human Resources",
@@ -38,7 +38,7 @@
     },
     "warehouse": {
       "name": "Warehouse Management",
-      "description": "Optimize inventory and warehouse operations"
+      "description": "Optimize stock and warehouse operations"
     }
   },
   "product": {
@@ -48,20 +48,20 @@
       "feature1": "360-degree customer view",
       "feature2": "Sales pipeline management",
       "feature3": "Marketing automation",
-      "content": "Manage customer relationships effectively with CRM Pro"
+      "content": "Effectively manage your customer relationships with CRM Pro"
     },
     "financeSuite": {
       "name": "Finance Suite",
       "shortDesc": "Comprehensive finance management package",
-      "feature1": "General ledger",
-      "feature2": "Accounts Payable/Receivable",
+      "feature1": "General accounting",
+      "feature2": "Receivables/Payables management",
       "feature3": "Budget planning",
-      "content": "Streamline your financial operations"
+      "content": "Simplify your financial operations"
     },
     "hrManager": {
       "name": "HR Manager",
       "shortDesc": "Human resources management system",
-      "feature1": "Employee database",
+      "feature1": "Personnel database",
       "feature2": "Attendance tracking",
       "feature3": "Leave management",
       "content": "Manage your workforce efficiently"
@@ -72,12 +72,12 @@
       "feature1": "Email campaigns",
       "feature2": "Social media management",
       "feature3": "Lead scoring",
-      "content": "Drive growth with powerful marketing tools"
+      "content": "Grow with powerful marketing tools"
     },
     "warehouseSystem": {
       "name": "Warehouse System",
       "shortDesc": "Warehouse management system",
-      "feature1": "Inventory tracking",
+      "feature1": "Stock tracking",
       "feature2": "Order management",
       "feature3": "Barcode scanning",
       "content": "Optimize your inventory"
@@ -87,16 +87,17 @@
       "shortDesc": "CRM for small businesses",
       "feature1": "Basic customer management",
       "feature2": "Simple reporting",
-      "content": "Get started with CRM at an affordable price"
+      "content": "Start with CRM at an affordable price"
     },
     "viewDetails": "View Details",
-    "contactForProduct": "Contact About Product",
-    "contactDescription": "Get in touch with our team to learn more about this product and how it can help your business."
+    "contactForProduct": "Contact Us About This Product",
+    "contactDescription": "Get in touch with our team to learn more about this product and how it can benefit your business.",
+    "features": "Product Features"
   },
   "home": {
     "categories": {
       "title": "Our Solutions",
-      "subtitle": "Software solutions designed specifically for your business"
+      "subtitle": "Software solutions specially designed for your business"
     },
     "partners": {
       "title": "Our Partners",
@@ -113,7 +114,7 @@
   },
   "stories": {
     "title": "Success Stories",
-    "subtitle": "Customer experiences and success stories"
+    "subtitle": "Our customers' experiences and success stories"
   },
   "story": {
     "techcorp": {
@@ -121,7 +122,7 @@
       "content": "TechCorp's success story"
     },
     "globalsoft": {
-      "title": "GlobalSoft Streamlined HR Processes",
+      "title": "GlobalSoft Accelerated HR Processes",
       "content": "GlobalSoft's success story"
     },
     "innovatelab": {
@@ -130,29 +131,32 @@
     }
   },
   "callRequest": {
-    "title": "Request a Call",
-    "subtitle": "Leave your information, we'll reach you shortly",
+    "title": "Let Us Call You",
+    "subtitle": "Leave your information, we'll reach you as soon as possible",
     "name": "Your Name",
     "surname": "Your Surname",
     "phone": "Your Phone Number",
-    "kvkk": "I have read and accept the privacy policy",
+    "message": "Your Message (Optional)",
+    "messagePlaceholder": "If you have a message you'd like to share with us, you can write it here...",
+    "kvkk": "I have read and accept the GDPR text",
     "submit": "Submit",
-    "success": "Your request has been received. We'll get back to you soon.",
-    "viewKvkk": "View Privacy Policy"
+    "success": "Your request has been received successfully. We will get back to you as soon as possible.",
+    "viewKvkk": "View GDPR Text"
   },
   "productContact": {
-    "title": "Contact About Product",
+    "title": "Contact Us About the Product",
     "name": "Your Name",
     "surname": "Your Surname",
     "phone": "Your Phone Number",
-    "email": "Your Email",
+    "email": "Your Email Address",
     "message": "Your Message",
+    "messagePlaceholder": "You can write your questions about the product here...",
     "submit": "Submit",
-    "success": "Your message has been sent. We'll get back to you soon."
+    "success": "Your message has been sent successfully. We will get back to you as soon as possible."
   },
   "common": {
     "loading": "Loading...",
-    "contactUs": "Request a Call",
+    "contactUs": "Contact Us",
     "learnMore": "Learn More",
     "close": "Close",
     "save": "Save",
@@ -162,11 +166,12 @@
     "add": "Add",
     "search": "Search",
     "filter": "Filter",
-    "all": "All"
+    "all": "All",
+    "back": "Back"
   },
   "kvkk": {
-    "title": "Privacy Policy",
-    "text": "Privacy policy text"
+    "title": "Personal Data Protection",
+    "text": "GDPR text"
   },
   "admin": {
     "title": "Admin Panel",
@@ -177,12 +182,135 @@
     "products": "Product Management",
     "references": "Reference Management",
     "stories": "Success Stories",
-    "kvkk": "Privacy Policy",
+    "kvkk": "GDPR Text",
     "forms": "Form Submissions",
     "partners": "Partners",
     "documents": "Documents",
     "sectors": "Sectors",
+    "menus": "Menu Management",
     "logout": "Logout",
-    "users": "User Management"
+    "welcome": "Welcome to the admin panel",
+    "quickActions": "Quick Actions",
+    "viewForms": "View Form Submissions",
+    "totalSubmissions": "total submissions",
+    "updateHeader": "Update Header Settings",
+    "manageLogoPhone": "Manage logo, phone and menu items",
+    "addBanner": "Add Banner",
+    "editBanner": "Edit Banner",
+    "manageBanners": "Manage homepage banners",
+    "addCategory": "Add Category",
+    "editCategory": "Edit Category",
+    "manageCategories": "Manage product categories",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "manageProducts": "Manage products",
+    "addReference": "Add Reference",
+    "editReference": "Edit Reference",
+    "manageReferences": "Manage references",
+    "addStory": "Add Story",
+    "editStory": "Edit Story",
+    "manageStories": "Manage success stories",
+    "active": "Active",
+    "inactive": "Inactive",
+    "order": "Order",
+    "titleKey": "Title Key (translation key)",
+    "subtitleKey": "Subtitle Key (translation key)",
+    "buttonTextKey": "Button Text Key (optional)",
+    "buttonLink": "Button Link (optional)",
+    "imageUrl": "Image URL",
+    "deleteConfirm": "Are you sure you want to delete this item?",
+    "bannerAdded": "Banner added successfully!",
+    "bannerUpdated": "Banner updated successfully!",
+    "bannerDeleted": "Banner deleted successfully!",
+    "categoryAdded": "Category added successfully!",
+    "categoryUpdated": "Category updated successfully!",
+    "categoryDeleted": "Category deleted successfully!",
+    "productAdded": "Product added successfully!",
+    "productUpdated": "Product updated successfully!",
+    "productDeleted": "Product deleted successfully!",
+    "referenceAdded": "Reference added successfully!",
+    "referenceUpdated": "Reference updated successfully!",
+    "referenceDeleted": "Reference deleted successfully!",
+    "storyAdded": "Story added successfully!",
+    "storyUpdated": "Story updated successfully!",
+    "storyDeleted": "Story deleted successfully!",
+    "manageKvkk": "Manage GDPR text",
+    "kvkkUpdated": "GDPR text updated!",
+    "manageHeader": "Manage header and top banner settings",
+    "logoText": "Logo Text",
+    "phoneNumber": "Phone Number",
+    "topBanner": "Top Banner",
+    "bannerText": "Banner Text (translation key)",
+    "bannerBgColor": "Banner Background Color",
+    "bannerLink": "Banner Link (optional)",
+    "enableBanner": "Enable Banner",
+    "headerUpdated": "Header settings updated!",
+    "saveChanges": "Save Changes",
+    "callRequests": "Call Requests",
+    "productContactForms": "Product Contact Forms",
+    "noCallRequests": "No call requests yet",
+    "noProductForms": "No product contact forms yet",
+    "name": "Name",
+    "surname": "Surname",
+    "phone": "Phone",
+    "email": "Email",
+    "message": "Message",
+    "date": "Date",
+    "product": "Product",
+    "kvkkAccepted": "GDPR Accepted",
+    "yes": "Yes",
+    "no": "No",
+    "status": "Status",
+    "new": "New",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "viewDetails": "View Details",
+    "sendEmail": "Send Email",
+    "changeStatus": "Change Status",
+    "assignTo": "Assign To",
+    "notes": "Notes",
+    "addNote": "Add Note",
+    "actions": "Actions",
+    "users": "User Management",
+    "userForm": {
+      "title": "User Information",
+      "newUser": "New User",
+      "editUser": "Edit User",
+      "username": "Username",
+      "firstName": "First Name",
+      "surname": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "language": "Language",
+      "selectLanguage": "Select language...",
+      "searchLanguage": "Search language...",
+      "password": "Password",
+      "newPassword": "New Password (Fill to change)",
+      "confirmPassword": "Confirm Password",
+      "userGroups": "User Groups",
+      "searchGroup": "Search group...",
+      "selected": "selected",
+      "profilePicture": "Profile Picture",
+      "changePicture": "Change Picture",
+      "uploadPicture": "Upload Picture",
+      "status": "Status",
+      "active": "Active",
+      "actions": "Actions",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "back": "Back",
+      "required": "is required",
+      "usernameRequired": "Username is required",
+      "passwordRequired": "Password is required",
+      "passwordMismatch": "Passwords do not match",
+      "userAdded": "User added",
+      "userUpdated": "User updated",
+      "errorSaving": "Error saving user",
+      "unexpectedError": "An unexpected error occurred",
+      "noGroupsFound": "No user groups found",
+      "noSearchResults": "No search results found",
+      "noLanguagesFound": "No languages found"
+    }
   }
 }
