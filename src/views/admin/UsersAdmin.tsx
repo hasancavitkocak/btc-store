@@ -126,104 +126,81 @@ export default function UsersAdmin() {
           </Card>
         ) : (
           <>
-            <Card>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Kullanıcı Adı
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Ad Soyad
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        E-posta
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Telefon
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Gruplar
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Durum
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        İşlemler
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {users.map((user) => (
-                      <tr key={user.code} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{user.username}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">
-                            {user.firstName} {user.lastName}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{user.email || '-'}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{user.phoneNumber || '-'}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex flex-wrap gap-1">
-                            {user.userGroups && user.userGroups.length > 0 ? (
-                              user.userGroups.map((ug, idx) => (
-                                <span key={idx} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                  {ug.description?.tr || ug.description?.en || ug.code || 'Grup'}
-                                </span>
-                              ))
-                            ) : (
-                              <span className="text-sm text-gray-400">-</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
-                            {user.active ? 'Aktif' : 'Pasif'}
+            <div className="grid grid-cols-1 gap-4">
+              {users.map((user) => (
+                <Card key={user.code} className="p-6 hover:shadow-lg transition-shadow border-l-4 border-blue-500">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">👤</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-lg">{user.username}</h3>
+                        {!user.active && (
+                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                            Pasif
                           </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => router.push(`/admin/users/${user.code}`)}
-                              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => setDeleteDialog({ 
-                                isOpen: true, 
-                                code: user.code, 
-                                username: user.username 
-                              })}
-                              className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+                        )}
+                      </div>
+                      <p className="text-gray-600 text-sm">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      {(user.email || user.phoneNumber) && (
+                        <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
+                          {user.email && (
+                            <span className="flex items-center gap-1">
+                              📧 {user.email}
+                            </span>
+                          )}
+                          {user.phoneNumber && (
+                            <span className="flex items-center gap-1">
+                              📱 {user.phoneNumber}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        <span className={`text-xs px-2 py-1 rounded ${user.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {user.active ? 'Aktif' : 'Pasif'}
+                        </span>
+                        {user.userGroups && user.userGroups.length > 0 && (
+                          user.userGroups.map((ug, idx) => (
+                            <span key={idx} className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700">
+                              {ug.description?.tr || ug.description?.en || ug.code || 'Grup'}
+                            </span>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.push(`/admin/users/${user.code}`)}
+                        className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDeleteDialog({ 
+                          isOpen: true, 
+                          code: user.code, 
+                          username: user.username 
+                        })}
+                        className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
 
             {users.length === 0 && (
-              <Card className="p-12 text-center mt-6">
+              <Card className="p-12 text-center">
                 <p className="text-gray-500 mb-4">Henüz kullanıcı eklenmemiş</p>
                 <Button onClick={() => router.push('/admin/users/new')} className="bg-blue-600 hover:bg-blue-700">
                   <Plus className="w-4 h-4 mr-2" />
