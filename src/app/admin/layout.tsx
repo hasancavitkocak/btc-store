@@ -11,15 +11,22 @@ export default function AdminLayoutWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated, initializeAuth } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Hydration kontrolü
+  // Hydration kontrolü ve auth initialize
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  // Auth'u initialize et (pathname değiştiğinde de)
+  useEffect(() => {
+    if (isHydrated) {
+      initializeAuth(); // JWT'den kullanıcı bilgilerini yükle
+    }
+  }, [isHydrated, pathname, initializeAuth]);
 
   useEffect(() => {
     if (!isHydrated) return;

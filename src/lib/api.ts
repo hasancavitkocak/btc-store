@@ -59,7 +59,7 @@ class ApiClient {
         const refreshToken = getCookie('refreshToken');
         if (!refreshToken) return false;
 
-        const response = await fetch(`${this.baseURL}/token/refresh`, {
+        const response = await fetch(`${this.baseURL}/v1/refresh-token/refresh`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refreshToken }),
@@ -70,8 +70,34 @@ class ApiClient {
 
         const data: AuthToken = await response.json();
         
+        console.log('Token refreshed successfully');
+        
         setCookie('accessToken', data.accessToken, 7);
         setCookie('refreshToken', data.refreshToken, 30);
+        
+        // JWT'den kullanıcı bilgilerini decode et ve store'u güncelle
+        if (typeof window !== 'undefined') {
+          try {
+            const { decodeJwt } = await import('@/lib/jwt');
+            const { useAuthStore } = await import('@/store/useAuthStore');
+            
+            const decoded = decodeJwt(data.accessToken);
+            if (decoded) {
+              const currentUser = {
+                username: decoded.username,
+                firstName: decoded.firstName,
+                lastName: decoded.lastName,
+                language: decoded.language,
+                picture: decoded.picture,
+                userGroups: decoded.roles,
+              };
+              console.log('Updating user in store:', currentUser);
+              useAuthStore.getState().setCurrentUser(currentUser);
+            }
+          } catch (error) {
+            console.error('Failed to update user store:', error);
+          }
+        }
         
         return true;
       } catch (error) {
@@ -202,7 +228,7 @@ class ApiClient {
   }
 
   async refreshToken(refreshToken: string): Promise<ApiResponse<AuthToken>> {
-    return this.post<AuthToken>('/token/refresh', { refreshToken }, { skipAuth: true });
+    return this.post<AuthToken>('/v1/refresh-token/refresh', { refreshToken }, { skipAuth: true });
   }
 
   // Upload helper

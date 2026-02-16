@@ -89,7 +89,9 @@ export default function AdminSidebar() {
   const t = useTranslations();
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, hasPermission, logout } = useAuthStore();
+  const currentUser = useAuthStore((state) => state.currentUser);
+  const hasPermission = useAuthStore((state) => state.hasPermission);
+  const logout = useAuthStore((state) => state.logout);
   const [openGroups, setOpenGroups] = useState<number[]>([0, 1, 2, 3]); // Tüm grupları başlangıçta aç
   const [openSubMenus, setOpenSubMenus] = useState<string[]>([]);
 
@@ -155,8 +157,22 @@ export default function AdminSidebar() {
 
         {currentUser && (
           <div className="mb-6 p-3 bg-gray-800 rounded-lg">
-            <p className="text-sm text-gray-400">Hoş geldiniz</p>
-            <p className="font-semibold">{currentUser.username}</p>
+            <div className="flex items-center gap-3 mb-2">
+              {currentUser.picture && (
+                <img 
+                  src={currentUser.picture} 
+                  alt={`${currentUser.firstName} ${currentUser.lastName}`}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-400">Hoş geldiniz</p>
+                <p className="font-semibold truncate">
+                  {currentUser.firstName} {currentUser.lastName}
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500">@{currentUser.username}</p>
           </div>
         )}
 

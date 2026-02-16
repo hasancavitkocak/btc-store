@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "country-flag-icons": "^1.6.13",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.344.0",
     "next": "^14.2.0",
     "next-intl": "^3.11.0",

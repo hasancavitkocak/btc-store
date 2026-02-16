@@ -25,11 +25,8 @@ export default function AdminLoginPage() {
       const result = await login(username, password);
       
       if (result.success) {
-        // Başarılı giriş - state güncellensin diye kısa bir bekleme
-        setTimeout(() => {
-          router.push('/admin');
-          router.refresh(); // Router'ı yenile
-        }, 100);
+        // Login başarılı - yönlendirme yap
+        router.push('/admin');
       } else {
         setError(result.error || 'Kullanıcı adı veya şifre hatalı');
         setIsLoading(false);

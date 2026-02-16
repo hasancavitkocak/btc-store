@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { apiClient, AuthToken } from '@/lib/api';
-import { setCookie, deleteCookie } from '@/lib/cookies';
+import { setCookie, deleteCookie, getCookie } from '@/lib/cookies';
+import { decodeJwt, isTokenExpired } from '@/lib/jwt';
 
 export type Permission = 
   | 'view_dashboard'
@@ -51,6 +52,7 @@ interface AuthState {
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   setCurrentUser: (user: CurrentUser | null) => void;
+  initializeAuth: () => Promise<void>;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
   updateUser: (id: string, user: Partial<User>) => void;
   deleteUser: (id: string) => void;
@@ -181,6 +183,72 @@ export const useAuthStore = create<AuthState>()(
 
       setCurrentUser: (user) => {
         set({ currentUser: user, isAuthenticated: !!user });
+      },
+
+      initializeAuth: async () => {
+        const accessToken = getCookie('accessToken');
+        const refreshToken = getCookie('refreshToken');
+        
+        if (!accessToken) {
+          set({ currentUser: null, isAuthenticated: false });
+          return;
+        }
+
+        // Token'ın süresi dolmuş mu kontrol et
+        if (isTokenExpired(accessToken)) {
+          // Refresh token varsa yenilemeyi dene
+          if (refreshToken) {
+            try {
+              const response = await apiClient.refreshToken(refreshToken);
+              
+              if (response.status === 'SUCCESS' && response.data) {
+                const authData = response.data as AuthToken;
+                
+                // Yeni token'ları kaydet
+                setCookie('accessToken', authData.accessToken, 7);
+                setCookie('refreshToken', authData.refreshToken, 30);
+                
+                // Kullanıcı bilgilerini güncelle
+                const currentUser: CurrentUser = {
+                  username: authData.username,
+                  firstName: authData.firstName,
+                  lastName: authData.lastName,
+                  language: authData.language,
+                  picture: authData.picture,
+                  userGroups: authData.userGroups,
+                };
+                
+                set({ currentUser, isAuthenticated: true });
+                return;
+              }
+            } catch (error) {
+              console.error('Token refresh failed:', error);
+            }
+          }
+          
+          // Refresh başarısız, logout yap
+          deleteCookie('accessToken');
+          deleteCookie('refreshToken');
+          set({ currentUser: null, isAuthenticated: false });
+          return;
+        }
+
+        // Token geçerli, JWT'den kullanıcı bilgilerini decode et
+        const decoded = decodeJwt(accessToken);
+        if (decoded) {
+          const currentUser: CurrentUser = {
+            username: decoded.username,
+            firstName: decoded.firstName,
+            lastName: decoded.lastName,
+            language: decoded.language,
+            picture: decoded.picture,
+            userGroups: decoded.roles,
+          };
+          
+          set({ currentUser, isAuthenticated: true });
+        } else {
+          set({ currentUser: null, isAuthenticated: false });
+        }
       },
 
       addUser: (userData) => {
