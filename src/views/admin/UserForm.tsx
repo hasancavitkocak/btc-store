@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save, X, ArrowLeft } from 'lucide-react';
-import { useAuthStore } from '../../store/useAuthStore';
-import { useStore } from '../../store/useStore';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Toast from '../../components/Toast';
+import ImageUpload from '../../components/ImageUpload';
+import ImageLightbox from '../../components/ImageLightbox';
+import { userService } from '../../services/admin.service';
 
 interface UserFormProps {
   userId?: string;
@@ -16,74 +17,145 @@ interface UserFormProps {
 
 export default function UserForm({ userId }: UserFormProps) {
   const router = useRouter();
-  const { users, roles, addUser, updateUser } = useAuthStore();
-  const { products, updateProduct } = useStore();
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [imageFiles, setImageFiles] = useState<string[]>([]);
+  const [newPictureFile, setNewPictureFile] = useState<File | null>(null);
+  const [shouldRemovePicture, setShouldRemovePicture] = useState(false);
+  const [lightbox, setLightbox] = useState<{ isOpen: boolean; imageUrl: string }>({
+    isOpen: false,
+    imageUrl: ''
+  });
   
   const isEditing = !!userId;
-  const user = isEditing ? users.find(u => u.id === userId) : null;
-
-  const getUserProducts = (uid: string) => {
-    return products.filter(p => p.responsibleUserId === uid).map(p => p.id);
-  };
 
   const [formData, setFormData] = useState({
+    code: '',
     username: '',
-    password: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    roleId: roles[0]?.id || '',
-    assignedProducts: [] as string[]
+    phoneNumber: '',
+    definedPassword: '',
+    active: true
   });
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        username: user.username,
-        password: user.password,
-        email: user.email,
-        roleId: user.roleId,
-        assignedProducts: getUserProducts(user.id)
-      });
+    if (isEditing && userId) {
+      loadUser();
     }
-  }, [user]);
+  }, [userId]);
 
-  const handleSave = () => {
-    if (!formData.username || !formData.password || !formData.email) {
-      setToast({ message: 'Lütfen tüm alanları doldurun!', type: 'error' });
+  const loadUser = async () => {
+    try {
+      setLoading(true);
+      const response = await userService.getByCode(userId!);
+      
+      if (response.status === 'SUCCESS' && response.data) {
+        const userData = response.data as any;
+        setFormData({
+          code: userData.code || '',
+          username: userData.username || '',
+          firstName: userData.firstName || '',
+          lastName: userData.lastName || '',
+          email: userData.email || '',
+          phoneNumber: userData.phoneNumber || '',
+          definedPassword: '',
+          active: userData.active !== false
+        });
+        
+        // Mevcut profil resmini göster
+        if (userData.picture?.absolutePath) {
+          setImageFiles([userData.picture.absolutePath]);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user:', error);
+      setToast({ message: 'Kullanıcı yüklenirken hata oluştu', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImageChange = (images: string[]) => {
+    setImageFiles(images);
+    
+    if (images.length === 0) {
+      setNewPictureFile(null);
+      setShouldRemovePicture(true);
+    } else if (images[0].startsWith('data:')) {
+      setShouldRemovePicture(false);
+      fetch(images[0])
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], 'profile-picture.jpg', { type: 'image/jpeg' });
+          setNewPictureFile(file);
+        });
+    } else {
+      // Mevcut resim korunuyor
+      setShouldRemovePicture(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!formData.username || !formData.email) {
+      setToast({ message: 'Kullanıcı adı ve e-posta zorunludur!', type: 'error' });
       return;
     }
 
-    const userData = {
-      username: formData.username,
-      password: formData.password,
-      email: formData.email,
-      roleId: formData.roleId
-    };
-
-    if (isEditing && userId) {
-      updateUser(userId, userData);
-      
-      // Ürün atamalarını güncelle
-      products.forEach(product => {
-        if (product.responsibleUserId === userId) {
-          updateProduct(product.id, { responsibleUserId: undefined });
-        }
-      });
-      
-      formData.assignedProducts.forEach(productId => {
-        updateProduct(productId, { responsibleUserId: userId });
-      });
-      
-      setToast({ message: 'Kullanıcı güncellendi!', type: 'success' });
-    } else {
-      addUser(userData);
-      setToast({ message: 'Kullanıcı eklendi!', type: 'success' });
+    if (!isEditing && !formData.definedPassword) {
+      setToast({ message: 'Yeni kullanıcı için şifre zorunludur!', type: 'error' });
+      return;
     }
 
-    setTimeout(() => {
-      router.push('/admin/users');
-    }, 1000);
+    try {
+      setLoading(true);
+
+      const userData = {
+        code: formData.code || undefined,
+        username: formData.username,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        definedPassword: formData.definedPassword || undefined,
+        active: formData.active
+      };
+
+      const response = await userService.save(userData, newPictureFile || undefined, shouldRemovePicture);
+      
+      if (response.status === 'SUCCESS') {
+        setToast({ 
+          message: isEditing ? 'Kullanıcı güncellendi!' : 'Kullanıcı eklendi!', 
+          type: 'success' 
+        });
+        
+        setTimeout(() => {
+          router.push('/admin/users');
+        }, 1000);
+      } else {
+        setToast({ 
+          message: response.errorMessage || 'Kayıt başarısız', 
+          type: 'error' 
+        });
+      }
+    } catch (error) {
+      console.error('Error saving user:', error);
+      setToast({ message: 'Kullanıcı kaydedilirken hata oluştu', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading && isEditing) {
+    return (
+      <div className="p-8">
+        <Card className="p-12 text-center">
+          <p className="text-gray-500">Yükleniyor...</p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -104,16 +176,46 @@ export default function UserForm({ userId }: UserFormProps) {
 
       <div className="max-w-4xl space-y-6">
         <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Profil Resmi</h2>
+          <ImageUpload
+            images={imageFiles}
+            onChange={handleImageChange}
+            onImageClick={(imageUrl) => setLightbox({ isOpen: true, imageUrl })}
+            maxImages={1}
+            label="Profil Resmi"
+          />
+          <p className="text-sm text-gray-500 mt-2">
+            Önerilen boyut: 400x400px (kare). Maksimum dosya boyutu: 2MB
+          </p>
+        </Card>
+
+        <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Kullanıcı Bilgileri</h2>
           <div className="space-y-4">
             <Input
               label="Kullanıcı Adı"
               value={formData.username}
               onChange={(e) => setFormData({...formData, username: e.target.value})}
-              placeholder="admin"
+              placeholder="kullanici_adi"
               required
             />
             
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Ad"
+                value={formData.firstName}
+                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                placeholder="Ad"
+              />
+              
+              <Input
+                label="Soyad"
+                value={formData.lastName}
+                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                placeholder="Soyad"
+              />
+            </div>
+
             <Input
               label="E-posta"
               type="email"
@@ -124,84 +226,54 @@ export default function UserForm({ userId }: UserFormProps) {
             />
 
             <Input
-              label="Şifre"
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-              placeholder="••••••"
-              required
+              label="Telefon"
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
+              placeholder="+90 555 123 4567"
             />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Rol
+            <Input
+              label={isEditing ? "Yeni Şifre (boş bırakılırsa değişmez)" : "Şifre"}
+              type="password"
+              value={formData.definedPassword}
+              onChange={(e) => setFormData({...formData, definedPassword: e.target.value})}
+              placeholder="••••••"
+              required={!isEditing}
+            />
+
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="active"
+                checked={formData.active}
+                onChange={(e) => setFormData({...formData, active: e.target.checked})}
+                className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <label htmlFor="active" className="text-sm font-medium text-gray-700">
+                Aktif
               </label>
-              <select
-                value={formData.roleId}
-                onChange={(e) => setFormData({...formData, roleId: e.target.value})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {roles.map(role => (
-                  <option key={role.id} value={role.id}>
-                    {role.name}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
         </Card>
 
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Ürün Sorumlulukları</h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Bu kullanıcının sorumlu olacağı ürünleri seçin. Seçilen ürünler için form bildirimleri bu kullanıcıya gönderilecek.
-          </p>
-          <div className="border border-gray-300 rounded-lg p-4 max-h-96 overflow-y-auto space-y-2">
-            {products.map((product) => (
-              <label
-                key={product.id}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={formData.assignedProducts.includes(product.id)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setFormData({
-                        ...formData,
-                        assignedProducts: [...formData.assignedProducts, product.id]
-                      });
-                    } else {
-                      setFormData({
-                        ...formData,
-                        assignedProducts: formData.assignedProducts.filter(id => id !== product.id)
-                      });
-                    }
-                  }}
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
-                />
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">{product.nameKey}</p>
-                  <p className="text-sm text-gray-500">{product.shortDescKey}</p>
-                </div>
-              </label>
-            ))}
-            {products.length === 0 && (
-              <p className="text-sm text-gray-500 text-center py-4">Henüz ürün yok</p>
-            )}
-          </div>
-          <p className="mt-3 text-sm text-gray-600">
-            {formData.assignedProducts.length} ürün seçildi
-          </p>
-        </Card>
-
-        <Card className="p-6">
           <div className="flex gap-3">
-            <Button onClick={handleSave} fullWidth className="bg-blue-600 hover:bg-blue-700">
+            <Button 
+              onClick={handleSave} 
+              fullWidth 
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={loading}
+            >
               <Save className="w-4 h-4 mr-2" />
-              Kaydet
+              {loading ? 'Kaydediliyor...' : 'Kaydet'}
             </Button>
-            <Button variant="outline" onClick={() => router.push('/admin/users')} fullWidth>
+            <Button 
+              variant="outline" 
+              onClick={() => router.push('/admin/users')} 
+              fullWidth
+              disabled={loading}
+            >
               <X className="w-4 h-4 mr-2" />
               İptal
             </Button>
@@ -216,6 +288,13 @@ export default function UserForm({ userId }: UserFormProps) {
           onClose={() => setToast(null)}
         />
       )}
+
+      <ImageLightbox
+        isOpen={lightbox.isOpen}
+        imageUrl={lightbox.imageUrl}
+        alt="Profil Resmi"
+        onClose={() => setLightbox({ isOpen: false, imageUrl: '' })}
+      />
     </div>
   );
 }

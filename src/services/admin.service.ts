@@ -192,7 +192,17 @@ export const parameterService = {
 export const userService = {
   getAll: () => apiClient.get('/v1/users'),
   getByCode: (code: string) => apiClient.get(`/v1/users/${code}`),
-  save: (data: any) => apiClient.post('/v1/users', data),
+  save: (data: any, pictureFile?: File, removePicture?: boolean) => {
+    const formData = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    formData.append('userData', jsonBlob);
+    if (pictureFile) {
+      formData.append('pictureFile', pictureFile);
+    } else if (removePicture) {
+      formData.append('removePicture', 'true');
+    }
+    return apiClient.upload('/v1/users', formData);
+  },
   delete: (code: string) => apiClient.delete(`/v1/users/${code}`),
 };
 

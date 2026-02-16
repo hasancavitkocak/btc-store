@@ -21,6 +21,7 @@ interface User {
   phoneNumber: string;
   active: boolean;
   deleted: boolean;
+  picture?: { absolutePath?: string };
   userGroups?: Array<{ code: string; description?: { tr?: string; en?: string } }>;
 }
 
@@ -156,10 +157,20 @@ export default function UsersAdmin() {
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
-                            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm">
-                              <span className="text-white text-sm font-semibold">
-                                {user.username.charAt(0).toUpperCase()}
-                              </span>
+                            <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden shadow-sm">
+                              {user.picture?.absolutePath ? (
+                                <img 
+                                  src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${user.picture.absolutePath}`}
+                                  alt={user.username}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                                  <span className="text-white text-sm font-semibold">
+                                    {user.username.charAt(0).toUpperCase()}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                             <div>
                               <div className="text-sm font-semibold text-gray-900">{user.username}</div>

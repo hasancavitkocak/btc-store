@@ -9,6 +9,8 @@ import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Toast from '../../components/Toast';
+import ImageUpload from '../../components/ImageUpload';
+import ImageLightbox from '../../components/ImageLightbox';
 import { userService, userGroupService } from '../../services/admin.service';
 
 interface UserFormProps {
@@ -22,6 +24,13 @@ export default function UserFormNew({ userId }: UserFormProps) {
   const [userGroups, setUserGroups] = useState<any[]>([]);
   const [filteredUserGroups, setFilteredUserGroups] = useState<any[]>([]);
   const [groupSearchQuery, setGroupSearchQuery] = useState('');
+  const [imageFiles, setImageFiles] = useState<string[]>([]);
+  const [newPictureFile, setNewPictureFile] = useState<File | null>(null);
+  const [shouldRemovePicture, setShouldRemovePicture] = useState(false);
+  const [lightbox, setLightbox] = useState<{ isOpen: boolean; imageUrl: string }>({
+    isOpen: false,
+    imageUrl: ''
+  });
   
   const isEditing = !!userId;
 
@@ -81,6 +90,11 @@ export default function UserFormNew({ userId }: UserFormProps) {
           active: userData.active ?? true,
           userGroups: userData.userGroups?.map((ug: any) => ug.code) || []
         });
+        
+        // Mevcut profil resmini göster
+        if (userData.picture?.absolutePath) {
+          setImageFiles([userData.picture.absolutePath]);
+        }
       }
     } catch (error) {
       console.error('Error loading user:', error);
@@ -122,7 +136,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
         userGroups: formData.userGroups.map(code => ({ code }))
       };
 
-      const response = await userService.save(userData);
+      const response = await userService.save(userData, newPictureFile || undefined, shouldRemovePicture);
 
       if (response.status === 'ERROR') {
         setToast({ 
@@ -176,6 +190,26 @@ export default function UserFormNew({ userId }: UserFormProps) {
     });
     
     setFilteredUserGroups(filtered);
+  };
+
+  const handleImageChange = (images: string[]) => {
+    setImageFiles(images);
+    
+    if (images.length === 0) {
+      setNewPictureFile(null);
+      setShouldRemovePicture(true);
+    } else if (images[0].startsWith('data:')) {
+      setShouldRemovePicture(false);
+      fetch(images[0])
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], 'profile-picture.jpg', { type: 'image/jpeg' });
+          setNewPictureFile(file);
+        });
+    } else {
+      // Mevcut resim korunuyor
+      setShouldRemovePicture(false);
+    }
   };
 
   const toggleUserGroup = (code: string) => {
@@ -369,6 +403,59 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
           <div className="space-y-6">
             <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Profil Resmi</h2>
+              <div className="flex flex-col items-center">
+                {imageFiles.length > 0 ? (
+                  <div className="relative group mb-4">
+                    <img
+                      src={imageFiles[0]}
+                      alt="Profil resmi"
+                      className="w-32 h-32 rounded-full object-cover border-2 border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => setLightbox({ isOpen: true, imageUrl: imageFiles[0] })}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleImageChange([])}
+                      className="absolute top-0 right-0 bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300 mb-4">
+                    <span className="text-4xl text-gray-400">👤</span>
+                  </div>
+                )}
+                
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        handleImageChange([reader.result as string]);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="hidden"
+                  id="profile-picture-upload"
+                />
+                <label
+                  htmlFor="profile-picture-upload"
+                  className="cursor-pointer px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  {imageFiles.length > 0 ? 'Resmi Değiştir' : 'Resim Yükle'}
+                </label>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  400x400px (kare)
+                </p>
+              </div>
+            </Card>
+
+            <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Durum</h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -419,6 +506,13 @@ export default function UserFormNew({ userId }: UserFormProps) {
             onClose={() => setToast(null)}
           />
         )}
+
+        <ImageLightbox
+          isOpen={lightbox.isOpen}
+          imageUrl={lightbox.imageUrl}
+          alt="Profil Resmi"
+          onClose={() => setLightbox({ isOpen: false, imageUrl: '' })}
+        />
       </Container>
     </Section>
   );
