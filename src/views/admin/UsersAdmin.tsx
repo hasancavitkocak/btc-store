@@ -10,30 +10,33 @@ import Button from '../../components/Button';
 import Toast from '../../components/Toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { searchService, SearchFormData } from '../../services/search.service';
-import { parameterService } from '../../services/admin.service';
+import { userService } from '../../services/admin.service';
 
-interface Parameter {
+interface User {
   code: string;
-  value: string;
-  description?: { tr?: string; en?: string };
-  dataType: string;
-  parameterType: string;
-  encrypt: boolean;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  active: boolean;
+  deleted: boolean;
+  userGroups?: Array<{ code: string; description?: { tr?: string; en?: string } }>;
 }
 
-export default function ParametersAdmin() {
+export default function UsersAdmin() {
   const router = useRouter();
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [parameters, setParameters] = useState<Parameter[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; code: string; value: string }>({
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; code: string; username: string }>({
     isOpen: false,
     code: '',
-    value: ''
+    username: ''
   });
 
   useEffect(() => {
@@ -42,26 +45,26 @@ export default function ParametersAdmin() {
 
   useEffect(() => {
     if (mounted) {
-      loadParameters();
+      loadUsers();
     }
   }, [page, mounted]);
 
-  const loadParameters = async () => {
+  const loadUsers = async () => {
     try {
       setLoading(true);
       
       const searchFormData: SearchFormData = {
         filters: [],
-        sort: { name: 'code', direction: 'ASC' }
+        sort: { name: 'username', direction: 'ASC' }
       };
 
-      const response = await searchService.search<Parameter>('parameter', searchFormData, page);
+      const response = await searchService.search<User>('user', searchFormData, page);
       
       if (response.status === 'SUCCESS' && response.data) {
         const pageData = (response.data as any).data;
         
         if (pageData && pageData.content) {
-          setParameters(pageData.content || []);
+          setUsers(pageData.content || []);
           setTotalPages(pageData.totalPages || 0);
           setTotalElements(pageData.totalElements || 0);
         } else {
@@ -70,13 +73,13 @@ export default function ParametersAdmin() {
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Parametre listesi yüklenirken hata oluştu', 
+          message: response.errorMessage || 'Kullanıcı listesi yüklenirken hata oluştu', 
           type: 'error' 
         });
       }
     } catch (error) {
-      console.error('Error loading parameters:', error);
-      setToast({ message: 'Parametre listesi yüklenirken hata oluştu', type: 'error' });
+      console.error('Error loading users:', error);
+      setToast({ message: 'Kullanıcı listesi yüklenirken hata oluştu', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -84,20 +87,20 @@ export default function ParametersAdmin() {
 
   const handleDelete = async (code: string) => {
     try {
-      const response = await parameterService.delete(code);
+      const response = await userService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Parametre silindi', type: 'success' });
+        setToast({ message: 'Kullanıcı silindi', type: 'success' });
         setPage(1);
         if (page === 1) {
-          loadParameters();
+          loadUsers();
         }
       } else {
         setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
       }
     } catch (error) {
-      console.error('Error deleting parameter:', error);
-      setToast({ message: 'Parametre silinirken hata oluştu', type: 'error' });
+      console.error('Error deleting user:', error);
+      setToast({ message: 'Kullanıcı silinirken hata oluştu', type: 'error' });
     }
   };
 
@@ -107,13 +110,13 @@ export default function ParametersAdmin() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Parametreler
+              Kullanıcılar
             </h1>
-            <p className="text-gray-600">Toplam {totalElements} parametre</p>
+            <p className="text-gray-600">Toplam {totalElements} kullanıcı</p>
           </div>
-          <Button onClick={() => router.push('/admin/parameters/new')} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => router.push('/admin/users/new')} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-5 h-5 mr-2" />
-            Yeni Parametre
+            Yeni Kullanıcı
           </Button>
         </div>
 
@@ -129,19 +132,22 @@ export default function ParametersAdmin() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Kod
+                        Kullanıcı Adı
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Değer
+                        Ad Soyad
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Açıklama
+                        E-posta
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Veri Tipi
+                        Telefon
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Tip
+                        Gruplar
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Durum
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                         İşlemler
@@ -149,44 +155,48 @@ export default function ParametersAdmin() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {parameters.map((parameter) => (
-                      <tr key={parameter.code} className="hover:bg-gray-50">
+                    {users.map((user) => (
+                      <tr key={user.code} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{parameter.code}</div>
+                          <div className="text-sm font-medium text-gray-900">{user.username}</div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-600 max-w-xs truncate">
-                            {parameter.encrypt ? '••••••••' : parameter.value}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-500 max-w-xs truncate">
-                            {parameter.description?.tr || parameter.description?.en || '-'}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-600">
+                            {user.firstName} {user.lastName}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                            {parameter.dataType}
-                          </span>
+                          <div className="text-sm text-gray-600">{user.email || '-'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                              {parameter.parameterType}
-                            </span>
-                            {parameter.encrypt && (
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                🔒
-                              </span>
+                          <div className="text-sm text-gray-600">{user.phoneNumber || '-'}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1">
+                            {user.userGroups && user.userGroups.length > 0 ? (
+                              user.userGroups.map((ug, idx) => (
+                                <span key={idx} className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                  {ug.description?.tr || ug.description?.en || ug.code || 'Grup'}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-sm text-gray-400">-</span>
                             )}
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            user.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
+                            {user.active ? 'Aktif' : 'Pasif'}
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex justify-end gap-2">
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => router.push(`/admin/parameters/${parameter.code}`)}
+                              onClick={() => router.push(`/admin/users/${user.code}`)}
                               className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                             >
                               <Edit className="w-4 h-4" />
@@ -196,8 +206,8 @@ export default function ParametersAdmin() {
                               variant="outline"
                               onClick={() => setDeleteDialog({ 
                                 isOpen: true, 
-                                code: parameter.code, 
-                                value: parameter.code 
+                                code: user.code, 
+                                username: user.username 
                               })}
                               className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
                             >
@@ -212,12 +222,12 @@ export default function ParametersAdmin() {
               </div>
             </Card>
 
-            {parameters.length === 0 && (
+            {users.length === 0 && (
               <Card className="p-12 text-center mt-6">
-                <p className="text-gray-500 mb-4">Henüz parametre eklenmemiş</p>
-                <Button onClick={() => router.push('/admin/parameters/new')} className="bg-blue-600 hover:bg-blue-700">
+                <p className="text-gray-500 mb-4">Henüz kullanıcı eklenmemiş</p>
+                <Button onClick={() => router.push('/admin/users/new')} className="bg-blue-600 hover:bg-blue-700">
                   <Plus className="w-4 h-4 mr-2" />
-                  İlk Parametreyi Ekle
+                  İlk Kullanıcıyı Ekle
                 </Button>
               </Card>
             )}
@@ -268,10 +278,10 @@ export default function ParametersAdmin() {
 
         <ConfirmDialog
           isOpen={deleteDialog.isOpen}
-          onClose={() => setDeleteDialog({ isOpen: false, code: '', value: '' })}
+          onClose={() => setDeleteDialog({ isOpen: false, code: '', username: '' })}
           onConfirm={() => handleDelete(deleteDialog.code)}
-          title="Parametre Sil"
-          message={`"${deleteDialog.value}" parametresini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
+          title="Kullanıcı Sil"
+          message={`"${deleteDialog.username}" kullanıcısını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
           confirmText="Sil"
           cancelText="İptal"
           type="danger"

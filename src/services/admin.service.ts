@@ -188,3 +188,11 @@ export const parameterService = {
   delete: (code: string) => apiClient.delete(`/v1/parameters/${code}`),
 };
 
+// User servisleri
+export const userService = {
+  getAll: () => apiClient.get('/v1/users'),
+  getByCode: (code: string) => apiClient.get(`/v1/users/${code}`),
+  save: (data: any) => apiClient.post('/v1/users', data),
+  delete: (code: string) => apiClient.delete(`/v1/users/${code}`),
+};
+

@@ -1,7 +1,7 @@
 'use client';
 
-import UsersAdminList from '@/views/admin/UsersAdminList';
+import UsersAdmin from '@/views/admin/UsersAdmin';
 
 export default function UsersPage() {
-  return <UsersAdminList />;
+  return <UsersAdmin />;
 }

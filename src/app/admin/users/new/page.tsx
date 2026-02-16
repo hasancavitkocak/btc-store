@@ -1,5 +1,5 @@
-import UserForm from '@/views/admin/UserForm';
+import UserFormNew from '@/views/admin/UserFormNew';
 
 export default function NewUserPage() {
-  return <UserForm />;
+  return <UserFormNew />;
 }
