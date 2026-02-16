@@ -640,6 +640,14 @@ export default function ProductForm({ productId }: ProductFormProps) {
                                 const newImages = imageFiles.filter((_, i) => i !== index);
                                 const newExistingImages = existingImages.filter((_, i) => i !== index);
                                 
+                                // Yeni yüklenen dosyaları da temizle
+                                const removedImage = imageFiles[index];
+                                if (removedImage.startsWith('data:')) {
+                                  // Bu yeni yüklenen bir görsel, newImageFiles'dan da kaldır
+                                  const dataImageIndex = imageFiles.slice(0, index).filter(img => img.startsWith('data:')).length;
+                                  setNewImageFiles(prev => prev.filter((_, i) => i !== dataImageIndex));
+                                }
+                                
                                 setImageFiles(newImages);
                                 setExistingImages(newExistingImages);
                                 
