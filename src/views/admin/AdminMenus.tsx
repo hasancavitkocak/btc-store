@@ -149,25 +149,25 @@ export default function AdminMenus() {
     console.log('Rendering icon:', iconValue);
     
     if (!iconValue) {
-      return <MenuIcon className="w-6 h-6 text-blue-600" />;
+      return <MenuIcon className="w-4 h-4 text-blue-600" />;
     }
 
     // Emoji ise direkt göster (Unicode emoji pattern)
     if (/\p{Emoji}/u.test(iconValue)) {
       console.log('Detected as emoji:', iconValue);
-      return <span className="text-2xl">{iconValue}</span>;
+      return <span className="text-lg">{iconValue}</span>;
     }
     
     // Lucide icon ise component olarak render et
     const IconComponent = (LucideIcons as any)[iconValue];
     if (IconComponent) {
       console.log('Detected as Lucide icon:', iconValue);
-      return <IconComponent className="w-6 h-6 text-blue-600" />;
+      return <IconComponent className="w-4 h-4 text-blue-600" />;
     }
     
     // Fallback - icon bulunamadı
     console.log('Icon not found, using fallback for:', iconValue);
-    return <MenuIcon className="w-6 h-6 text-blue-600" />;
+    return <MenuIcon className="w-4 h-4 text-blue-600" />;
   };
 
   return (
@@ -203,86 +203,154 @@ export default function AdminMenus() {
           </Card>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-4">
-              {(() => {
-                console.log('Rendering menus, count:', flatMenus.length);
-                return Array.isArray(flatMenus) && flatMenus.map((menu) => {
-                  console.log('Rendering menu:', menu);
-                  const indent = menu.level * 32; // Her seviye için 32px girinti
-                  return (
-                    <div key={menu.code} style={{ marginLeft: `${indent}px` }}>
-                      <Card className="p-6 hover:shadow-lg transition-shadow border-l-4 border-blue-500">
-                        <div className="flex items-center gap-4">
-                          {menu.level > 0 && (
-                            <div className="text-gray-400 text-sm font-mono">
-                              {'└─'.repeat(1)}
-                            </div>
-                          )}
-                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            {renderIcon(menu.icon)}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              {menu.level > 0 && (
-                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                                  Alt Menü
-                                </span>
-                              )}
-                              <h3 className="font-semibold text-lg">{menu.name?.tr || menu.name?.en || 'İsimsiz Menü'}</h3>
-                            </div>
-                            {menu.url && <p className="text-gray-600 text-sm">{menu.url}</p>}
-                            <div className="flex items-center gap-2 mt-2">
-                              <span className={`text-xs px-2 py-1 rounded ${menu.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+            <Card className="overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Menü
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        URL
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Gruplar
+                      </th>
+                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Sıra
+                      </th>
+                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Durum
+                      </th>
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        İşlemler
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {(() => {
+                      console.log('Rendering menus, count:', flatMenus.length);
+                      return Array.isArray(flatMenus) && flatMenus.map((menu, index) => {
+                        console.log('Rendering menu:', menu);
+                        return (
+                          <tr 
+                            key={menu.code}
+                            className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                          >
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3" style={{ paddingLeft: `${menu.level * 24}px` }}>
+                                {menu.level > 0 && (
+                                  <span className="text-gray-400 text-xs">└─</span>
+                                )}
+                                <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                  {renderIcon(menu.icon)}
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm font-semibold text-gray-900">
+                                      {menu.name?.tr || menu.name?.en || 'İsimsiz Menü'}
+                                    </span>
+                                    {menu.level > 0 && (
+                                      <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 text-gray-600">
+                                        Alt
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-xs text-gray-600 font-mono">
+                                {menu.url || '-'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex flex-wrap gap-1">
+                                {menu.userGroups && menu.userGroups.length > 0 ? (
+                                  <>
+                                    {menu.userGroups.slice(0, 2).map((ug: any, idx: number) => (
+                                      <span 
+                                        key={idx}
+                                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800"
+                                      >
+                                        {ug.name?.tr || ug.name?.en || ug.code}
+                                      </span>
+                                    ))}
+                                    {menu.userGroups.length > 2 && (
+                                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-700">
+                                        +{menu.userGroups.length - 2}
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <span className="text-xs text-gray-400">Tümü</span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-xs font-semibold text-gray-700">
+                                {menu.displayOrder}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
+                                menu.active 
+                                  ? 'bg-green-100 text-green-800 ring-1 ring-green-600/20' 
+                                  : 'bg-red-100 text-red-800 ring-1 ring-red-600/20'
+                              }`}>
+                                <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                  menu.active ? 'bg-green-600' : 'bg-red-600'
+                                }`}></span>
                                 {menu.active ? 'Aktif' : 'Pasif'}
                               </span>
-                              <span className={`text-xs px-2 py-1 rounded ${menu.isRoot ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
-                                {menu.isRoot ? 'Ana Menü' : 'Alt Menü'}
-                              </span>
-                              <span className="text-xs text-gray-500">Sıra: {menu.displayOrder}</span>
-                              {menu.userGroups && menu.userGroups.length > 0 && (
-                                <span className="text-xs text-gray-500">
-                                  {menu.userGroups.length} Kullanıcı Grubu
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => router.push(`/admin/menus/admin/${menu.code}`)}
-                              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setDeleteDialog({ 
-                                isOpen: true, 
-                                code: menu.code, 
-                                name: menu.name?.tr || menu.name?.en || 'İsimsiz Menü'
-                              })}
-                              className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </Card>
-                    </div>
-                  );
-                });
-              })()}
-            </div>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex justify-end gap-2">
+                                <button
+                                  onClick={() => router.push(`/admin/menus/admin/${menu.code}`)}
+                                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:bg-blue-100 transition-colors"
+                                  title="Düzenle"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => setDeleteDialog({ 
+                                    isOpen: true, 
+                                    code: menu.code, 
+                                    name: menu.name?.tr || menu.name?.en || 'İsimsiz Menü'
+                                  })}
+                                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
+                                  title="Sil"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      });
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
 
             {(!Array.isArray(flatMenus) || flatMenus.length === 0) && (
-              <Card className="p-12 text-center">
-                <p className="text-gray-500 mb-4">Henüz admin menü eklenmemiş</p>
-                <Button onClick={() => router.push('/admin/menus/admin/new')} className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  İlk Admin Menüyü Ekle
-                </Button>
+              <Card className="p-12 text-center mt-6">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                    <span className="text-3xl">⚙️</span>
+                  </div>
+                  <div>
+                    <p className="text-gray-900 font-medium mb-1">Henüz admin menü eklenmemiş</p>
+                    <p className="text-gray-500 text-sm mb-4">İlk admin menüyü ekleyerek başlayın</p>
+                  </div>
+                  <Button onClick={() => router.push('/admin/menus/admin/new')} className="bg-blue-600 hover:bg-blue-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    İlk Admin Menüyü Ekle
+                  </Button>
+                </div>
               </Card>
             )}
           </>
