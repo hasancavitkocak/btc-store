@@ -4,8 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ArrowLeft, ChevronLeft, ChevronRight, Check, MessageCircle } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Check, MessageCircle, FileText, Download } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { useAuthStore } from '../store/useAuthStore';
 import Container from '../components/Container';
 import Button from '../components/Button';
 
@@ -14,11 +15,15 @@ export default function ProductDetail() {
   const id = params?.id as string;
   const t = useTranslations();
   const router = useRouter();
-  const { products, categories } = useStore();
+  const { products, categories, documents } = useStore();
+  const { isAuthenticated } = useAuthStore();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const product = products.find((p) => p.id === id);
   const category = product ? categories.find((c) => c.id === product.categoryId) : null;
+  
+  // Ürüne ait dokümanları filtrele
+  const productDocuments = documents.filter(doc => doc.productId === id);
 
   if (!product) {
     return (
@@ -203,9 +208,64 @@ export default function ProductDetail() {
 
           {/* Product Content */}
           {product.htmlContent && (
-            <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
+            <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8">
               <div className="prose prose-sm lg:prose-lg max-w-none text-gray-700">
                 <div dangerouslySetInnerHTML={{ __html: product.htmlContent }} />
+              </div>
+            </div>
+          )}
+
+          {/* Documents Section - Only for authenticated users */}
+          {isAuthenticated && productDocuments.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 lg:p-10">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Ürün Dokümanları
+                </h3>
+                <p className="text-gray-600">
+                  Bu ürüne ait teknik dokümanlar ve belgeler
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {productDocuments.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="group border border-gray-200 rounded-xl p-5 hover:border-gray-300 hover:shadow-md transition-all duration-200"
+                  >
+                    {/* File type indicator */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-gray-600" />
+                      </div>
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                        {doc.fileType}
+                      </span>
+                    </div>
+
+                    {/* Document info */}
+                    <h4 className="font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[3rem]">
+                      {doc.title}
+                    </h4>
+                    
+                    {doc.description && (
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2 min-h-[2.5rem]">
+                        {doc.description}
+                      </p>
+                    )}
+
+                    {/* Download button */}
+                    <a
+                      href={doc.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-sm font-medium transition-colors"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>İndir</span>
+                    </a>
+                  </div>
+                ))}
               </div>
             </div>
           )}

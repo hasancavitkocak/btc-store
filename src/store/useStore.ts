@@ -7,7 +7,7 @@ import { references as defaultReferences, Reference } from '../mock/references';
 import { stories as defaultStories, Story } from '../mock/stories';
 import { partners as defaultPartners, Partner } from '../mock/partners';
 import { kvkkData as defaultKvkkData, KVKKData } from '../mock/kvkk';
-import { headerData as defaultHeaderData, HeaderData } from '../mock/header';
+import { headerData as defaultHeaderData, HeaderData, MenuItem } from '../mock/header';
 import { documents as defaultDocuments, Document } from '../mock/documents';
 import { CallRequest, ProductContactForm } from '../mock/forms';
 import { sendEmail, createProductContactEmailBody, createCallRequestEmailBody } from '../lib/email';

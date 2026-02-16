@@ -10,37 +10,72 @@ import Section from '../components/Section';
 import Card from '../components/Card';
 import Button from '../components/Button';
 
-export default function Products() {
+interface CategoryProductsProps {
+  menuPath?: string; // Menünün path'i (örn: /sap-services)
+  title?: string; // Sayfa başlığı
+  subtitle?: string; // Sayfa alt başlığı
+}
+
+export default function CategoryProducts({ menuPath, title, subtitle }: CategoryProductsProps) {
   const t = useTranslations();
   const searchParams = useSearchParams();
-  const { products, categories } = useStore();
+  const { products, categories, header } = useStore();
   const categoryParam = searchParams?.get('category');
+
+  // Bu menüye bağlı kategorileri al - path'e göre bul
+  const menuItem = menuPath ? header.menuItems.find(m => m.path === menuPath) : null;
   
+  const menuCategories = useMemo(() => {
+    if (!menuItem || menuItem.type !== 'category-dropdown') {
+      // Eğer menü yoksa veya kategori dropdown değilse, tüm kategorileri göster
+      return categories;
+    }
+    
+    // Eğer categoryIds boş veya tanımsızsa, tüm kategorileri göster
+    if (!menuItem.categoryIds || menuItem.categoryIds.length === 0) {
+      return categories;
+    }
+    
+    // Sadece bu menüye bağlı kategorileri göster
+    return categories.filter(c => menuItem.categoryIds!.includes(c.id));
+  }, [menuItem, categories]);
+
   // Kategori parametresini validate et
-  const isValidCategory = categoryParam === 'all' || !categoryParam || categories.some(c => c.id === categoryParam);
-  
+  const isValidCategory = categoryParam === 'all' || !categoryParam || menuCategories.some(c => c.id === categoryParam);
+
   const [selectedCategory, setSelectedCategory] = useState<string>(
     isValidCategory ? (categoryParam || 'all') : 'all'
   );
 
   const activeProducts = products.filter((p) => p.active);
-  const activeCategories = categories.sort((a, b) => a.order - b.order);
+  const activeCategories = menuCategories.sort((a, b) => a.order - b.order);
 
   // Seçili kategorinin bilgilerini al
-  const selectedCategoryInfo = selectedCategory !== 'all' 
+  const selectedCategoryInfo = selectedCategory !== 'all'
     ? categories.find(c => c.id === selectedCategory)
     : null;
 
   const filteredProducts = useMemo(() => {
-    if (selectedCategory === 'all') {
-      return activeProducts;
+    let filtered = activeProducts;
+
+    // Önce menüye bağlı kategorilere göre filtrele
+    if (menuItem && menuItem.type === 'category-dropdown') {
+      const categoryIds = menuItem.categoryIds && menuItem.categoryIds.length > 0
+        ? menuItem.categoryIds
+        : categories.map(c => c.id);
+      filtered = filtered.filter(p => categoryIds.includes(p.categoryId));
     }
-    return activeProducts.filter((p) => p.categoryId === selectedCategory);
-  }, [activeProducts, selectedCategory]);
+
+    // Sonra seçili kategoriye göre filtrele
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter((p) => p.categoryId === selectedCategory);
+    }
+
+    return filtered;
+  }, [activeProducts, selectedCategory, menuItem, categories]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    // Next.js'de URL'yi güncellemek için router.push kullanılır
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       if (categoryId === 'all') {
@@ -52,43 +87,48 @@ export default function Products() {
     }
   };
 
+  const pageTitle = title || (menuItem ? t(menuItem.labelKey) : t('menu.products'));
+  const pageSubtitle = subtitle || t('home.categories.subtitle');
+
   return (
     <Section>
       <Container>
         <div className="text-center mb-16">
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6">
-            {t('menu.products')}
+            {pageTitle}
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
-            {t('home.categories.subtitle')}
+            {pageSubtitle}
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
-          <button
-            onClick={() => handleCategoryChange('all')}
-            className={`px-8 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 ${
-              selectedCategory === 'all'
-                ? 'bg-blue-900 text-white shadow-xl scale-105'
-                : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg'
-            }`}
-          >
-            {t('common.all')}
-          </button>
-          {activeCategories.map((category) => (
+        {activeCategories.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-4 mb-16">
             <button
-              key={category.id}
-              onClick={() => handleCategoryChange(category.id)}
+              onClick={() => handleCategoryChange('all')}
               className={`px-8 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 ${
-                selectedCategory === category.id
+                selectedCategory === 'all'
                   ? 'bg-blue-900 text-white shadow-xl scale-105'
                   : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg'
               }`}
             >
-              {t(category.nameKey)}
+              {t('common.all')}
             </button>
-          ))}
-        </div>
+            {activeCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => handleCategoryChange(category.id)}
+                className={`px-8 py-3 rounded-2xl font-semibold text-lg transition-all duration-300 ${
+                  selectedCategory === category.id
+                    ? 'bg-blue-900 text-white shadow-xl scale-105'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg'
+                }`}
+              >
+                {t(category.nameKey)}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
@@ -150,9 +190,11 @@ export default function Products() {
                   </p>
                 </>
               )}
-              <Button onClick={() => handleCategoryChange('all')} className="bg-blue-900 hover:bg-blue-800">
-                Tüm Ürünleri Görüntüle
-              </Button>
+              {activeCategories.length > 0 && (
+                <Button onClick={() => handleCategoryChange('all')} className="bg-blue-900 hover:bg-blue-800">
+                  Tüm Ürünleri Görüntüle
+                </Button>
+              )}
             </div>
           </div>
         )}

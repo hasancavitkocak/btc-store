@@ -30,11 +30,11 @@ export default function Home() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 flex items-center">
               <Container>
-                <div className="max-w-3xl text-white">
-                  <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
+                <div className="max-w-3xl text-white px-4 md:px-8 lg:px-12">
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
                     {t(banner.titleKey)}
                   </h1>
-                  <p className="text-xl sm:text-2xl md:text-3xl mb-10 text-gray-100 leading-relaxed">
+                  <p className="text-lg sm:text-xl md:text-2xl mb-10 text-gray-100 leading-relaxed">
                     {t(banner.subtitleKey)}
                   </p>
                   {banner.buttonTextKey && banner.buttonLink && (

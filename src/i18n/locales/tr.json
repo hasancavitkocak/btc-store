@@ -2,6 +2,8 @@
   "menu": {
     "home": "Ana Sayfa",
     "products": "Ürünler",
+    "sapServices": "SAP Hizmetleri",
+    "sectorSolutions": "Sektörel Çözümler",
     "references": "Referanslar",
     "stories": "Başarı Hikayeleri",
     "contact": "İletişim"
@@ -267,6 +269,16 @@
     "notes": "Notlar",
     "addNote": "Not Ekle",
     "actions": "İşlemler",
-    "users": "Kullanıcı Yönetimi"
+    "users": "Kullanıcı Yönetimi",
+    "menuManagement": "Menü Yönetimi",
+    "manageMenu": "Menü öğelerini yönetin",
+    "addMenuItem": "Menü Öğesi Ekle",
+    "editMenuItem": "Menü Öğesi Düzenle",
+    "menuItemAdded": "Menü öğesi başarıyla eklendi!",
+    "menuItemUpdated": "Menü öğesi başarıyla güncellendi!",
+    "menuItemDeleted": "Menü öğesi başarıyla silindi!",
+    "labelKey": "Etiket Anahtarı (çeviri anahtarı)",
+    "path": "Yol (URL)",
+    "menuItems": "Menü Öğeleri"
   }
 }

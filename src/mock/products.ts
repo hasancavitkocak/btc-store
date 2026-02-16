@@ -25,6 +25,7 @@ export const products: Product[] = [
       'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200',
       'https://images.pexels.com/photos/7688336/pexels-photo-7688336.jpeg?auto=compress&cs=tinysrgb&w=1200'
     ],
+    documents: ['doc-crm-pro-1', 'doc-crm-pro-2', 'doc-crm-pro-3'],
     features: ['product.crmPro.feature1', 'product.crmPro.feature2', 'product.crmPro.feature3'],
     contentKey: 'product.crmPro.content',
     htmlContent: `
@@ -53,6 +54,7 @@ export const products: Product[] = [
       'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&w=1200',
       'https://images.pexels.com/photos/7688465/pexels-photo-7688465.jpeg?auto=compress&cs=tinysrgb&w=1200'
     ],
+    documents: ['doc-finance-1', 'doc-finance-2', 'doc-finance-3'],
     features: ['product.financeSuite.feature1', 'product.financeSuite.feature2', 'product.financeSuite.feature3'],
     contentKey: 'product.financeSuite.content',
     htmlContent: `
@@ -79,6 +81,7 @@ export const products: Product[] = [
       'https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=1200',
       'https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=1200'
     ],
+    documents: ['doc-hr-1', 'doc-hr-2'],
     features: ['product.hrManager.feature1', 'product.hrManager.feature2', 'product.hrManager.feature3'],
     contentKey: 'product.hrManager.content',
     htmlContent: `
@@ -105,6 +108,7 @@ export const products: Product[] = [
       'https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=1200',
       'https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=1200'
     ],
+    documents: ['doc-marketing-1', 'doc-marketing-2', 'doc-marketing-3'],
     features: ['product.marketingHub.feature1', 'product.marketingHub.feature2', 'product.marketingHub.feature3'],
     contentKey: 'product.marketingHub.content',
     htmlContent: `
@@ -131,6 +135,7 @@ export const products: Product[] = [
       'https://images.pexels.com/photos/4483611/pexels-photo-4483611.jpeg?auto=compress&cs=tinysrgb&w=1200',
       'https://images.pexels.com/photos/4481258/pexels-photo-4481258.jpeg?auto=compress&cs=tinysrgb&w=1200'
     ],
+    documents: ['doc-warehouse-1', 'doc-warehouse-2'],
     features: ['product.warehouseSystem.feature1', 'product.warehouseSystem.feature2', 'product.warehouseSystem.feature3'],
     contentKey: 'product.warehouseSystem.content',
     htmlContent: `
@@ -157,6 +162,7 @@ export const products: Product[] = [
       'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200',
       'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200'
     ],
+    documents: ['doc-crm-lite-1', 'doc-crm-lite-2'],
     features: ['product.crmLite.feature1', 'product.crmLite.feature2'],
     contentKey: 'product.crmLite.content',
     htmlContent: `

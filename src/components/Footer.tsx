@@ -15,9 +15,9 @@ export default function Footer() {
       <Container>
         <div className="py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <div className="mb-4 bg-white/10 backdrop-blur-sm rounded-xl p-3 inline-block">
+            <div className="mb-4">
               <img 
-                src="/ChatGPT_Image_11_Sub_2026_09_47_39.png" 
+                src="/btc-store-logo.png" 
                 alt="BTC Store" 
                 className="h-12 w-auto"
               />

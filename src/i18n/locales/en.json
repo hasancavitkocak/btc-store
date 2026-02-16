@@ -2,6 +2,8 @@
   "menu": {
     "home": "Home",
     "products": "Products",
+    "sapServices": "SAP Services",
+    "sectorSolutions": "Sector Solutions",
     "references": "References",
     "stories": "Success Stories",
     "contact": "Contact"
@@ -180,6 +182,19 @@
     "kvkk": "Privacy Policy",
     "forms": "Form Submissions",
     "logout": "Logout",
-    "users": "User Management"
+    "users": "User Management",
+    "menuManagement": "Menu Management",
+    "manageMenu": "Manage menu items",
+    "addMenuItem": "Add Menu Item",
+    "editMenuItem": "Edit Menu Item",
+    "menuItemAdded": "Menu item added successfully!",
+    "menuItemUpdated": "Menu item updated successfully!",
+    "menuItemDeleted": "Menu item deleted successfully!",
+    "labelKey": "Label Key (translation key)",
+    "path": "Path (URL)",
+    "menuItems": "Menu Items",
+    "order": "Order",
+    "actions": "Actions",
+    "deleteConfirm": "Are you sure you want to delete this item?"
   }
 }

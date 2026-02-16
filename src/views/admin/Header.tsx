@@ -13,19 +13,15 @@ import Toast from '../../components/Toast';
 export default function Header() {
   const t = useTranslations();
   const { header, updateHeader } = useStore();
-  const [logo, setLogo] = useState(header.logo);
-  const [phone, setPhone] = useState(header.phone);
   const [bannerEnabled, setBannerEnabled] = useState(!!header.topBanner);
   const [bannerText, setBannerText] = useState(header.topBanner?.textKey || '');
-  const [bannerBgColor, setBannerBgColor] = useState(header.topBanner?.bgColor || '#1e3a8a');
+  const [bannerBgColor, setBannerBgColor] = useState(header.topBanner?.bgColor || '#bbf6e2');
   const [bannerLink, setBannerLink] = useState(header.topBanner?.link || '');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const handleSave = () => {
     updateHeader({
       ...header,
-      logo,
-      phone,
       topBanner: bannerEnabled ? {
         textKey: bannerText,
         bgColor: bannerBgColor,
@@ -40,31 +36,12 @@ export default function Header() {
       <Container>
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {t('admin.header')}
+            Banner Ayarları
           </h1>
-          <p className="text-gray-600">{t('admin.manageHeader')}</p>
+          <p className="text-gray-600">Üst banner ayarlarını yönetin</p>
         </div>
 
         <div className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Genel Ayarlar</h2>
-            <div className="space-y-4">
-              <Input
-                label={t('admin.logoText')}
-                value={logo}
-                onChange={(e) => setLogo(e.target.value)}
-                placeholder="BTC Store"
-              />
-
-              <Input
-                label={t('admin.phoneNumber')}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+90 555 123 45 67"
-              />
-            </div>
-          </Card>
-
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-gray-900">{t('admin.topBanner')}</h2>
@@ -105,7 +82,7 @@ export default function Header() {
                     <Input
                       value={bannerBgColor}
                       onChange={(e) => setBannerBgColor(e.target.value)}
-                      placeholder="#1e3a8a"
+                      placeholder="#bbf6e2"
                     />
                   </div>
                 </div>
@@ -118,7 +95,7 @@ export default function Header() {
                 />
 
                 <div 
-                  className="p-3 rounded text-white text-center text-sm"
+                  className="p-3 rounded text-gray-900 text-center text-sm"
                   style={{ backgroundColor: bannerBgColor }}
                 >
                   {t(bannerText) || 'Banner önizlemesi'}

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, Shield, LogOut, ChevronDown, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, Shield, LogOut, ChevronDown, ChevronRight, Menu } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useState, useEffect } from 'react';
 
@@ -17,7 +17,7 @@ const menuGroups = [
   {
     title: 'İçerik Yönetimi',
     items: [
-      { icon: Settings, labelKey: 'admin.header', path: '/admin/header' },
+      { icon: Image, labelKey: 'Banner Ayarları', path: '/admin/header' },
       { icon: Image, labelKey: 'admin.banners', path: '/admin/banners' },
       { icon: FolderTree, labelKey: 'admin.categories', path: '/admin/categories' },
       { icon: Package, labelKey: 'admin.products', path: '/admin/products' },
@@ -37,6 +37,7 @@ const menuGroups = [
   {
     title: 'Sistem',
     items: [
+      { icon: Settings, labelKey: 'Ayarlar', path: '/admin/settings' },
       { icon: Shield, labelKey: 'admin.users', path: '/admin/users', permission: 'manage_users' as const }
     ]
   }

@@ -52,7 +52,7 @@ export default function CategoriesAdmin() {
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg">{t(category.nameKey)}</h3>
                   <p className="text-gray-600 text-sm mb-2">{t(category.descriptionKey)}</p>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className={`text-xs px-2 py-1 rounded ${category.showOnHome ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}>
                       {category.showOnHome ? 'Ana Sayfada' : 'Gizli'}
                     </span>

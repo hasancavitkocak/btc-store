@@ -4,6 +4,6 @@ import CategoryProducts from '@/views/CategoryProducts';
 
 export const dynamic = 'force-dynamic';
 
-export default function ProductsPage() {
-  return <CategoryProducts menuPath="/products" />;
+export default function SapServicesPage() {
+  return <CategoryProducts menuPath="/sap-services" />;
 }

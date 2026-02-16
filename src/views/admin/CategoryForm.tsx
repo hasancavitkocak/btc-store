@@ -27,6 +27,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
   const category = isEditing ? categories.find(c => c.id === categoryId) : null;
 
   const [formData, setFormData] = useState({
+    slug: '',
     nameKey: '',
     descriptionKey: '',
     image: '',
@@ -46,6 +47,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
   useEffect(() => {
     if (category) {
       setFormData({
+        slug: category.id,
         nameKey: category.nameKey,
         descriptionKey: category.descriptionKey,
         image: category.image,
@@ -64,9 +66,22 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
     } else {
       setFormData(prev => ({ ...prev, order: categories.length + 1 }));
     }
-  }, [category, categories.length]);
+  }, [category, categories.length, categoryId]);
 
   const handleSave = () => {
+    // Slug'ı validate et
+    if (!formData.slug.trim()) {
+      setToast({ message: 'Slug alanı zorunludur!', type: 'error' });
+      return;
+    }
+
+    // Slug'ın benzersiz olduğunu kontrol et (düzenleme modunda mevcut kategori hariç)
+    const slugExists = categories.some(c => c.id === formData.slug && c.id !== categoryId);
+    if (slugExists) {
+      setToast({ message: 'Bu slug zaten kullanılıyor!', type: 'error' });
+      return;
+    }
+
     const categoryData = {
       nameKey: formData.nameKey,
       descriptionKey: formData.descriptionKey,
@@ -89,7 +104,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
     } else {
       const newCategory = {
         ...categoryData,
-        id: Date.now().toString()
+        id: formData.slug
       };
       addCategory(newCategory as any);
       setToast({ message: t('admin.categoryAdded'), type: 'success' });
@@ -123,6 +138,19 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Kategori Bilgileri</h2>
               <div className="space-y-4">
+                <div>
+                  <Input
+                    label="Slug (URL için benzersiz tanımlayıcı)"
+                    value={formData.slug}
+                    onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-')})}
+                    placeholder="sap-hizmetleri"
+                    required
+                    disabled={isEditing}
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    {isEditing ? 'Slug düzenlenemez' : 'Sadece küçük harf, rakam ve tire kullanın (örn: sap-hizmetleri)'}
+                  </p>
+                </div>
                 <div>
                   <Input
                     label="Name Key (çeviri anahtarı)"

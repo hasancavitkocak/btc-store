@@ -101,6 +101,14 @@ const defaultUsers: User[] = [
     email: 'admin@example.com',
     roleId: '1',
     createdAt: new Date().toISOString()
+  },
+  {
+    id: '2',
+    username: 'temsilci1',
+    password: 'demo123',
+    email: 'temsilci1@example.com',
+    roleId: '3', // Representative role
+    createdAt: new Date().toISOString()
   }
 ];
 
