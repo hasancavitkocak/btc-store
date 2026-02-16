@@ -123,86 +123,82 @@ export default function ParametersAdmin() {
           </Card>
         ) : (
           <>
-            <Card>
+            <Card className="overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Kod
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Değer
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Açıklama
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Veri Tipi
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Tip
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         İşlemler
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {parameters.map((parameter) => (
-                      <tr key={parameter.code} className="hover:bg-gray-50">
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {parameters.map((parameter, index) => (
+                      <tr 
+                        key={parameter.code} 
+                        className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{parameter.code}</div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-gray-900">{parameter.code}</span>
+                            {parameter.encrypt && (
+                              <span className="text-yellow-600" title="Şifreli">🔒</span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm text-gray-600 max-w-xs truncate">
+                          <div className="text-sm text-gray-600 max-w-xs truncate font-mono">
                             {parameter.encrypt ? '••••••••' : parameter.value}
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm text-gray-500 max-w-xs truncate">
+                          <div className="text-xs text-gray-500 max-w-xs truncate">
                             {parameter.description?.tr || parameter.description?.en || '-'}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                            {parameter.dataType}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                        <td className="px-6 py-4 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                              {parameter.dataType}
+                            </span>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
                               {parameter.parameterType}
                             </span>
-                            {parameter.encrypt && (
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                🔒
-                              </span>
-                            )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
+                            <button
                               onClick={() => router.push(`/admin/parameters/${parameter.code}`)}
-                              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:bg-blue-100 transition-colors"
+                              title="Düzenle"
                             >
                               <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
+                            </button>
+                            <button
                               onClick={() => setDeleteDialog({ 
                                 isOpen: true, 
                                 code: parameter.code, 
                                 value: parameter.code 
                               })}
-                              className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
+                              title="Sil"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -214,11 +210,19 @@ export default function ParametersAdmin() {
 
             {parameters.length === 0 && (
               <Card className="p-12 text-center mt-6">
-                <p className="text-gray-500 mb-4">Henüz parametre eklenmemiş</p>
-                <Button onClick={() => router.push('/admin/parameters/new')} className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  İlk Parametreyi Ekle
-                </Button>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                    <span className="text-3xl">⚙️</span>
+                  </div>
+                  <div>
+                    <p className="text-gray-900 font-medium mb-1">Henüz parametre eklenmemiş</p>
+                    <p className="text-gray-500 text-sm mb-4">İlk parametreyi ekleyerek başlayın</p>
+                  </div>
+                  <Button onClick={() => router.push('/admin/parameters/new')} className="bg-blue-600 hover:bg-blue-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    İlk Parametreyi Ekle
+                  </Button>
+                </div>
               </Card>
             )}
 

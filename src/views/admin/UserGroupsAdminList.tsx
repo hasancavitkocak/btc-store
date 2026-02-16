@@ -140,67 +140,84 @@ export default function UserGroupsAdminList() {
         </Card>
       ) : userGroups.length === 0 ? (
         <Card className="p-12 text-center">
-          <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 mb-4">Henüz rol eklenmemiş</p>
-          <Button onClick={() => router.push('/admin/user-groups/new')} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            İlk Rolü Ekle
-          </Button>
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+              <Users className="w-8 h-8 text-gray-400" />
+            </div>
+            <div>
+              <p className="text-gray-900 font-medium mb-1">Henüz rol eklenmemiş</p>
+              <p className="text-gray-500 text-sm mb-4">İlk rolü ekleyerek başlayın</p>
+            </div>
+            <Button onClick={() => router.push('/admin/user-groups/new')} className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-2" />
+              İlk Rolü Ekle
+            </Button>
+          </div>
         </Card>
       ) : (
         <>
-          <Card>
+          <Card className="overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Rol Kodu
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Rol
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Açıklama
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Oluşturulma
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       İşlemler
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {userGroups.map((group) => (
-                    <tr key={group.id} className="hover:bg-gray-50">
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {userGroups.map((group, index) => (
+                    <tr 
+                      key={group.id} 
+                      className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-purple-600" />
-                          <span className="text-sm font-medium text-gray-900">{group.code}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-sm">
+                            <Users className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-gray-900">{group.code}</div>
+                            <div className="text-xs text-gray-500">Kullanıcı Grubu</div>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600">{group.description?.tr || group.description?.en || '-'}</div>
+                        <div className="text-sm text-gray-600">
+                          {group.description?.tr || group.description?.en || '-'}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {group.createdDate ? new Date(group.createdDate).toLocaleDateString('tr-TR') : '-'}
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <span className="text-xs text-gray-500">
+                          {group.createdDate ? new Date(group.createdDate).toLocaleDateString('tr-TR') : '-'}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
+                          <button
                             onClick={() => router.push(`/admin/user-groups/${group.code}`)}
-                            className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:bg-blue-100 transition-colors"
+                            title="Düzenle"
                           >
                             <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
+                          </button>
+                          <button
                             onClick={() => setDeleteDialog({ isOpen: true, code: group.code })}
-                            className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
+                            title="Sil"
                           >
                             <Trash2 className="w-4 h-4" />
-                          </Button>
+                          </button>
                         </div>
                       </td>
                     </tr>

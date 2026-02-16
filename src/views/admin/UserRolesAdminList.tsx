@@ -141,77 +141,99 @@ export default function UserRolesAdminList() {
         </Card>
       ) : userRoles.length === 0 ? (
         <Card className="p-12 text-center">
-          <Shield className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 mb-4">Henüz yetki eklenmemiş</p>
-          <Button onClick={() => router.push('/admin/user-roles/new')} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            İlk Yetkiyi Ekle
-          </Button>
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+              <Shield className="w-8 h-8 text-gray-400" />
+            </div>
+            <div>
+              <p className="text-gray-900 font-medium mb-1">Henüz yetki eklenmemiş</p>
+              <p className="text-gray-500 text-sm mb-4">İlk yetkiyi ekleyerek başlayın</p>
+            </div>
+            <Button onClick={() => router.push('/admin/user-roles/new')} className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-2" />
+              İlk Yetkiyi Ekle
+            </Button>
+          </div>
         </Card>
       ) : (
         <>
-          <Card>
+          <Card className="overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Yetki Kodu
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Yetki
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Açıklama
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Durum
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Oluşturulma
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       İşlemler
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {userRoles.map((role) => (
-                    <tr key={role.id} className="hover:bg-gray-50">
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {userRoles.map((role, index) => (
+                    <tr 
+                      key={role.id} 
+                      className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-blue-600" />
-                          <span className="text-sm font-medium text-gray-900">{role.code}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+                            <Shield className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-gray-900">{role.code}</div>
+                            <div className="text-xs text-gray-500">Kullanıcı Yetkisi</div>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600">{role.description?.tr || role.description?.en || '-'}</div>
+                        <div className="text-sm text-gray-600">
+                          {role.description?.tr || role.description?.en || '-'}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          role.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      <td className="px-6 py-4 text-center">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
+                          role.active 
+                            ? 'bg-green-100 text-green-800 ring-1 ring-green-600/20' 
+                            : 'bg-red-100 text-red-800 ring-1 ring-red-600/20'
                         }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                            role.active ? 'bg-green-600' : 'bg-red-600'
+                          }`}></span>
                           {role.active ? 'Aktif' : 'Pasif'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {role.createdDate ? new Date(role.createdDate).toLocaleDateString('tr-TR') : '-'}
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <span className="text-xs text-gray-500">
+                          {role.createdDate ? new Date(role.createdDate).toLocaleDateString('tr-TR') : '-'}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
+                          <button
                             onClick={() => router.push(`/admin/user-roles/${role.code}`)}
-                            className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:bg-blue-100 transition-colors"
+                            title="Düzenle"
                           >
                             <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
+                          </button>
+                          <button
                             onClick={() => setDeleteDialog({ isOpen: true, code: role.code })}
-                            className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
+                            title="Sil"
                           >
                             <Trash2 className="w-4 h-4" />
-                          </Button>
+                          </button>
                         </div>
                       </td>
                     </tr>
