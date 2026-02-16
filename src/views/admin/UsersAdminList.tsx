@@ -49,14 +49,14 @@ export default function UsersAdminList() {
             onClick={() => router.push('/admin/user-groups')}
             className="flex items-center gap-2"
           >
-            Roller (Groups)
+            Roller
           </Button>
           <Button
             variant="outline"
             onClick={() => router.push('/admin/user-roles')}
             className="flex items-center gap-2"
           >
-            Yetkiler (Roles)
+            Yetkiler
           </Button>
           <Button
             onClick={() => router.push('/admin/users/new')}

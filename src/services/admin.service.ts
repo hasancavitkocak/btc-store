@@ -179,3 +179,12 @@ export const userRoleService = {
   save: (data: any) => apiClient.post('/v1/userroles', data),
   delete: (code: string) => apiClient.delete(`/v1/userroles/${code}`),
 };
+
+// Parameter servisleri
+export const parameterService = {
+  getAll: () => apiClient.get('/v1/parameters'),
+  getByCode: (code: string) => apiClient.get(`/v1/parameters/${code}`),
+  save: (data: any) => apiClient.post('/v1/parameters', data),
+  delete: (code: string) => apiClient.delete(`/v1/parameters/${code}`),
+};
+

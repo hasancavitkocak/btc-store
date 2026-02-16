@@ -256,7 +256,7 @@ export default function UserRoleForm({ id }: UserRoleFormProps) {
             <Card className="p-6 bg-blue-50 border-blue-200">
               <h3 className="font-semibold text-blue-900 mb-2">Bilgi</h3>
               <p className="text-sm text-blue-800">
-                Yetkiler (User Roles), sistemdeki belirli işlemleri yapma hakkını tanımlar. 
+                Yetkiler, sistemdeki belirli işlemleri yapma hakkını tanımlar. 
                 Bu yetkiler kullanıcılara veya rollere atanabilir.
               </p>
             </Card>

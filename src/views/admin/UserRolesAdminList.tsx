@@ -113,7 +113,7 @@ export default function UserRolesAdminList() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Yetkiler (User Roles)
+            Yetkiler
           </h1>
           <p className="text-gray-600">Toplam {totalElements} yetki</p>
         </div>

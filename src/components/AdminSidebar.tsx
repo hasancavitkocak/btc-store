@@ -66,14 +66,19 @@ const menuGroups: MenuGroup[] = [
         ]
       },
       { 
+        icon: Settings, 
+        labelKey: 'Parametreler', 
+        path: '/admin/parameters'
+      },
+      { 
         icon: Users, 
         labelKey: 'admin.users', 
         path: '/admin/users',
         // permission: 'manage_users' as const, // Geçici olarak kapalı
         subItems: [
           { labelKey: '👥 Kullanıcılar', path: '/admin/users' },
-          { labelKey: '🏢 Roller (User Groups)', path: '/admin/user-groups' },
-          { labelKey: '🔐 Yetkiler (User Roles)', path: '/admin/user-roles' }
+          { labelKey: '🏢 Roller', path: '/admin/user-groups' },
+          { labelKey: '🔐 Yetkiler', path: '/admin/user-roles' }
         ]
       }
     ]

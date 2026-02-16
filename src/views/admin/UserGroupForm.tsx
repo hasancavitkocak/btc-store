@@ -292,7 +292,7 @@ export default function UserGroupForm({ id }: UserGroupFormProps) {
             <Card className="p-6 bg-blue-50 border-blue-200">
               <h3 className="font-semibold text-blue-900 mb-2">Bilgi</h3>
               <p className="text-sm text-blue-800">
-                Roller (User Groups), kullanıcıları gruplandırarak toplu yetki ataması yapmanızı sağlar.
+                Roller, kullanıcıları gruplandırarak toplu yetki ataması yapmanızı sağlar.
               </p>
             </Card>
           </div>

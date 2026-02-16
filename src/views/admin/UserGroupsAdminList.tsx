@@ -112,7 +112,7 @@ export default function UserGroupsAdminList() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Roller (User Groups)
+            Roller
           </h1>
           <p className="text-gray-600">Toplam {totalElements} rol</p>
         </div>
