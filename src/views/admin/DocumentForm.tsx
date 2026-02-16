@@ -7,7 +7,8 @@ import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Toast from '../../components/Toast';
-import { productService } from '../../services/product.service';
+import SearchableAutocomplete from '../../components/SearchableAutocomplete';
+import { apiClient } from '@/lib/api';
 
 interface DocumentFormProps {
   documentId?: string;
@@ -24,9 +25,6 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [productSearchTerm, setProductSearchTerm] = useState('');
-  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
   
   const isEditing = !!documentId;
 
@@ -53,49 +51,19 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
   };
 
   useEffect(() => {
-    loadProducts();
     if (documentId) {
       loadDocument();
     }
   }, [documentId]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (isProductDropdownOpen && !target.closest('.product-dropdown-container')) {
-        setIsProductDropdownOpen(false);
-        setProductSearchTerm('');
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isProductDropdownOpen]);
-
-  const loadProducts = async () => {
-    try {
-      const response = await productService.getAll();
-      if (response.status === 'SUCCESS' && response.data) {
-        const productsData = (response.data as any).data || response.data;
-        const activeProducts = Array.isArray(productsData) 
-          ? productsData.filter((p: any) => p.active) 
-          : [];
-        setProducts(activeProducts);
-      }
-    } catch (error) {
-      console.error('Error loading products:', error);
-      setProducts([]);
-    }
-  };
-
   const loadDocument = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/v1/documents/${documentId}`);
-      const result = await response.json();
+      const response = await apiClient.get(`/v1/documents/${documentId}`);
       
-      if (result.status === 'SUCCESS' && result.data) {
-        const docData = (result.data as any).data || result.data;
+      if (response.status === 'SUCCESS' && response.data) {
+        const wrappedData = response.data as any;
+        const docData = wrappedData.data || wrappedData;
         
         setFormData({
           id: docData.id,
@@ -131,29 +99,28 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
       
       const formDataToSend = new FormData();
       
+      // DocumentData yapısı - Java backend'e uygun
       const documentData = {
-        id: formData.id,
-        code: formData.code,
+        ...(formData.id && { id: formData.id }),
+        ...(formData.code && { code: formData.code }),
         title: formData.title,
         description: formData.description,
         products: formData.products.map(p => ({ code: p.code })),
         active: formData.active
       };
       
+      // JSON olarak documentData ekle
       formDataToSend.append('documentData', new Blob([JSON.stringify(documentData)], { type: 'application/json' }));
       
+      // Media dosyalarını ekle
       mediaFiles.forEach((file) => {
         formDataToSend.append('mediaFiles', file);
       });
 
-      const response = await fetch('/api/v1/documents', {
-        method: 'POST',
-        body: formDataToSend
-      });
+      // apiClient.upload kullan (Authorization header otomatik eklenir)
+      const response = await apiClient.upload('/v1/documents', formDataToSend);
 
-      const result = await response.json();
-
-      if (result.status === 'SUCCESS') {
+      if (response.status === 'SUCCESS') {
         setToast({ 
           message: isEditing ? 'Doküman güncellendi!' : 'Doküman eklendi!', 
           type: 'success' 
@@ -162,7 +129,10 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
           router.push('/admin/documents');
         }, 1000);
       } else {
-        setToast({ message: 'Kayıt sırasında hata oluştu!', type: 'error' });
+        setToast({ 
+          message: response.errorMessage || 'Kayıt sırasında hata oluştu!', 
+          type: 'error' 
+        });
       }
     } catch (error) {
       console.error('Error saving document:', error);
@@ -188,31 +158,6 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
       medias: prev.medias.filter(m => m.code !== code)
     }));
   };
-
-  const addProduct = (product: Product) => {
-    if (!formData.products.find(p => p.code === product.code)) {
-      setFormData(prev => ({
-        ...prev,
-        products: [...prev.products, product]
-      }));
-    }
-    setIsProductDropdownOpen(false);
-    setProductSearchTerm('');
-  };
-
-  const removeProduct = (code: string) => {
-    setFormData(prev => ({
-      ...prev,
-      products: prev.products.filter(p => p.code !== code)
-    }));
-  };
-
-  const filteredProducts = products.filter(product =>
-    product.active &&
-    !formData.products.find(p => p.code === product.code) &&
-    (product.name.tr.toLowerCase().includes(productSearchTerm.toLowerCase()) ||
-     product.name.en.toLowerCase().includes(productSearchTerm.toLowerCase()))
-  );
 
   if (loading) {
     return (
@@ -493,57 +438,21 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">İlgili Ürünler</h2>
             
-            <div className="product-dropdown-container relative">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ürün Ekle
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={productSearchTerm}
-                  onChange={(e) => {
-                    setProductSearchTerm(e.target.value);
-                    setIsProductDropdownOpen(true);
-                  }}
-                  onFocus={() => setIsProductDropdownOpen(true)}
-                  placeholder="Ürün ara..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                
-                {isProductDropdownOpen && filteredProducts.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                    {filteredProducts.map(product => (
-                      <button
-                        key={product.code}
-                        onClick={() => addProduct(product)}
-                        className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors"
-                      >
-                        {product.name.tr || product.name.en}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Selected Products */}
-            {formData.products.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {formData.products.map(product => (
-                  <div key={product.code} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-gray-700 text-sm">{product.name.tr || product.name.en}</span>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => removeProduct(product.code)}
-                      className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <SearchableAutocomplete<Product>
+              itemType="product"
+              searchField="name"
+              locale="tr"
+              selectedItems={formData.products}
+              onItemsChange={(products) => setFormData({ ...formData, products })}
+              getItemKey={(product) => product.code}
+              getItemLabel={(product) => product.name.tr || product.name.en}
+              placeholder="Ürün ara..."
+              label="Ürün Ekle"
+              multiple={true}
+              additionalFilters={[
+                { name: 'active', value: true, searchCondition: 'EQUALS' }
+              ]}
+            />
           </Card>
 
           <Card className="p-6">

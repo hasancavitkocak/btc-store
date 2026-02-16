@@ -10,6 +10,7 @@ import Toast from '../../components/Toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { productService } from '../../services/product.service';
 import { searchService } from '../../services/search.service';
+import { apiClient } from '@/lib/api';
 
 interface Document {
   id: number;
@@ -81,16 +82,16 @@ export default function DocumentsAdminList() {
 
   const handleDelete = async (code: string) => {
     try {
-      const response = await fetch(`/api/v1/documents/${code}`, {
-        method: 'DELETE'
-      });
-      const result = await response.json();
+      const response = await apiClient.delete(`/v1/documents/${code}`);
 
-      if (result.status === 'SUCCESS') {
+      if (response.status === 'SUCCESS') {
         setToast({ message: 'Doküman başarıyla silindi!', type: 'success' });
         loadDocuments();
       } else {
-        setToast({ message: 'Silme işlemi başarısız!', type: 'error' });
+        setToast({ 
+          message: response.errorMessage || 'Silme işlemi başarısız!', 
+          type: 'error' 
+        });
       }
     } catch (error) {
       console.error('Error deleting document:', error);
