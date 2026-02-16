@@ -11,7 +11,7 @@ import Input from '../../components/Input';
 import Toast from '../../components/Toast';
 import ImageUpload from '../../components/ImageUpload';
 import ImageLightbox from '../../components/ImageLightbox';
-import { userService, userGroupService } from '../../services/admin.service';
+import { userService, userGroupService, languageService } from '../../services/admin.service';
 
 interface UserFormProps {
   userId?: string;
@@ -24,6 +24,11 @@ export default function UserFormNew({ userId }: UserFormProps) {
   const [userGroups, setUserGroups] = useState<any[]>([]);
   const [filteredUserGroups, setFilteredUserGroups] = useState<any[]>([]);
   const [groupSearchQuery, setGroupSearchQuery] = useState('');
+  const [languages, setLanguages] = useState<any[]>([]);
+  const [languageSearchQuery, setLanguageSearchQuery] = useState('');
+  const [filteredLanguages, setFilteredLanguages] = useState<any[]>([]);
+  const [selectedLanguageCode, setSelectedLanguageCode] = useState<string>('');
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [imageFiles, setImageFiles] = useState<string[]>([]);
   const [newPictureFile, setNewPictureFile] = useState<File | null>(null);
   const [shouldRemovePicture, setShouldRemovePicture] = useState(false);
@@ -50,6 +55,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
   useEffect(() => {
     loadUserGroups();
+    loadLanguages();
     if (userId) {
       loadUser();
     }
@@ -66,6 +72,20 @@ export default function UserFormNew({ userId }: UserFormProps) {
       }
     } catch (error) {
       console.error('Error loading user groups:', error);
+    }
+  };
+
+  const loadLanguages = async () => {
+    try {
+      const response = await languageService.getAll();
+      if (response.status === 'SUCCESS' && response.data) {
+        const languagesData = (response.data as any).data || response.data;
+        const langs = Array.isArray(languagesData) ? languagesData : [];
+        setLanguages(langs);
+        setFilteredLanguages(langs);
+      }
+    } catch (error) {
+      console.error('Error loading languages:', error);
     }
   };
 
@@ -90,6 +110,11 @@ export default function UserFormNew({ userId }: UserFormProps) {
           active: userData.active ?? true,
           userGroups: userData.userGroups?.map((ug: any) => ug.code) || []
         });
+        
+        // Dil bilgisini set et
+        if (userData.language?.code) {
+          setSelectedLanguageCode(userData.language.code);
+        }
         
         // Mevcut profil resmini göster
         if (userData.picture?.absolutePath) {
@@ -133,7 +158,8 @@ export default function UserFormNew({ userId }: UserFormProps) {
         phoneNumber: formData.phoneNumber,
         active: formData.active,
         ...(formData.definedPassword && { definedPassword: formData.definedPassword }),
-        userGroups: formData.userGroups.map(code => ({ code }))
+        userGroups: formData.userGroups.map(code => ({ code })),
+        ...(selectedLanguageCode && { language: { code: selectedLanguageCode } })
       };
 
       const response = await userService.save(userData, newPictureFile || undefined, shouldRemovePicture);
@@ -191,6 +217,21 @@ export default function UserFormNew({ userId }: UserFormProps) {
     
     setFilteredUserGroups(filtered);
   };
+
+  // Close language dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (isLanguageDropdownOpen && !target.closest('.language-dropdown-container')) {
+        setIsLanguageDropdownOpen(false);
+        setLanguageSearchQuery('');
+        setFilteredLanguages(languages);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isLanguageDropdownOpen, languages]);
 
   const handleImageChange = (images: string[]) => {
     setImageFiles(images);
@@ -302,6 +343,106 @@ export default function UserFormNew({ userId }: UserFormProps) {
                     value={formData.phoneNumber}
                     onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                   />
+                </div>
+
+                <div className="relative language-dropdown-container">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Dil
+                  </label>
+                  
+                  {/* Dropdown Trigger */}
+                  <button
+                    type="button"
+                    onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                    className="w-full px-4 py-2 text-left border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white flex items-center justify-between hover:border-gray-400 transition-colors"
+                  >
+                    <span className={selectedLanguageCode ? 'text-gray-900' : 'text-gray-500'}>
+                      {selectedLanguageCode 
+                        ? languages.find(l => l.code === selectedLanguageCode)?.name?.tr || 
+                          languages.find(l => l.code === selectedLanguageCode)?.name?.en || 
+                          selectedLanguageCode
+                        : 'Dil seçin...'}
+                    </span>
+                    <Search className="w-5 h-5 text-gray-400" />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isLanguageDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                      {/* Search Input */}
+                      <div className="p-3 border-b border-gray-200 bg-gray-50">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="Dil ara..."
+                            value={languageSearchQuery}
+                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
+                            onChange={(e) => {
+                              const query = e.target.value;
+                              setLanguageSearchQuery(query);
+                              
+                              if (!query) {
+                                setFilteredLanguages(languages);
+                                return;
+                              }
+                              
+                              const filtered = languages.filter(lang => {
+                                const searchLower = query.toLowerCase();
+                                const nameTr = lang.name?.tr?.toLowerCase() || '';
+                                const nameEn = lang.name?.en?.toLowerCase() || '';
+                                const code = lang.code?.toLowerCase() || '';
+                                
+                                return nameTr.includes(searchLower) || 
+                                       nameEn.includes(searchLower) || 
+                                       code.includes(searchLower);
+                              });
+                              
+                              setFilteredLanguages(filtered);
+                            }}
+                            autoFocus
+                          />
+                        </div>
+                      </div>
+
+                      {/* Language List */}
+                      <div className="max-h-64 overflow-y-auto">
+                        {filteredLanguages.length === 0 ? (
+                          <div className="px-4 py-8 text-center text-gray-500 text-sm">
+                            {languageSearchQuery ? 'Sonuç bulunamadı' : 'Dil bulunamadı'}
+                          </div>
+                        ) : (
+                          filteredLanguages.map(lang => (
+                            <button
+                              key={lang.code}
+                              type="button"
+                              onClick={() => {
+                                setSelectedLanguageCode(lang.code);
+                                setIsLanguageDropdownOpen(false);
+                                setLanguageSearchQuery('');
+                                setFilteredLanguages(languages);
+                              }}
+                              className={`w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors flex items-center gap-3 border-b border-gray-100 last:border-b-0 ${
+                                selectedLanguageCode === lang.code ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
+                              }`}
+                            >
+                              <span className="text-sm flex-1">
+                                {lang.name?.tr || lang.name?.en || lang.code}
+                                {lang.name?.en && lang.name?.tr !== lang.name?.en && (
+                                  <span className="ml-2 text-xs text-gray-500">
+                                    ({lang.name.en})
+                                  </span>
+                                )}
+                              </span>
+                              {selectedLanguageCode === lang.code && (
+                                <span className="text-blue-600 font-bold">✓</span>
+                              )}
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div>

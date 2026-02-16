@@ -206,3 +206,8 @@ export const userService = {
   delete: (code: string) => apiClient.delete(`/v1/users/${code}`),
 };
 
+// Language servisleri
+export const languageService = {
+  getAll: () => apiClient.get('/v1/languages'),
+};
+
