@@ -167,4 +167,15 @@ export const menuLinkItemService = {
 // User Group servisleri
 export const userGroupService = {
   getAll: () => apiClient.get('/v1/usergroups'),
+  getByCode: (code: string) => apiClient.get(`/v1/usergroups/${code}`),
+  save: (data: any) => apiClient.post('/v1/usergroups', data),
+  delete: (code: string) => apiClient.delete(`/v1/usergroups/${code}`),
+};
+
+// User Role servisleri
+export const userRoleService = {
+  getAll: () => apiClient.get('/v1/userroles'),
+  getByCode: (code: string) => apiClient.get(`/v1/userroles/${code}`),
+  save: (data: any) => apiClient.post('/v1/userroles', data),
+  delete: (code: string) => apiClient.delete(`/v1/userroles/${code}`),
 };

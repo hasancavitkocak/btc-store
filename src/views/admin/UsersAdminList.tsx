@@ -46,10 +46,17 @@ export default function UsersAdminList() {
         <div className="flex gap-3">
           <Button
             variant="outline"
-            onClick={() => router.push('/admin/users/roles')}
+            onClick={() => router.push('/admin/user-groups')}
             className="flex items-center gap-2"
           >
-            Rolleri Yönet
+            Roller (Groups)
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => router.push('/admin/user-roles')}
+            className="flex items-center gap-2"
+          >
+            Yetkiler (Roles)
           </Button>
           <Button
             onClick={() => router.push('/admin/users/new')}

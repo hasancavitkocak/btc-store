@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, Shield, LogOut, ChevronDown, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, LogOut, ChevronDown, ChevronRight } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useState, useEffect } from 'react';
 
@@ -65,7 +65,17 @@ const menuGroups: MenuGroup[] = [
           { labelKey: '🌐 Public Menüler', path: '/admin/menus/public' }
         ]
       },
-      { icon: Shield, labelKey: 'admin.users', path: '/admin/users', permission: 'manage_users' as const }
+      { 
+        icon: Users, 
+        labelKey: 'admin.users', 
+        path: '/admin/users',
+        // permission: 'manage_users' as const, // Geçici olarak kapalı
+        subItems: [
+          { labelKey: '👥 Kullanıcılar', path: '/admin/users' },
+          { labelKey: '🏢 Roller (User Groups)', path: '/admin/user-groups' },
+          { labelKey: '🔐 Yetkiler (User Roles)', path: '/admin/user-roles' }
+        ]
+      }
     ]
   }
 ];
@@ -75,7 +85,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser, hasPermission, logout } = useAuthStore();
-  const [openGroups, setOpenGroups] = useState<number[]>([]);
+  const [openGroups, setOpenGroups] = useState<number[]>([0, 1, 2, 3]); // Tüm grupları başlangıçta aç
   const [openSubMenus, setOpenSubMenus] = useState<string[]>([]);
 
   // Aktif grubu otomatik aç
