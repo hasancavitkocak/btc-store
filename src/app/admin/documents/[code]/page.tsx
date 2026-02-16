@@ -1,11 +1,11 @@
+'use client';
+
 import DocumentForm from '@/views/admin/DocumentForm';
+import { useParams } from 'next/navigation';
 
-interface PageProps {
-  params: {
-    code: string;
-  };
-}
-
-export default function EditDocumentPage({ params }: PageProps) {
-  return <DocumentForm documentId={params.code} />;
+export default function EditDocumentPage() {
+  const params = useParams();
+  const documentId = params.code as string;
+  
+  return <DocumentForm documentId={documentId} />;
 }

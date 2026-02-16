@@ -26,7 +26,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
   const [loading, setLoading] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   
-  const isEditing = !!documentId;
+  const isEditing = documentId !== 'new' && !!documentId;
 
   const [formData, setFormData] = useState({
     id: undefined as number | undefined,
@@ -50,20 +50,17 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
     setExpandedFields(newExpanded);
   };
 
-  useEffect(() => {
-    if (documentId) {
-      loadDocument();
-    }
-  }, [documentId]);
-
   const loadDocument = async () => {
     try {
       setLoading(true);
+      console.log('Loading document with code:', documentId);
       const response = await apiClient.get(`/v1/documents/${documentId}`);
+      console.log('Document response:', response);
       
       if (response.status === 'SUCCESS' && response.data) {
         const wrappedData = response.data as any;
         const docData = wrappedData.data || wrappedData;
+        console.log('Document data:', docData);
         
         setFormData({
           id: docData.id,
@@ -74,6 +71,9 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
           medias: docData.medias || [],
           active: docData.active ?? true
         });
+      } else {
+        console.error('Failed to load document:', response);
+        setToast({ message: 'Doküman bulunamadı!', type: 'error' });
       }
     } catch (error) {
       console.error('Error loading document:', error);
@@ -82,6 +82,12 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (documentId && documentId !== 'new') {
+      loadDocument();
+    }
+  }, [documentId]);
 
   const handleSave = async () => {
     if (!formData.title.tr && !formData.title.en) {
@@ -106,6 +112,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
         title: formData.title,
         description: formData.description,
         products: formData.products.map(p => ({ code: p.code })),
+        medias: formData.medias.map(m => ({ code: m.code })), // Mevcut dosyaları gönder
         active: formData.active
       };
       

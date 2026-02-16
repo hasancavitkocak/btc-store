@@ -35,16 +35,24 @@ export default function DocumentsAdminList() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
-  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; code: string | null }>({
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; code: string | null; title: string }>({
     isOpen: false,
-    code: null
+    code: null,
+    title: ''
   });
 
   const canManage = hasPermission('manage_documents');
 
   useEffect(() => {
-    loadDocuments();
+    setPage(1); // Filtre değiştiğinde sayfa 1'e dön
   }, [selectedProducts]);
+
+  useEffect(() => {
+    loadDocuments();
+  }, [selectedProducts, page]);
 
   const loadDocuments = async () => {
     try {
@@ -68,14 +76,25 @@ export default function DocumentsAdminList() {
       const response = await searchService.search<Document>(
         'document',
         { filters },
-        1
+        page
       );
       
       if (response.status === 'SUCCESS' && response.data) {
         const wrappedData = response.data as any;
         const pageData = wrappedData.data || wrappedData;
-        const docsData = pageData.content || pageData;
-        setDocuments(Array.isArray(docsData) ? docsData : []);
+        
+        console.log('Page data:', pageData);
+        
+        if (pageData && pageData.content) {
+          setDocuments(pageData.content || []);
+          setTotalPages(pageData.totalPages || 0);
+          setTotalElements(pageData.totalElements || 0);
+          console.log('Total pages:', pageData.totalPages, 'Total elements:', pageData.totalElements);
+        } else {
+          setDocuments([]);
+          setTotalPages(0);
+          setTotalElements(0);
+        }
       }
     } catch (error) {
       console.error('Error loading documents:', error);
@@ -102,7 +121,7 @@ export default function DocumentsAdminList() {
       console.error('Error deleting document:', error);
       setToast({ message: 'Silme işlemi sırasında hata oluştu!', type: 'error' });
     } finally {
-      setDeleteDialog({ isOpen: false, code: null });
+      setDeleteDialog({ isOpen: false, code: null, title: '' });
     }
   };
 
@@ -163,8 +182,8 @@ export default function DocumentsAdminList() {
       {/* Doküman Listesi */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Tüm Dokümanlar
-          <span className="text-sm font-normal text-gray-500 ml-3">({documents.length} doküman)</span>
+          {selectedProducts.length > 0 ? 'Seçili Filtredeki Dokümanlar' : 'Tüm Dokümanlar'}
+          <span className="text-sm font-normal text-gray-500 ml-3">({totalElements} doküman)</span>
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -172,19 +191,7 @@ export default function DocumentsAdminList() {
             <Card key={doc.code} className="p-6 hover:shadow-lg transition-shadow flex flex-col">
               {/* Dosya Önizleme */}
               <div className="flex items-center justify-center h-32 mb-4 bg-gray-50 rounded">
-                {doc.medias && doc.medias.length > 0 ? (
-                  <img
-                    src={doc.medias[0].absolutePath}
-                    alt={doc.title.tr || doc.title.en}
-                    className="max-w-full max-h-full object-cover rounded"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.parentElement!.innerHTML = '<div class="flex items-center justify-center w-full h-full"><svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div>';
-                    }}
-                  />
-                ) : (
-                  getFileIcon()
-                )}
+                <FileText className="w-16 h-16 text-blue-600" />
               </div>
               
               {/* Başlık */}
@@ -235,7 +242,11 @@ export default function DocumentsAdminList() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setDeleteDialog({ isOpen: true, code: doc.code })}
+                  onClick={() => setDeleteDialog({ 
+                    isOpen: true, 
+                    code: doc.code,
+                    title: doc.title.tr || doc.title.en || 'Başlıksız'
+                  })}
                   className="flex-1 flex items-center justify-center border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
                   title="Sil"
                 >
@@ -245,6 +256,39 @@ export default function DocumentsAdminList() {
             </Card>
           ))}
         </div>
+        
+        {/* Pagination */}
+        {totalPages > 0 && (
+          <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
+            <div className="text-sm text-gray-600">
+              Toplam {totalElements} doküman
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1 || loading}
+              >
+                Önceki
+              </Button>
+              
+              <span className="text-sm text-gray-600 px-4">
+                Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+              </span>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages || loading}
+              >
+                Sonraki
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {documents.length === 0 && (
@@ -273,9 +317,9 @@ export default function DocumentsAdminList() {
       <ConfirmDialog
         isOpen={deleteDialog.isOpen}
         title="Dokümanı Sil"
-        message="Bu dokümanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+        message={`"${deleteDialog.title}" başlıklı dokümanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
         onConfirm={() => deleteDialog.code && handleDelete(deleteDialog.code)}
-        onClose={() => setDeleteDialog({ isOpen: false, code: null })}
+        onClose={() => setDeleteDialog({ isOpen: false, code: null, title: '' })}
       />
     </div>
   );
