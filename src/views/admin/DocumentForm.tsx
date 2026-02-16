@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, X, ArrowLeft, Upload, Trash2, FileText } from 'lucide-react';
+import { Save, X, ArrowLeft, Upload, Trash2, FileText, Globe } from 'lucide-react';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -207,7 +207,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
                     onClick={() => toggleField('title')}
                     className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
                   >
-                    <span>Diğer Diller</span>
+                    <span>{expandedFields.has('title') ? '🌐' : '🌍'} Diğer Diller</span>
                     <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                     <span className="text-gray-400">{expandedFields.has('title') ? '▼' : '▶'}</span>
                   </button>
@@ -259,7 +259,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
                     onClick={() => toggleField('description')}
                     className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
                   >
-                    <span>Diğer Diller</span>
+                    <span>{expandedFields.has('description') ? '🌐' : '🌍'} Diğer Diller</span>
                     <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                     <span className="text-gray-400">{expandedFields.has('description') ? '▼' : '▶'}</span>
                   </button>

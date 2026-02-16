@@ -375,7 +375,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
                     <label className="text-sm font-medium text-gray-700">Ürün Adı</label>
                     <button type="button" onClick={() => toggleField('name')} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                      <span>Diğer Diller</span>
+                      <span>{expandedFields.has('name') ? '🌐' : '🌍'} Diğer Diller</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('name') ? '▼' : '▶'}</span>
                     </button>
@@ -399,7 +399,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
                     <label className="text-sm font-medium text-gray-700">Kısa Açıklama</label>
                     <button type="button" onClick={() => toggleField('shortDescription')} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                      <span>Diğer Diller</span>
+                      <span>{expandedFields.has('shortDescription') ? '🌐' : '🌍'} Diğer Diller</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('shortDescription') ? '▼' : '▶'}</span>
                     </button>

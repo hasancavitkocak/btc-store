@@ -120,88 +120,105 @@ export default function Sectors() {
           </Card>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-4">
-              {sectors.map((sector) => (
-                <Card key={sector.code} className="p-6 hover:shadow-lg transition-shadow">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{sector.name.tr || sector.name.en}</h3>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className={`text-xs px-2 py-1 rounded ${sector.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {sector.active ? 'Aktif' : 'Pasif'}
+            <Card>
+              {sectors.length === 0 ? (
+                <div className="p-12 text-center">
+                  <p className="text-gray-500 mb-4">Henüz sektör eklenmemiş</p>
+                  <Button onClick={() => router.push('/admin/sectors/new')} className="bg-blue-600 hover:bg-blue-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    İlk Sektörü Ekle
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sektör Adı</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {sectors.map((sector) => (
+                          <tr key={sector.code} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-medium text-gray-900">{sector.name.tr || sector.name.en || '-'}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                sector.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              }`}>
+                                {sector.active ? 'Aktif' : 'Pasif'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                              <div className="flex items-center justify-end gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => router.push(`/admin/sectors/${sector.code}`)}
+                                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setDeleteDialog({ 
+                                    isOpen: true, 
+                                    code: sector.code, 
+                                    name: sector.name.tr || sector.name.en 
+                                  })}
+                                  className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {totalElements > 0 && (
+                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                      <div className="text-sm text-gray-600">
+                        Toplam <span className="font-medium">{totalElements}</span> kayıt
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setPage(p => Math.max(1, p - 1))}
+                          disabled={page === 1 || loading}
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                          Önceki
+                        </Button>
+                        
+                        <span className="text-sm text-gray-600 px-4">
+                          Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                         </span>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                          disabled={page === totalPages || loading}
+                        >
+                          Sonraki
+                          <ChevronRight className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => router.push(`/admin/sectors/${sector.code}`)}
-                        className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setDeleteDialog({ 
-                          isOpen: true, 
-                          code: sector.code, 
-                          name: sector.name.tr || sector.name.en 
-                        })}
-                        className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-
-            {sectors.length === 0 && (
-              <Card className="p-12 text-center">
-                <p className="text-gray-500 mb-4">Henüz sektör eklenmemiş</p>
-                <Button onClick={() => router.push('/admin/sectors/new')} className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  İlk Sektörü Ekle
-                </Button>
-              </Card>
-            )}
-
-            {totalElements > 0 && (
-              <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
-                <div className="text-sm text-gray-600">
-                  Toplam <span className="font-medium">{totalElements}</span> kayıt
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    disabled={page === 1 || loading}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Önceki
-                  </Button>
-                  
-                  <span className="text-sm text-gray-600 px-4">
-                    Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
-                  </span>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages || loading}
-                  >
-                    Sonraki
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
+                  )}
+                </>
+              )}
+            </Card>
           </>
         )}
 
