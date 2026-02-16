@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { banners as defaultBanners, Banner } from '../mock/banners';
 import { categories as defaultCategories, Category } from '../mock/categories';
 import { products as defaultProducts, Product } from '../mock/products';
@@ -12,6 +11,7 @@ import { documents as defaultDocuments, Document } from '../mock/documents';
 import { CallRequest, ProductContactForm } from '../mock/forms';
 import { sendEmail, createProductContactEmailBody, createCallRequestEmailBody } from '../lib/email';
 import { useAuthStore } from './useAuthStore';
+import { publicService } from '../services/public.service';
 
 interface StoreState {
   header: HeaderData;
@@ -25,6 +25,14 @@ interface StoreState {
   kvkk: KVKKData;
   callRequests: CallRequest[];
   productContactForms: ProductContactForm[];
+  isLoadingBanners: boolean;
+  isLoadingCategories: boolean;
+  isLoadingPartners: boolean;
+  isLoadingReferences: boolean;
+  bannersFetched: boolean;
+  categoriesFetched: boolean;
+  partnersFetched: boolean;
+  referencesFetched: boolean;
 
   updateHeader: (header: HeaderData) => void;
   addBanner: (banner: Banner) => void;
@@ -52,24 +60,180 @@ interface StoreState {
   addCallRequest: (request: CallRequest) => void;
   addProductContactForm: (form: ProductContactForm) => void;
   resetToDefaults: () => void;
+  fetchActiveBanners: () => Promise<void>;
+  fetchActiveCategories: () => Promise<void>;
+  fetchActivePartners: () => Promise<void>;
+  fetchActiveReferences: () => Promise<void>;
 }
 
-export const useStore = create<StoreState>()(
-  persist(
-    (set) => ({
+export const useStore = create<StoreState>()((set, get) => ({
       header: defaultHeaderData,
-      banners: defaultBanners,
-      categories: defaultCategories,
+      banners: [], // Mock veriler yerine boş başlat
+      categories: [], // Mock veriler yerine boş başlat
       products: defaultProducts,
-      references: defaultReferences,
-      partners: defaultPartners,
+      references: [], // Mock veriler yerine boş başlat
+      partners: [], // Mock veriler yerine boş başlat
       stories: defaultStories,
       documents: defaultDocuments,
       kvkk: defaultKvkkData,
       callRequests: [],
       productContactForms: [],
+      isLoadingBanners: false,
+      isLoadingCategories: false,
+      isLoadingPartners: false,
+      isLoadingReferences: false,
+      bannersFetched: false,
+      categoriesFetched: false,
+      partnersFetched: false,
+      referencesFetched: false,
 
       updateHeader: (header) => set({ header }),
+
+      fetchActiveBanners: async () => {
+        // Eğer zaten fetch edildiyse veya loading ise tekrar çekme
+        const state = get();
+        if (state.bannersFetched || state.isLoadingBanners) {
+          return;
+        }
+
+        set({ isLoadingBanners: true });
+        try {
+          const response = await publicService.getActiveBanners();
+          
+          if (response.status === 'SUCCESS' && response.data) {
+            // Backend response'u kontrol et - data içinde data olabilir
+            const bannerData = Array.isArray(response.data) 
+              ? response.data 
+              : (response.data.data || []);
+            
+            // Backend'den gelen verileri frontend formatına çevir
+            const mappedBanners: Banner[] = bannerData.map((banner: any, index: number) => ({
+              id: banner.code,
+              // title, subtitle, buttonText obje olarak geliyor (çoklu dil için)
+              titleKey: banner.title?.tr || banner.title?.en || banner.name || '',
+              subtitleKey: banner.subtitle?.tr || banner.subtitle?.en || banner.description || '',
+              buttonTextKey: banner.buttonText?.tr || banner.buttonText?.en || '',
+              buttonLink: banner.buttonLink || '',
+              // media objesi içinde absolutePath var
+              image: banner.media?.absolutePath || '/images/placeholder.jpg',
+              active: banner.active,
+              order: banner.order || index
+            }));
+            set({ banners: mappedBanners, bannersFetched: true });
+          }
+        } catch (error) {
+          console.error('Failed to fetch banners:', error);
+        } finally {
+          set({ isLoadingBanners: false });
+        }
+      },
+
+      fetchActiveCategories: async () => {
+        // Eğer zaten fetch edildiyse veya loading ise tekrar çekme
+        const state = get();
+        if (state.categoriesFetched || state.isLoadingCategories) {
+          return;
+        }
+
+        set({ isLoadingCategories: true });
+        try {
+          const response = await publicService.getActiveCategories();
+          
+          if (response.status === 'SUCCESS' && response.data) {
+            // Backend response'u kontrol et - data içinde data olabilir
+            const categoryData = Array.isArray(response.data) 
+              ? response.data 
+              : (response.data.data || []);
+            
+            // Backend'den gelen verileri frontend formatına çevir
+            const mappedCategories: Category[] = categoryData.map((category: any, index: number) => ({
+              id: category.code,
+              // name ve description obje olarak geliyor (çoklu dil için)
+              nameKey: category.name?.tr || category.name?.en || category.name || '',
+              descriptionKey: category.description?.tr || category.description?.en || category.description || '',
+              // media objesi içinde absolutePath var
+              image: category.media?.absolutePath || '/images/placeholder.jpg',
+              showOnHome: true,
+              active: category.active,
+              order: category.order || index,
+              bgColor: '#F9FAFB',
+              buttonBgColor: '#0EA5E9',
+              buttonTextColor: '#FFFFFF',
+              buttonBorderColor: '#0EA5E9'
+            }));
+            set({ categories: mappedCategories, categoriesFetched: true });
+          }
+        } catch (error) {
+          console.error('Failed to fetch categories:', error);
+        } finally {
+          set({ isLoadingCategories: false });
+        }
+      },
+
+      fetchActivePartners: async () => {
+        const state = get();
+        if (state.partnersFetched || state.isLoadingPartners) {
+          return;
+        }
+
+        set({ isLoadingPartners: true });
+        try {
+          // Tüm aktif partner'ları çek (home page değil)
+          const response = await publicService.getActivePartners();
+          
+          if (response.status === 'SUCCESS' && response.data) {
+            const partnerData = Array.isArray(response.data) 
+              ? response.data 
+              : (response.data.data || []);
+            
+            const mappedPartners: Partner[] = partnerData.map((partner: any, index: number) => ({
+              id: partner.code,
+              name: partner.name?.tr || partner.name?.en || partner.name || '',
+              logo: partner.media?.absolutePath || '/images/placeholder.jpg',
+              active: partner.active,
+              order: partner.order || index
+            }));
+            set({ partners: mappedPartners, partnersFetched: true });
+          }
+        } catch (error) {
+          console.error('Failed to fetch partners:', error);
+        } finally {
+          set({ isLoadingPartners: false });
+        }
+      },
+
+      fetchActiveReferences: async () => {
+        const state = get();
+        if (state.referencesFetched || state.isLoadingReferences) {
+          return;
+        }
+
+        set({ isLoadingReferences: true });
+        try {
+          // Tüm aktif reference'ları çek (home page değil)
+          const response = await publicService.getActiveReferences();
+          
+          if (response.status === 'SUCCESS' && response.data) {
+            const referenceData = Array.isArray(response.data) 
+              ? response.data 
+              : (response.data.data || []);
+            
+            const mappedReferences: Reference[] = referenceData.map((reference: any, index: number) => ({
+              id: reference.code,
+              name: reference.name?.tr || reference.name?.en || reference.name || '',
+              logo: reference.media?.absolutePath || '/images/placeholder.jpg',
+              active: reference.active,
+              showOnHome: reference.showOnHome !== false,
+              order: reference.order || index
+            }));
+            set({ references: mappedReferences, referencesFetched: true });
+          }
+        } catch (error) {
+          console.error('Failed to fetch references:', error);
+        } finally {
+          set({ isLoadingReferences: false });
+        }
+      },
 
       addBanner: (banner) =>
         set((state) => ({ banners: [...state.banners, banner] })),
@@ -203,9 +367,4 @@ export const useStore = create<StoreState>()(
           callRequests: [],
           productContactForms: []
         })
-    }),
-    {
-      name: 'app-store'
-    }
-  )
-);
+    }));

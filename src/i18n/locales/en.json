@@ -312,5 +312,14 @@
       "noSearchResults": "No search results found",
       "noLanguagesFound": "No languages found"
     }
+  },
+  "partners": {
+    "title": "Our Partners",
+    "subtitle": "We work with leading companies in the industry"
+  },
+  "common": {
+    "learnMore": "Learn More",
+    "seeMore": "See More",
+    "viewAll": "View All"
   }
 }

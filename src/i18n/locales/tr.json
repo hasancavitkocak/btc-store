@@ -312,5 +312,14 @@
       "noSearchResults": "Arama sonucu bulunamadı",
       "noLanguagesFound": "Dil bulunamadı"
     }
+  },
+  "partners": {
+    "title": "Partnerlerimiz",
+    "subtitle": "Sektörün önde gelen firmaları ile çalışıyoruz"
+  },
+  "common": {
+    "learnMore": "Daha Fazla Bilgi",
+    "seeMore": "Daha Fazla Göster",
+    "viewAll": "Tümünü Gör"
   }
 }
