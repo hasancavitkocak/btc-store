@@ -7,7 +7,25 @@ import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen,
 import { useAuthStore } from '@/store/useAuthStore';
 import { useState, useEffect } from 'react';
 
-const menuGroups = [
+interface SubMenuItem {
+  labelKey: string;
+  path: string;
+}
+
+interface MenuItem {
+  icon: any;
+  labelKey: string;
+  path: string;
+  permission?: 'manage_users';
+  subItems?: SubMenuItem[];
+}
+
+interface MenuGroup {
+  title: string;
+  items: MenuItem[];
+}
+
+const menuGroups: MenuGroup[] = [
   {
     title: '',
     items: [
@@ -38,6 +56,15 @@ const menuGroups = [
   {
     title: 'Sistem',
     items: [
+      { 
+        icon: Settings, 
+        labelKey: 'admin.menus', 
+        path: '/admin/menus/admin',
+        subItems: [
+          { labelKey: '⚙️ Admin Menüler', path: '/admin/menus/admin' },
+          { labelKey: '🌐 Public Menüler', path: '/admin/menus/public' }
+        ]
+      },
       { icon: Shield, labelKey: 'admin.users', path: '/admin/users', permission: 'manage_users' as const }
     ]
   }
@@ -49,16 +76,37 @@ export default function AdminSidebar() {
   const router = useRouter();
   const { currentUser, hasPermission, logout } = useAuthStore();
   const [openGroups, setOpenGroups] = useState<number[]>([]);
+  const [openSubMenus, setOpenSubMenus] = useState<string[]>([]);
 
   // Aktif grubu otomatik aç
   useEffect(() => {
     menuGroups.forEach((group, index) => {
-      const hasActiveItem = group.items.some(item => 
-        pathname === item.path || (item.path !== '/admin' && pathname?.startsWith(item.path + '/'))
-      );
+      const hasActiveItem = group.items.some(item => {
+        // Ana item kontrolü
+        const isMainActive = pathname === item.path || (item.path !== '/admin' && pathname?.startsWith(item.path + '/'));
+        // Alt item kontrolü
+        const hasActiveSubItem = item.subItems?.some((subItem: SubMenuItem) => 
+          pathname === subItem.path || pathname?.startsWith(subItem.path + '/')
+        );
+        return isMainActive || hasActiveSubItem;
+      });
       if (hasActiveItem && !openGroups.includes(index)) {
         setOpenGroups(prev => [...prev, index]);
       }
+    });
+
+    // Alt menüleri otomatik aç
+    menuGroups.forEach(group => {
+      group.items.forEach(item => {
+        if (item.subItems) {
+          const hasActiveSubItem = item.subItems.some((subItem: SubMenuItem) => 
+            pathname === subItem.path || pathname?.startsWith(subItem.path + '/')
+          );
+          if (hasActiveSubItem && !openSubMenus.includes(item.path)) {
+            setOpenSubMenus(prev => [...prev, item.path]);
+          }
+        }
+      });
     });
   }, [pathname]);
 
@@ -67,6 +115,14 @@ export default function AdminSidebar() {
       prev.includes(index) 
         ? prev.filter(i => i !== index)
         : [...prev, index]
+    );
+  };
+
+  const toggleSubMenu = (path: string) => {
+    setOpenSubMenus(prev => 
+      prev.includes(path) 
+        ? prev.filter(p => p !== path)
+        : [...prev, path]
     );
   };
 
@@ -110,28 +166,79 @@ export default function AdminSidebar() {
                 <div className="space-y-1 mt-1">
                   {group.items.map((item) => {
                     // Check permission if required
-                    if ('permission' in item && item.permission && !hasPermission(item.permission)) {
+                    if (item.permission && !hasPermission(item.permission)) {
                       return null;
                     }
 
                     const Icon = item.icon;
-                    // Daha iyi aktif kontrol - tam eşleşme veya alt sayfa kontrolü
+                    const hasSubItems = item.subItems && item.subItems.length > 0;
+                    
+                    // Ana item veya alt itemlerden biri aktif mi?
                     const isActive = pathname === item.path || 
                                     (item.path !== '/admin' && pathname?.startsWith(item.path + '/'));
+                    const hasActiveSubItem = hasSubItems && item.subItems!.some((subItem: SubMenuItem) => 
+                      pathname === subItem.path || pathname?.startsWith(subItem.path + '/')
+                    );
+                    const isSubMenuOpen = openSubMenus.includes(item.path);
 
                     return (
-                      <Link
-                        key={item.path}
-                        href={item.path}
-                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors ${
-                          isActive
-                            ? 'bg-blue-900 text-white shadow-lg'
-                            : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                        }`}
-                      >
-                        <Icon className="w-4 h-4" />
-                        <span className="text-sm">{item.labelKey === 'Partnerler' ? item.labelKey : t(item.labelKey)}</span>
-                      </Link>
+                      <div key={item.path}>
+                        {hasSubItems ? (
+                          <>
+                            <button
+                              onClick={() => toggleSubMenu(item.path)}
+                              className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg transition-colors ${
+                                isActive || hasActiveSubItem
+                                  ? 'bg-blue-900 text-white shadow-lg'
+                                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <Icon className="w-4 h-4" />
+                                <span className="text-sm">{item.labelKey === 'Partnerler' ? item.labelKey : t(item.labelKey)}</span>
+                              </div>
+                              {isSubMenuOpen ? (
+                                <ChevronDown className="w-4 h-4" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4" />
+                              )}
+                            </button>
+                            
+                            {isSubMenuOpen && (
+                              <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-700 pl-2">
+                                {item.subItems!.map((subItem: SubMenuItem) => {
+                                  const isSubActive = pathname === subItem.path || pathname?.startsWith(subItem.path + '/');
+                                  return (
+                                    <Link
+                                      key={subItem.path}
+                                      href={subItem.path}
+                                      className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
+                                        isSubActive
+                                          ? 'bg-blue-800 text-white'
+                                          : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                                      }`}
+                                    >
+                                      {subItem.labelKey}
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <Link
+                            href={item.path}
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors ${
+                              isActive
+                                ? 'bg-blue-900 text-white shadow-lg'
+                                : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                            }`}
+                          >
+                            <Icon className="w-4 h-4" />
+                            <span className="text-sm">{item.labelKey === 'Partnerler' ? item.labelKey : t(item.labelKey)}</span>
+                          </Link>
+                        )}
+                      </div>
                     );
                   })}
                 </div>

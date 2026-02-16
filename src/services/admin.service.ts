@@ -153,3 +153,18 @@ export const sectorService = {
   },
   delete: (code: string) => apiClient.delete(`/v1/sectors/${code}`),
 };
+
+// Menu servisleri
+export const menuLinkItemService = {
+  getAll: () => apiClient.get('/v1/menu-link-items'),
+  getRootMenus: () => apiClient.get('/v1/menu-link-items/root'),
+  getByType: (menuType: string) => apiClient.get(`/v1/menu-link-items/by-type/${menuType}`),
+  getByCode: (code: string) => apiClient.get(`/v1/menu-link-items/${code}`),
+  save: (data: any) => apiClient.post('/v1/menu-link-items', data),
+  delete: (code: string) => apiClient.delete(`/v1/menu-link-items/${code}`),
+};
+
+// User Group servisleri
+export const userGroupService = {
+  getAll: () => apiClient.get('/v1/usergroups'),
+};
