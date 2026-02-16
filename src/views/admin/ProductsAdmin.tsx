@@ -19,7 +19,7 @@ interface Product {
   shortDescription: { tr: string; en: string };
   categories?: Array<{ code: string; name: { tr: string; en: string } }>;
   mainImage?: { absolutePath: string };
-  responsibleUsers?: Array<{ username: string; email: string }>;
+  responsibleUsers?: Array<{ username: string; email: string; picture?: { absolutePath: string } }>;
   active: boolean;
 }
 
@@ -113,9 +113,7 @@ export default function ProductsAdmin() {
       <Container>
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Ürünler
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Ürünler</h1>
             <p className="text-gray-600">Toplam {totalElements} ürün</p>
           </div>
           <Button onClick={() => router.push('/admin/products/new')} className="bg-blue-600 hover:bg-blue-700">
@@ -124,105 +122,140 @@ export default function ProductsAdmin() {
           </Button>
         </div>
 
-        {loading ? (
-          <Card className="p-12 text-center">
-            <p className="text-gray-500">Yükleniyor...</p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {products.map((product) => (
-                <Card key={product.code} className="p-4 hover:shadow-lg transition-shadow">
-                  <img
-                    src={product.mainImage?.absolutePath || '/no-image.svg'}
-                    alt={product.name.tr || product.name.en}
-                    className="w-full h-40 object-cover rounded-lg mb-3 cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => product.mainImage?.absolutePath && setLightbox({
-                      isOpen: true,
-                      imageUrl: product.mainImage.absolutePath,
-                      alt: product.name.tr || product.name.en
-                    })}
-                  />
-                  <h3 className="font-semibold text-lg mb-2">
-                    {product.name.tr || product.name.en}
-                  </h3>
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                    {product.shortDescription.tr || product.shortDescription.en}
-                  </p>
-                  
-                  {product.categories && product.categories.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      {product.categories.slice(0, 2).map((cat, idx) => (
-                        <span key={idx} className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">
-                          {cat.name.tr || cat.name.en}
-                        </span>
-                      ))}
-                      {product.categories.length > 2 && (
-                        <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
-                          +{product.categories.length - 2}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  
-                  {product.responsibleUsers && product.responsibleUsers.length > 0 && (
-                    <div className="text-xs text-gray-500 mb-2 flex flex-wrap gap-1">
-                      {product.responsibleUsers.slice(0, 2).map((user, idx) => (
-                        <span key={idx} className="inline-flex items-center gap-1">
-                          👤 {user.username}
-                        </span>
-                      ))}
-                      {product.responsibleUsers.length > 2 && (
-                        <span>+{product.responsibleUsers.length - 2}</span>
-                      )}
-                    </div>
-                  )}
-                  
-                  <div className="mb-3">
-                    <span className={`text-xs px-2 py-1 rounded ${product.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                      {product.active ? 'Aktif' : 'Pasif'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => router.push(`/admin/products/${product.code}`)}
-                      className="flex-1 flex items-center justify-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                    >
-                      <Edit className="w-4 h-4" />
-                      Düzenle
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setDeleteDialog({ 
-                        isOpen: true, 
-                        code: product.code, 
-                        name: product.name.tr || product.name.en
-                      })}
-                      className="flex items-center justify-center gap-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+        <Card>
+          {loading ? (
+            <div className="p-12 text-center">
+              <p className="text-gray-500">Yükleniyor...</p>
             </div>
+          ) : products.length === 0 ? (
+            <div className="p-12 text-center">
+              <p className="text-gray-500 mb-4">Henüz ürün eklenmemiş</p>
+              <Button onClick={() => router.push('/admin/products/new')} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="w-4 h-4 mr-2" />
+                İlk Ürünü Ekle
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Görsel</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ürün Adı</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategoriler</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sorumlular</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {products.map((product) => (
+                      <tr key={product.code} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <img
+                            src={product.mainImage?.absolutePath || '/no-image.svg'}
+                            alt={product.name.tr || product.name.en}
+                            className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => product.mainImage?.absolutePath && setLightbox({
+                              isOpen: true,
+                              imageUrl: product.mainImage.absolutePath,
+                              alt: product.name.tr || product.name.en
+                            })}
+                          />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-medium text-gray-900">{product.name.tr || product.name.en}</div>
+                          <div className="text-sm text-gray-500 line-clamp-1">{product.shortDescription.tr || product.shortDescription.en}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          {product.categories && product.categories.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {product.categories.slice(0, 2).map((cat, idx) => (
+                                <span key={idx} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                  {cat.name.tr || cat.name.en}
+                                </span>
+                              ))}
+                              {product.categories.length > 2 && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                  +{product.categories.length - 2}
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-sm text-gray-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          {product.responsibleUsers && product.responsibleUsers.length > 0 ? (
+                            <div className="flex items-center gap-1">
+                              {product.responsibleUsers.slice(0, 3).map((user, idx) => (
+                                <div key={idx} className="relative group">
+                                  {user.picture?.absolutePath ? (
+                                    <img
+                                      src={user.picture.absolutePath}
+                                      alt={user.username}
+                                      className="w-8 h-8 rounded-full object-cover border-2 border-white"
+                                      title={user.username}
+                                    />
+                                  ) : (
+                                    <div
+                                      className="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs font-semibold border-2 border-white"
+                                      title={user.username}
+                                    >
+                                      {user.username.charAt(0).toUpperCase()}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                              {product.responsibleUsers.length > 3 && (
+                                <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-semibold border-2 border-white">
+                                  +{product.responsibleUsers.length - 3}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-sm text-gray-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            product.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
+                            {product.active ? 'Aktif' : 'Pasif'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => router.push(`/admin/products/${product.code}`)}
+                              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setDeleteDialog({ 
+                                isOpen: true, 
+                                code: product.code, 
+                                name: product.name.tr || product.name.en
+                              })}
+                              className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-            {products.length === 0 && (
-              <Card className="p-12 text-center">
-                <p className="text-gray-500 mb-4">Henüz ürün eklenmemiş</p>
-                <Button onClick={() => router.push('/admin/products/new')} className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  İlk Ürünü Ekle
-                </Button>
-              </Card>
-            )}
-
-            {totalElements > 0 && (
-              <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
+              <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                 <div className="text-sm text-gray-600">
                   Toplam <span className="font-medium">{totalElements}</span> kayıt
                 </div>
@@ -253,9 +286,9 @@ export default function ProductsAdmin() {
                   </Button>
                 </div>
               </div>
-            )}
-          </>
-        )}
+            </>
+          )}
+        </Card>
 
         {toast && (
           <Toast
