@@ -64,6 +64,20 @@ export interface Reference {
   showOnHome: boolean;
 }
 
+export interface MenuItem {
+  id: number;
+  code: string;
+  name: MultiLangText;
+  icon?: string;
+  displayOrder: number;
+  isRoot: boolean;
+  active: boolean;
+  url?: string;
+  menuType: 'PUBLIC' | 'ADMIN_PANEL';
+  parentMenuCode?: string;
+  subMenuLinkItems?: MenuItem[];
+}
+
 export const publicService = {
   // Get active banners
   async getActiveBanners() {
@@ -93,5 +107,10 @@ export const publicService = {
   // Get home page references (limited to 4)
   async getHomePageReferences() {
     return apiClient.get<Reference[]>('/v1/public/references/home', { skipAuth: true });
+  },
+
+  // Get public menus with hierarchy
+  async getPublicMenus() {
+    return apiClient.get<MenuItem[]>('/v1/public/menus', { skipAuth: true });
   },
 };

@@ -11,7 +11,7 @@ import { documents as defaultDocuments, Document } from '../mock/documents';
 import { CallRequest, ProductContactForm } from '../mock/forms';
 import { sendEmail, createProductContactEmailBody, createCallRequestEmailBody } from '../lib/email';
 import { useAuthStore } from './useAuthStore';
-import { publicService } from '../services/public.service';
+import { publicService, MenuItem } from '../services/public.service';
 
 interface StoreState {
   header: HeaderData;
@@ -25,14 +25,17 @@ interface StoreState {
   kvkk: KVKKData;
   callRequests: CallRequest[];
   productContactForms: ProductContactForm[];
+  menuItems: MenuItem[];
   isLoadingBanners: boolean;
   isLoadingCategories: boolean;
   isLoadingPartners: boolean;
   isLoadingReferences: boolean;
+  isLoadingMenus: boolean;
   bannersFetched: boolean;
   categoriesFetched: boolean;
   partnersFetched: boolean;
   referencesFetched: boolean;
+  menusFetched: boolean;
 
   updateHeader: (header: HeaderData) => void;
   addBanner: (banner: Banner) => void;
@@ -64,6 +67,7 @@ interface StoreState {
   fetchActiveCategories: () => Promise<void>;
   fetchActivePartners: () => Promise<void>;
   fetchActiveReferences: () => Promise<void>;
+  fetchPublicMenus: () => Promise<void>;
 }
 
 export const useStore = create<StoreState>()((set, get) => ({
@@ -78,21 +82,24 @@ export const useStore = create<StoreState>()((set, get) => ({
       kvkk: defaultKvkkData,
       callRequests: [],
       productContactForms: [],
-      isLoadingBanners: false,
-      isLoadingCategories: false,
-      isLoadingPartners: false,
-      isLoadingReferences: false,
+      menuItems: [],
+      isLoadingBanners: true, // Başlangıçta true olmalı
+      isLoadingCategories: true, // Başlangıçta true olmalı
+      isLoadingPartners: true, // Başlangıçta true olmalı
+      isLoadingReferences: true, // Başlangıçta true olmalı
+      isLoadingMenus: true, // Başlangıçta true olmalı
       bannersFetched: false,
       categoriesFetched: false,
       partnersFetched: false,
       referencesFetched: false,
+      menusFetched: false,
 
       updateHeader: (header) => set({ header }),
 
       fetchActiveBanners: async () => {
-        // Eğer zaten fetch edildiyse veya loading ise tekrar çekme
+        // Eğer zaten fetch edildiyse tekrar çekme
         const state = get();
-        if (state.bannersFetched || state.isLoadingBanners) {
+        if (state.bannersFetched) {
           return;
         }
 
@@ -129,9 +136,9 @@ export const useStore = create<StoreState>()((set, get) => ({
       },
 
       fetchActiveCategories: async () => {
-        // Eğer zaten fetch edildiyse veya loading ise tekrar çekme
+        // Eğer zaten fetch edildiyse tekrar çekme
         const state = get();
-        if (state.categoriesFetched || state.isLoadingCategories) {
+        if (state.categoriesFetched) {
           return;
         }
 
@@ -172,7 +179,7 @@ export const useStore = create<StoreState>()((set, get) => ({
 
       fetchActivePartners: async () => {
         const state = get();
-        if (state.partnersFetched || state.isLoadingPartners) {
+        if (state.partnersFetched) {
           return;
         }
 
@@ -204,7 +211,7 @@ export const useStore = create<StoreState>()((set, get) => ({
 
       fetchActiveReferences: async () => {
         const state = get();
-        if (state.referencesFetched || state.isLoadingReferences) {
+        if (state.referencesFetched) {
           return;
         }
 
@@ -232,6 +239,30 @@ export const useStore = create<StoreState>()((set, get) => ({
           console.error('Failed to fetch references:', error);
         } finally {
           set({ isLoadingReferences: false });
+        }
+      },
+
+      fetchPublicMenus: async () => {
+        const state = get();
+        if (state.menusFetched) {
+          return;
+        }
+
+        set({ isLoadingMenus: true });
+        try {
+          const response = await publicService.getPublicMenus();
+          
+          if (response.status === 'SUCCESS' && response.data) {
+            const menuData = Array.isArray(response.data) 
+              ? response.data 
+              : (response.data.data || []);
+            
+            set({ menuItems: menuData, menusFetched: true });
+          }
+        } catch (error) {
+          console.error('Failed to fetch menus:', error);
+        } finally {
+          set({ isLoadingMenus: false });
         }
       },
 

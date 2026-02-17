@@ -33,7 +33,7 @@ export default function Home() {
     fetchActiveCategories();
     fetchActivePartners();
     fetchActiveReferences();
-  }, []); // Dependency array boş - sadece mount'ta çalışsın
+  }, [fetchActiveBanners, fetchActiveCategories, fetchActivePartners, fetchActiveReferences]);
 
   const activeBanners = banners.filter((b) => b.active).sort((a, b) => a.order - b.order);
   const homeCategories = categories.filter((c) => c.showOnHome).sort((a, b) => a.order - b.order);
@@ -51,10 +51,31 @@ export default function Home() {
   return (
     <div>
       {isLoadingBanners ? (
-        <div className="h-[70vh] min-h-[600px] max-h-[900px] flex items-center justify-center bg-gray-100">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto mb-4"></div>
-            <p className="text-gray-500 text-lg">Bannerlar yükleniyor...</p>
+        <div className="relative h-[70vh] min-h-[600px] max-h-[900px] bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200 overflow-hidden">
+          {/* Animated gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+          
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/10 to-transparent flex items-center">
+            <Container>
+              <div className="max-w-3xl space-y-6">
+                {/* Title skeleton */}
+                <div className="space-y-4">
+                  <div className="h-16 bg-gray-300/50 rounded-lg w-3/4 animate-pulse"></div>
+                  <div className="h-16 bg-gray-300/50 rounded-lg w-2/3 animate-pulse"></div>
+                </div>
+                
+                {/* Subtitle skeleton */}
+                <div className="space-y-3 pt-4">
+                  <div className="h-8 bg-gray-300/40 rounded-lg w-full animate-pulse"></div>
+                  <div className="h-8 bg-gray-300/40 rounded-lg w-5/6 animate-pulse"></div>
+                </div>
+                
+                {/* Button skeleton */}
+                <div className="pt-6">
+                  <div className="h-14 bg-gray-300/60 rounded-lg w-48 animate-pulse"></div>
+                </div>
+              </div>
+            </Container>
           </div>
         </div>
       ) : activeBanners.length > 0 ? (
@@ -102,9 +123,13 @@ export default function Home() {
           </div>
 
           {isLoadingPartners ? (
-            <div className="py-12 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto mb-4"></div>
-              <p className="text-gray-500 text-lg">Partnerler yükleniyor...</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-gray-200 rounded-xl h-24 animate-pulse"
+                ></div>
+              ))}
             </div>
           ) : homePartners.length > 0 ? (
             <>
@@ -151,9 +176,36 @@ export default function Home() {
       </Section>
 
       {isLoadingCategories ? (
-        <div className="py-12 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto mb-4"></div>
-          <p className="text-gray-500 text-lg">Kategoriler yükleniyor...</p>
+        <div className="space-y-0">
+          {[...Array(3)].map((_, index) => (
+            <div 
+              key={index}
+              className="py-16 md:py-24"
+              style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFFFFF' }}
+            >
+              <Container>
+                <div className={`flex flex-col md:flex-row gap-12 items-center ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+                  {/* Image skeleton */}
+                  <div className="w-full md:w-1/2">
+                    <div className="aspect-[4/3] bg-gray-300 rounded-2xl animate-pulse"></div>
+                  </div>
+                  
+                  {/* Content skeleton */}
+                  <div className="w-full md:w-1/2 space-y-4">
+                    <div className="h-10 bg-gray-300 rounded-lg w-3/4 animate-pulse"></div>
+                    <div className="space-y-3">
+                      <div className="h-6 bg-gray-200 rounded w-full animate-pulse"></div>
+                      <div className="h-6 bg-gray-200 rounded w-5/6 animate-pulse"></div>
+                      <div className="h-6 bg-gray-200 rounded w-4/6 animate-pulse"></div>
+                    </div>
+                    <div className="pt-2">
+                      <div className="h-12 bg-gray-300 rounded-lg w-40 animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              </Container>
+            </div>
+          ))}
         </div>
       ) : homeCategories.length > 0 ? (
         <div className="space-y-0">
@@ -210,9 +262,13 @@ export default function Home() {
           </div>
 
           {isLoadingReferences ? (
-            <div className="py-12 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto mb-4"></div>
-              <p className="text-gray-500 text-lg">Referanslar yükleniyor...</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-gray-200 rounded-2xl h-32 animate-pulse"
+                ></div>
+              ))}
             </div>
           ) : homeReferences.length > 0 ? (
             <>
