@@ -219,10 +219,16 @@ export default function Home() {
                 bgColor={category.bgColor || '#F9FAFB'}
               >
                 <div className="space-y-4">
-                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+                  <h3 
+                    className="text-2xl md:text-3xl font-bold leading-tight"
+                    style={{ color: category.textColor || '#111827' }}
+                  >
                     {category.nameKey}
                   </h3>
-                  <p className="text-base md:text-lg text-gray-600 leading-relaxed">
+                  <p 
+                    className="text-base md:text-lg leading-relaxed"
+                    style={{ color: category.textColor || '#4B5563' }}
+                  >
                     {category.descriptionKey}
                   </p>
                   {category.showButton !== false && (

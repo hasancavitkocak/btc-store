@@ -6,8 +6,10 @@ export interface Category {
   icon: string;
   showOnHome: boolean;
   order: number;
+  active?: boolean;
   // Renk ayarları
   bgColor?: string;
+  textColor?: string;
   iconBgColor?: string;
   // Buton ayarları
   showButton?: boolean;

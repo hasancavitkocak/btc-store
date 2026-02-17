@@ -160,13 +160,17 @@ export const useStore = create<StoreState>()((set, get) => ({
               descriptionKey: category.description?.tr || category.description?.en || category.description || '',
               // media objesi içinde absolutePath var
               image: category.media?.absolutePath || '/images/placeholder.jpg',
-              showOnHome: true,
+              showOnHome: category.showOnHomepage ?? true,
               active: category.active,
               order: category.order || index,
-              bgColor: '#F9FAFB',
-              buttonBgColor: '#0EA5E9',
-              buttonTextColor: '#FFFFFF',
-              buttonBorderColor: '#0EA5E9'
+              // Backend'den gelen stil özellikleri
+              bgColor: category.backgroundColor || '#F9FAFB',
+              textColor: category.textColor || '#111827',
+              showButton: category.showButton ?? true,
+              buttonText: category.buttonText?.tr || category.buttonText?.en || 'Detayları Gör',
+              buttonBgColor: category.buttonBackgroundColor || '#0EA5E9',
+              buttonTextColor: category.buttonTextColor || '#FFFFFF',
+              buttonBorderColor: category.buttonBorderColor || '#0EA5E9'
             }));
             set({ categories: mappedCategories, categoriesFetched: true });
           }

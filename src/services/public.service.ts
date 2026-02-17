@@ -37,6 +37,14 @@ export interface Category {
   name: MultiLangText;
   description?: MultiLangText;
   media?: Media;
+  backgroundColor?: string;
+  textColor?: string;
+  showButton?: boolean;
+  buttonText?: MultiLangText;
+  buttonBackgroundColor?: string;
+  buttonBorderColor?: string;
+  buttonTextColor?: string;
+  showOnHomepage?: boolean;
   order: number;
   active: boolean;
   parentCode?: string;
