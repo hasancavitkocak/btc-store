@@ -159,6 +159,7 @@ export const menuLinkItemService = {
   getAll: () => apiClient.get('/v1/menu-link-items'),
   getRootMenus: () => apiClient.get('/v1/menu-link-items/root'),
   getByType: (menuType: string) => apiClient.get(`/v1/menu-link-items/by-type/${menuType}`),
+  getByTypeFlat: (menuType: string) => apiClient.get(`/v1/menu-link-items/by-type/${menuType}/flat`),
   getByCode: (code: string) => apiClient.get(`/v1/menu-link-items/${code}`),
   save: (data: any) => apiClient.post('/v1/menu-link-items', data),
   delete: (code: string) => apiClient.delete(`/v1/menu-link-items/${code}`),
@@ -211,3 +212,23 @@ export const languageService = {
   getAll: () => apiClient.get('/v1/languages'),
 };
 
+// Site Configuration servisleri
+export const siteConfigurationService = {
+  get: () => apiClient.get('/v1/site-configuration'),
+  save: (data: any, headerLogoFile?: File, footerLogoFile?: File, removeHeaderLogo?: boolean, removeFooterLogo?: boolean) => {
+    const formData = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    formData.append('configData', jsonBlob);
+    if (headerLogoFile) {
+      formData.append('headerLogo', headerLogoFile);
+    } else if (removeHeaderLogo) {
+      formData.append('removeHeaderLogo', 'true');
+    }
+    if (footerLogoFile) {
+      formData.append('footerLogo', footerLogoFile);
+    } else if (removeFooterLogo) {
+      formData.append('removeFooterLogo', 'true');
+    }
+    return apiClient.upload('/v1/site-configuration', formData);
+  },
+};

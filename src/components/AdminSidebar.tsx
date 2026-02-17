@@ -58,6 +58,11 @@ const menuGroups: MenuGroup[] = [
     items: [
       { 
         icon: Settings, 
+        labelKey: 'Site Ayarları', 
+        path: '/admin/site-configuration'
+      },
+      { 
+        icon: Settings, 
         labelKey: 'admin.menus', 
         path: '/admin/menus/admin',
         subItems: [

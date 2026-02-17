@@ -12,14 +12,15 @@ import LanguageSwitcher from './LanguageSwitcher';
 export default function Header() {
   const t = useTranslations();
   const locale = useLocale();
-  const { header, menuItems, isLoadingMenus, fetchPublicMenus } = useStore();
+  const { header, menuItems, siteConfiguration, isLoadingMenus, fetchPublicMenus, fetchSiteConfiguration } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
 
-  // Menüleri fetch et
+  // Menüleri ve konfigürasyonu fetch et
   useEffect(() => {
     fetchPublicMenus();
-  }, [fetchPublicMenus]);
+    fetchSiteConfiguration();
+  }, [fetchPublicMenus, fetchSiteConfiguration]);
 
   // Backend'den gelen menüleri hiyerarşik yapıya çevir
   const rootMenus = menuItems
@@ -53,11 +54,19 @@ export default function Header() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-8">
               <Link href="/" className="flex items-center">
-                <img 
-                  src="/ChatGPT_Image_11_Sub_2026_09_47_39.png" 
-                  alt="BTC Store" 
-                  className="h-12 w-auto"
-                />
+                {siteConfiguration?.headerLogo?.absolutePath ? (
+                  <img 
+                    src={siteConfiguration.headerLogo.absolutePath} 
+                    alt="Logo" 
+                    className="h-12 w-auto"
+                  />
+                ) : (
+                  <img 
+                    src="/ChatGPT_Image_11_Sub_2026_09_47_39.png" 
+                    alt="BTC Store" 
+                    className="h-12 w-auto"
+                  />
+                )}
               </Link>
             </div>
 
@@ -128,12 +137,14 @@ export default function Header() {
             <div className="flex items-center gap-4">
               <LanguageSwitcher />
 
-              <div className="hidden lg:flex items-center gap-2 text-gray-700">
-                <Phone className="w-4 h-4" />
-                <a href={`tel:${header.phone}`} className="hover:text-blue-900 transition-colors font-medium">
-                  {header.phone}
-                </a>
-              </div>
+              {siteConfiguration?.showContactPhone && siteConfiguration?.contactPhone && (
+                <div className="hidden lg:flex items-center gap-2 text-gray-700">
+                  <Phone className="w-4 h-4" />
+                  <a href={`tel:${siteConfiguration.contactPhone}`} className="hover:text-blue-900 transition-colors font-medium">
+                    {siteConfiguration.contactPhone}
+                  </a>
+                </div>
+              )}
 
               <Link href="/call-request" className="hidden sm:block">
                 <Button size="sm" className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800">

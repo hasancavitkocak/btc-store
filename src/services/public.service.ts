@@ -128,4 +128,9 @@ export const publicService = {
   async getPublicMenus() {
     return apiClient.get<MenuItem[]>('/v1/public/menus', { skipAuth: true });
   },
+
+  // Get site configuration
+  async getSiteConfiguration() {
+    return apiClient.get('/v1/public/site-configuration', { skipAuth: true });
+  },
 };

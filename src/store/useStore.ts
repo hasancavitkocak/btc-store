@@ -26,6 +26,7 @@ interface StoreState {
   callRequests: CallRequest[];
   productContactForms: ProductContactForm[];
   menuItems: MenuItem[];
+  siteConfiguration: any;
   isLoadingBanners: boolean;
   isLoadingCategories: boolean;
   isLoadingPartners: boolean;
@@ -68,6 +69,7 @@ interface StoreState {
   fetchActivePartners: () => Promise<void>;
   fetchActiveReferences: () => Promise<void>;
   fetchPublicMenus: () => Promise<void>;
+  fetchSiteConfiguration: () => Promise<void>;
 }
 
 export const useStore = create<StoreState>()((set, get) => ({
@@ -83,6 +85,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       callRequests: [],
       productContactForms: [],
       menuItems: [],
+      siteConfiguration: null,
       isLoadingBanners: true, // Başlangıçta true olmalı
       isLoadingCategories: true, // Başlangıçta true olmalı
       isLoadingPartners: true, // Başlangıçta true olmalı
@@ -275,6 +278,19 @@ export const useStore = create<StoreState>()((set, get) => ({
           console.error('Failed to fetch menus:', error);
         } finally {
           set({ isLoadingMenus: false });
+        }
+      },
+
+      fetchSiteConfiguration: async () => {
+        try {
+          const response = await publicService.getSiteConfiguration();
+          
+          if (response.status === 'SUCCESS' && response.data) {
+            const configData = (response.data as any).data || response.data;
+            set({ siteConfiguration: configData });
+          }
+        } catch (error) {
+          console.error('Failed to fetch site configuration:', error);
         }
       },
 
