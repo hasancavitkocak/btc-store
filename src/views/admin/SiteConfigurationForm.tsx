@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Save, Image as ImageIcon, Phone, Menu as MenuIcon } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -16,7 +15,6 @@ import { siteConfigurationService, menuLinkItemService } from '../../services/ad
 type TabType = 'logos' | 'contact' | 'footer';
 
 export default function SiteConfigurationForm() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>('logos');
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
@@ -79,7 +77,7 @@ export default function SiteConfigurationForm() {
         }
 
         if (configData.footerMenus && Array.isArray(configData.footerMenus)) {
-          const menuCodes = new Set(configData.footerMenus.map((m: any) => m.code));
+          const menuCodes = new Set<string>(configData.footerMenus.map((m: any) => m.code));
           setSelectedFooterMenus(menuCodes);
         }
       }

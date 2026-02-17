@@ -12,7 +12,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 export default function Header() {
   const t = useTranslations();
   const locale = useLocale();
-  const { header, menuItems, siteConfiguration, isLoadingMenus, fetchPublicMenus, fetchSiteConfiguration } = useStore();
+  const { header, menuItems, siteConfiguration, isLoadingMenus, isLoadingSiteConfiguration, fetchPublicMenus, fetchSiteConfiguration } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
 
@@ -54,7 +54,9 @@ export default function Header() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-8">
               <Link href="/" className="flex items-center">
-                {siteConfiguration?.headerLogo?.absolutePath ? (
+                {isLoadingSiteConfiguration ? (
+                  <div className="h-12 w-32 bg-gray-200 rounded animate-pulse"></div>
+                ) : siteConfiguration?.headerLogo?.absolutePath ? (
                   <img 
                     src={siteConfiguration.headerLogo.absolutePath} 
                     alt="Logo" 
@@ -137,13 +139,20 @@ export default function Header() {
             <div className="flex items-center gap-4">
               <LanguageSwitcher />
 
-              {siteConfiguration?.showContactPhone && siteConfiguration?.contactPhone && (
-                <div className="hidden lg:flex items-center gap-2 text-gray-700">
-                  <Phone className="w-4 h-4" />
-                  <a href={`tel:${siteConfiguration.contactPhone}`} className="hover:text-blue-900 transition-colors font-medium">
-                    {siteConfiguration.contactPhone}
-                  </a>
+              {isLoadingSiteConfiguration ? (
+                <div className="hidden lg:flex items-center gap-2">
+                  <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-5 w-32 bg-gray-200 rounded animate-pulse"></div>
                 </div>
+              ) : (
+                siteConfiguration?.showContactPhone && siteConfiguration?.contactPhone && (
+                  <div className="hidden lg:flex items-center gap-2 text-gray-700">
+                    <Phone className="w-4 h-4" />
+                    <a href={`tel:${siteConfiguration.contactPhone}`} className="hover:text-blue-900 transition-colors font-medium">
+                      {siteConfiguration.contactPhone}
+                    </a>
+                  </div>
+                )
               )}
 
               <Link href="/call-request" className="hidden sm:block">

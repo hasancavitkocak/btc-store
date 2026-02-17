@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 export default function Footer() {
   const t = useTranslations();
   const locale = useLocale();
-  const { siteConfiguration, fetchSiteConfiguration } = useStore();
+  const { siteConfiguration, isLoadingSiteConfiguration, fetchSiteConfiguration } = useStore();
 
   useEffect(() => {
     fetchSiteConfiguration();
@@ -30,7 +30,9 @@ export default function Footer() {
         <div className="py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="mb-4 bg-white/10 backdrop-blur-sm rounded-xl p-3 inline-block">
-              {siteConfiguration?.footerLogo?.absolutePath ? (
+              {isLoadingSiteConfiguration ? (
+                <div className="h-12 w-32 bg-gray-700 rounded animate-pulse"></div>
+              ) : siteConfiguration?.footerLogo?.absolutePath ? (
                 <img 
                   src={siteConfiguration.footerLogo.absolutePath} 
                   alt="Logo" 
@@ -50,7 +52,16 @@ export default function Footer() {
           </div>
 
           <div>
-            {footerMenus.length > 0 ? (
+            {isLoadingSiteConfiguration ? (
+              <div>
+                <div className="h-6 w-32 bg-gray-700 rounded mb-4 animate-pulse"></div>
+                <div className="flex flex-col gap-2">
+                  <div className="h-5 w-40 bg-gray-700 rounded animate-pulse"></div>
+                  <div className="h-5 w-36 bg-gray-700 rounded animate-pulse"></div>
+                  <div className="h-5 w-44 bg-gray-700 rounded animate-pulse"></div>
+                </div>
+              </div>
+            ) : footerMenus.length > 0 ? (
               <>
                 <h4 className="text-white font-semibold mb-4">Hızlı Linkler</h4>
                 <nav className="flex flex-col gap-2">
@@ -75,32 +86,52 @@ export default function Footer() {
 
           <div>
             <h4 className="text-white font-semibold mb-4">İletişim</h4>
-            <div className="flex flex-col gap-3">
-              {siteConfiguration?.footerPhone && (
-                <a 
-                  href={`tel:${siteConfiguration.footerPhone}`} 
-                  className="flex items-center gap-2 hover:text-white transition-colors"
-                >
-                  <Phone className="w-4 h-4" />
-                  {siteConfiguration.footerPhone}
-                </a>
-              )}
-              {siteConfiguration?.footerEmail && (
-                <a 
-                  href={`mailto:${siteConfiguration.footerEmail}`} 
-                  className="flex items-center gap-2 hover:text-white transition-colors"
-                >
-                  <Mail className="w-4 h-4" />
-                  {siteConfiguration.footerEmail}
-                </a>
-              )}
-              {siteConfiguration?.footerAddress && (
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
-                  <span>{siteConfiguration.footerAddress}</span>
+            {isLoadingSiteConfiguration ? (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-gray-700 rounded animate-pulse"></div>
+                  <div className="h-5 w-36 bg-gray-700 rounded animate-pulse"></div>
                 </div>
-              )}
-            </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-gray-700 rounded animate-pulse"></div>
+                  <div className="h-5 w-40 bg-gray-700 rounded animate-pulse"></div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-4 h-4 bg-gray-700 rounded animate-pulse mt-1"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-5 w-full bg-gray-700 rounded animate-pulse"></div>
+                    <div className="h-5 w-3/4 bg-gray-700 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {siteConfiguration?.footerPhone && (
+                  <a 
+                    href={`tel:${siteConfiguration.footerPhone}`} 
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    <Phone className="w-4 h-4" />
+                    {siteConfiguration.footerPhone}
+                  </a>
+                )}
+                {siteConfiguration?.footerEmail && (
+                  <a 
+                    href={`mailto:${siteConfiguration.footerEmail}`} 
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    <Mail className="w-4 h-4" />
+                    {siteConfiguration.footerEmail}
+                  </a>
+                )}
+                {siteConfiguration?.footerAddress && (
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
+                    <span>{siteConfiguration.footerAddress}</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

@@ -32,6 +32,7 @@ interface StoreState {
   isLoadingPartners: boolean;
   isLoadingReferences: boolean;
   isLoadingMenus: boolean;
+  isLoadingSiteConfiguration: boolean;
   bannersFetched: boolean;
   categoriesFetched: boolean;
   partnersFetched: boolean;
@@ -91,6 +92,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       isLoadingPartners: true, // Başlangıçta true olmalı
       isLoadingReferences: true, // Başlangıçta true olmalı
       isLoadingMenus: true, // Başlangıçta true olmalı
+      isLoadingSiteConfiguration: true, // Başlangıçta true olmalı
       bannersFetched: false,
       categoriesFetched: false,
       partnersFetched: false,
@@ -282,6 +284,7 @@ export const useStore = create<StoreState>()((set, get) => ({
       },
 
       fetchSiteConfiguration: async () => {
+        set({ isLoadingSiteConfiguration: true });
         try {
           const response = await publicService.getSiteConfiguration();
           
@@ -291,6 +294,8 @@ export const useStore = create<StoreState>()((set, get) => ({
           }
         } catch (error) {
           console.error('Failed to fetch site configuration:', error);
+        } finally {
+          set({ isLoadingSiteConfiguration: false });
         }
       },
 
