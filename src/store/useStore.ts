@@ -124,7 +124,14 @@ export const useStore = create<StoreState>()((set, get) => ({
               // media objesi içinde absolutePath var
               image: banner.media?.absolutePath || '/images/placeholder.jpg',
               active: banner.active,
-              order: banner.order || index
+              order: banner.order || index,
+              // Yeni alanlar
+              showTitle: banner.showTitle ?? true,
+              showSubtitle: banner.showSubtitle ?? true,
+              showButton: banner.showButton ?? true,
+              buttonBackgroundColor: banner.buttonBackgroundColor || '#1E3A8A',
+              buttonBorderColor: banner.buttonBorderColor || '#1E3A8A',
+              buttonTextColor: banner.buttonTextColor || '#FFFFFF'
             }));
             set({ banners: mappedBanners, bannersFetched: true });
           }
@@ -168,6 +175,7 @@ export const useStore = create<StoreState>()((set, get) => ({
               textColor: category.textColor || '#111827',
               showButton: category.showButton ?? true,
               buttonText: category.buttonText?.tr || category.buttonText?.en || 'Detayları Gör',
+              buttonLink: category.buttonLink || `/products?category=${category.code}`,
               buttonBgColor: category.buttonBackgroundColor || '#0EA5E9',
               buttonTextColor: category.buttonTextColor || '#FFFFFF',
               buttonBorderColor: category.buttonBorderColor || '#0EA5E9'

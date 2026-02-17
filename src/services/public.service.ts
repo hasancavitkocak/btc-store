@@ -29,6 +29,12 @@ export interface Banner {
   media?: Media;
   order: number;
   active: boolean;
+  showTitle?: boolean;
+  showSubtitle?: boolean;
+  showButton?: boolean;
+  buttonBackgroundColor?: string;
+  buttonBorderColor?: string;
+  buttonTextColor?: string;
 }
 
 export interface Category {
@@ -41,6 +47,7 @@ export interface Category {
   textColor?: string;
   showButton?: boolean;
   buttonText?: MultiLangText;
+  buttonLink?: string;
   buttonBackgroundColor?: string;
   buttonBorderColor?: string;
   buttonTextColor?: string;

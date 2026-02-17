@@ -80,34 +80,49 @@ export default function Home() {
         </div>
       ) : activeBanners.length > 0 ? (
         <Carousel>
-          {activeBanners.map((banner) => (
-            <div key={banner.id} className="relative h-[70vh] min-h-[600px] max-h-[900px]">
-              <img
-                src={banner.image}
-                alt={t(banner.titleKey)}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 flex items-center">
-                <Container>
-                  <div className="max-w-3xl text-white">
-                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
-                      {banner.titleKey}
-                    </h1>
-                    <p className="text-xl sm:text-2xl md:text-3xl mb-10 text-gray-100 leading-relaxed">
-                      {banner.subtitleKey}
-                    </p>
-                    {banner.buttonTextKey && banner.buttonLink && (
-                      <Link href={banner.buttonLink}>
-                        <Button size="lg" className="text-lg px-8 py-6 shadow-2xl hover:shadow-3xl transition-all bg-blue-900 hover:bg-blue-800">
-                          {banner.buttonTextKey}
-                        </Button>
-                      </Link>
-                    )}
-                  </div>
-                </Container>
+          {activeBanners.map((banner) => {
+            return (
+              <div key={banner.id} className="relative h-[70vh] min-h-[600px] max-h-[900px]">
+                <img
+                  src={banner.image}
+                  alt={banner.titleKey}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 flex items-center">
+                  <Container>
+                    <div className="max-w-3xl text-white">
+                      {banner.showTitle !== false && banner.titleKey && (
+                        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
+                          {banner.titleKey}
+                        </h1>
+                      )}
+                      {banner.showSubtitle !== false && banner.subtitleKey && (
+                        <p className="text-xl sm:text-2xl md:text-3xl mb-10 text-gray-100 leading-relaxed">
+                          {banner.subtitleKey}
+                        </p>
+                      )}
+                      {banner.showButton !== false && banner.buttonTextKey && banner.buttonLink && (
+                        <Link href={banner.buttonLink}>
+                          <button
+                            className="text-lg px-8 py-6 rounded-lg font-semibold shadow-2xl hover:shadow-3xl transition-all hover:scale-105"
+                            style={{
+                              backgroundColor: banner.buttonBackgroundColor || '#1E3A8A',
+                              borderWidth: '2px',
+                              borderStyle: 'solid',
+                              borderColor: banner.buttonBorderColor || '#1E3A8A',
+                              color: banner.buttonTextColor || '#FFFFFF'
+                            }}
+                          >
+                            {banner.buttonTextKey}
+                          </button>
+                        </Link>
+                      )}
+                    </div>
+                  </Container>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </Carousel>
       ) : null}
 
@@ -233,7 +248,7 @@ export default function Home() {
                   </p>
                   {category.showButton !== false && (
                     <div className="pt-1">
-                      <Link href={`/products?category=${category.id}`}>
+                      <Link href={category.buttonLink || `/products?category=${category.id}`}>
                         <button
                           className="px-6 py-2.5 text-sm md:text-base rounded-lg font-semibold shadow-md hover:shadow-lg transition-all hover:scale-105"
                           style={{

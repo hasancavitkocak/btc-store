@@ -23,6 +23,12 @@ interface Banner {
   media?: { absolutePath: string };
   order: number;
   active: boolean;
+  showTitle?: boolean;
+  showSubtitle?: boolean;
+  showButton?: boolean;
+  buttonBackgroundColor?: string;
+  buttonBorderColor?: string;
+  buttonTextColor?: string;
 }
 
 export default function Banners() {
@@ -150,11 +156,26 @@ export default function Banners() {
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg">{banner.title.tr || banner.title.en}</h3>
                       <p className="text-gray-600 text-sm">{banner.subtitle.tr || banner.subtitle.en}</p>
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <span className={`text-xs px-2 py-1 rounded ${banner.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                           {banner.active ? 'Aktif' : 'Pasif'}
                         </span>
                         <span className="text-xs text-gray-500">Sıra: {banner.order}</span>
+                        {banner.showTitle !== false && (
+                          <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700">
+                            📝 Başlık
+                          </span>
+                        )}
+                        {banner.showSubtitle !== false && (
+                          <span className="text-xs px-2 py-1 rounded bg-purple-100 text-purple-700">
+                            📄 Alt Başlık
+                          </span>
+                        )}
+                        {banner.showButton !== false && (
+                          <span className="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-700">
+                            🔘 Buton
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="flex gap-2">

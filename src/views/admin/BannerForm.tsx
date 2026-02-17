@@ -52,7 +52,13 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
     buttonText: { tr: '', en: '', de: '', fr: '', es: '', it: '' },
     buttonLink: '',
     order: 0,
-    active: true
+    active: true,
+    showTitle: true,
+    showSubtitle: true,
+    showButton: true,
+    buttonBackgroundColor: '#1E40AF',
+    buttonBorderColor: '#1E40AF',
+    buttonTextColor: '#FFFFFF'
   });
 
   useEffect(() => {
@@ -77,7 +83,13 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
           buttonText: bannerData.buttonText || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
           buttonLink: bannerData.buttonLink || '',
           order: bannerData.order || 0,
-          active: bannerData.active ?? true
+          active: bannerData.active ?? true,
+          showTitle: bannerData.showTitle ?? true,
+          showSubtitle: bannerData.showSubtitle ?? true,
+          showButton: bannerData.showButton ?? true,
+          buttonBackgroundColor: bannerData.buttonBackgroundColor || '#1E40AF',
+          buttonBorderColor: bannerData.buttonBorderColor || '#1E40AF',
+          buttonTextColor: bannerData.buttonTextColor || '#FFFFFF'
         });
         
         if (bannerData.media?.absolutePath) {
@@ -124,7 +136,13 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
         buttonText: formData.buttonText,
         buttonLink: formData.buttonLink,
         order: formData.order,
-        active: formData.active
+        active: formData.active,
+        showTitle: formData.showTitle,
+        showSubtitle: formData.showSubtitle,
+        showButton: formData.showButton,
+        buttonBackgroundColor: formData.buttonBackgroundColor,
+        buttonBorderColor: formData.buttonBorderColor,
+        buttonTextColor: formData.buttonTextColor
       };
 
       const response = await bannerService.save(bannerData, newMediaFile || undefined, shouldRemoveMedia);
@@ -286,65 +304,198 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">Buton Metni</label>
-                    <button
-                      type="button"
-                      onClick={() => toggleField('buttonText')}
-                      className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
-                    >
-                      <span className="text-base">{expandedFields.has('buttonText') ? '🌐' : '🌍'}</span>
-                      <span>Diğer Diller</span>
-                      <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
-                      <span className="text-gray-400">{expandedFields.has('buttonText') ? '▼' : '▶'}</span>
-                    </button>
-                  </div>
-                  <div className="p-4 space-y-3">
-                    <Input
-                      placeholder="🇹🇷 Türkçe"
-                      value={formData.buttonText.tr}
-                      onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, tr: e.target.value } })}
-                    />
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-4">Görünürlük Ayarları</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="showTitle"
+                        checked={formData.showTitle}
+                        onChange={(e) => setFormData({ ...formData, showTitle: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <label htmlFor="showTitle" className="text-sm font-medium text-gray-700">
+                        Başlık Göster
+                      </label>
+                    </div>
                     
-                    {expandedFields.has('buttonText') && (
-                      <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Input
-                          placeholder="🇬🇧 English"
-                          value={formData.buttonText.en}
-                          onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, en: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇩🇪 Deutsch"
-                          value={formData.buttonText.de}
-                          onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, de: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇫🇷 Français"
-                          value={formData.buttonText.fr}
-                          onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, fr: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇪🇸 Español"
-                          value={formData.buttonText.es}
-                          onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, es: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇮🇹 Italiano"
-                          value={formData.buttonText.it}
-                          onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, it: e.target.value } })}
-                        />
-                      </div>
-                    )}
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="showSubtitle"
+                        checked={formData.showSubtitle}
+                        onChange={(e) => setFormData({ ...formData, showSubtitle: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <label htmlFor="showSubtitle" className="text-sm font-medium text-gray-700">
+                        Alt Başlık Göster
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="showButton"
+                        checked={formData.showButton}
+                        onChange={(e) => setFormData({ ...formData, showButton: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <label htmlFor="showButton" className="text-sm font-medium text-gray-700">
+                        Buton Göster
+                      </label>
+                    </div>
                   </div>
                 </div>
 
-                <Input
-                  label="Buton Linki"
-                  value={formData.buttonLink}
-                  onChange={(e) => setFormData({ ...formData, buttonLink: e.target.value })}
-                  placeholder="/products"
-                />
+                {formData.showButton && (
+                  <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-4">Buton Ayarları</h3>
+                    <div className="space-y-4">
+                      <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+                        <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
+                          <label className="text-sm font-medium text-gray-700">Buton Metni</label>
+                          <button
+                            type="button"
+                            onClick={() => toggleField('buttonText')}
+                            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
+                          >
+                            <span className="text-base">{expandedFields.has('buttonText') ? '🌐' : '🌍'}</span>
+                            <span>Diğer Diller</span>
+                            <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
+                            <span className="text-gray-400">{expandedFields.has('buttonText') ? '▼' : '▶'}</span>
+                          </button>
+                        </div>
+                        <div className="p-4 space-y-3">
+                          <Input
+                            placeholder="🇹🇷 Türkçe"
+                            value={formData.buttonText.tr}
+                            onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, tr: e.target.value } })}
+                          />
+                          
+                          {expandedFields.has('buttonText') && (
+                            <div className="space-y-3 pt-3 border-t border-gray-200">
+                              <Input
+                                placeholder="🇬🇧 English"
+                                value={formData.buttonText.en}
+                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, en: e.target.value } })}
+                              />
+                              <Input
+                                placeholder="🇩🇪 Deutsch"
+                                value={formData.buttonText.de}
+                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, de: e.target.value } })}
+                              />
+                              <Input
+                                placeholder="🇫🇷 Français"
+                                value={formData.buttonText.fr}
+                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, fr: e.target.value } })}
+                              />
+                              <Input
+                                placeholder="🇪🇸 Español"
+                                value={formData.buttonText.es}
+                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, es: e.target.value } })}
+                              />
+                              <Input
+                                placeholder="🇮🇹 Italiano"
+                                value={formData.buttonText.it}
+                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, it: e.target.value } })}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <Input
+                        label="Buton Linki"
+                        value={formData.buttonLink}
+                        onChange={(e) => setFormData({ ...formData, buttonLink: e.target.value })}
+                        placeholder="/products"
+                      />
+
+                      <div className="border-t border-gray-300 pt-4 mt-4">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3">Buton Renkleri</h4>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Arka Plan Rengi
+                            </label>
+                            <div className="flex gap-2 items-center">
+                              <input
+                                type="color"
+                                value={formData.buttonBackgroundColor}
+                                onChange={(e) => setFormData({ ...formData, buttonBackgroundColor: e.target.value })}
+                                className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
+                              />
+                              <Input
+                                value={formData.buttonBackgroundColor}
+                                onChange={(e) => setFormData({ ...formData, buttonBackgroundColor: e.target.value })}
+                                placeholder="#1E40AF"
+                                className="flex-1"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Çerçeve Rengi
+                            </label>
+                            <div className="flex gap-2 items-center">
+                              <input
+                                type="color"
+                                value={formData.buttonBorderColor}
+                                onChange={(e) => setFormData({ ...formData, buttonBorderColor: e.target.value })}
+                                className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
+                              />
+                              <Input
+                                value={formData.buttonBorderColor}
+                                onChange={(e) => setFormData({ ...formData, buttonBorderColor: e.target.value })}
+                                placeholder="#1E40AF"
+                                className="flex-1"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Metin Rengi
+                            </label>
+                            <div className="flex gap-2 items-center">
+                              <input
+                                type="color"
+                                value={formData.buttonTextColor}
+                                onChange={(e) => setFormData({ ...formData, buttonTextColor: e.target.value })}
+                                className="w-12 h-10 rounded border border-gray-300 cursor-pointer"
+                              />
+                              <Input
+                                value={formData.buttonTextColor}
+                                onChange={(e) => setFormData({ ...formData, buttonTextColor: e.target.value })}
+                                placeholder="#FFFFFF"
+                                className="flex-1"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 p-4 bg-white rounded-lg border border-gray-200">
+                        <p className="text-xs text-gray-600 mb-3">Önizleme:</p>
+                        <button
+                          type="button"
+                          className="px-6 py-3 rounded-lg font-semibold transition-all"
+                          style={{
+                            backgroundColor: formData.buttonBackgroundColor,
+                            borderWidth: '2px',
+                            borderStyle: 'solid',
+                            borderColor: formData.buttonBorderColor,
+                            color: formData.buttonTextColor
+                          }}
+                        >
+                          {formData.buttonText.tr || 'Buton Metni'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 
                 <ImageUpload
                   images={imageFiles}

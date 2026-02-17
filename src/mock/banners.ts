@@ -7,6 +7,12 @@ export interface Banner {
   image: string;
   order: number;
   active: boolean;
+  showTitle?: boolean;
+  showSubtitle?: boolean;
+  showButton?: boolean;
+  buttonBackgroundColor?: string;
+  buttonBorderColor?: string;
+  buttonTextColor?: string;
 }
 
 export const banners: Banner[] = [

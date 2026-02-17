@@ -14,6 +14,7 @@ export interface Category {
   // Buton ayarları
   showButton?: boolean;
   buttonText?: string;
+  buttonLink?: string;
   buttonBgColor?: string;
   buttonTextColor?: string;
   buttonBorderColor?: string;

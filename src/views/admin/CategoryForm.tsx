@@ -51,6 +51,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
     textColor: '#000000',
     showButton: true,
     buttonText: { tr: 'Detayları Gör', en: 'View Details', de: '', fr: '', es: '', it: '' },
+    buttonLink: '',
     buttonBackgroundColor: '#3b82f6',
     buttonBorderColor: '#2563eb',
     buttonTextColor: '#ffffff',
@@ -82,6 +83,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
           textColor: categoryData.textColor || '#000000',
           showButton: categoryData.showButton ?? true,
           buttonText: categoryData.buttonText || { tr: 'Detayları Gör', en: 'View Details', de: '', fr: '', es: '', it: '' },
+          buttonLink: categoryData.buttonLink || '',
           buttonBackgroundColor: categoryData.buttonBackgroundColor || '#3b82f6',
           buttonBorderColor: categoryData.buttonBorderColor || '#2563eb',
           buttonTextColor: categoryData.buttonTextColor || '#ffffff',
@@ -137,6 +139,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
         textColor: formData.textColor,
         showButton: formData.showButton,
         buttonText: formData.buttonText,
+        buttonLink: formData.buttonLink,
         buttonBackgroundColor: formData.buttonBackgroundColor,
         buttonBorderColor: formData.buttonBorderColor,
         buttonTextColor: formData.buttonTextColor,
@@ -434,6 +437,13 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                         )}
                       </div>
                     </div>
+
+                    <Input
+                      label="Buton Linki"
+                      value={formData.buttonLink}
+                      onChange={(e) => setFormData({ ...formData, buttonLink: e.target.value })}
+                      placeholder="/products?category=..."
+                    />
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
