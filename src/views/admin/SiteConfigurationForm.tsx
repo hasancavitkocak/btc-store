@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Image as ImageIcon, Phone, Menu as MenuIcon } from 'lucide-react';
+import { Save, Image as ImageIcon, Megaphone, Menu as MenuIcon } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
@@ -12,7 +12,7 @@ import ImageUpload from '../../components/ImageUpload';
 import ImageLightbox from '../../components/ImageLightbox';
 import { siteConfigurationService, menuLinkItemService } from '../../services/admin.service';
 
-type TabType = 'logos' | 'contact' | 'footer';
+type TabType = 'logos' | 'header' | 'footer';
 
 export default function SiteConfigurationForm() {
   const [activeTab, setActiveTab] = useState<TabType>('logos');
@@ -26,15 +26,26 @@ export default function SiteConfigurationForm() {
   const [shouldRemoveFooterLogo, setShouldRemoveFooterLogo] = useState(false);
   const [publicMenus, setPublicMenus] = useState<any[]>([]);
   const [selectedFooterMenus, setSelectedFooterMenus] = useState<Set<string>>(new Set());
+  const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
   const [lightbox, setLightbox] = useState<{ isOpen: boolean; imageUrl: string }>({
     isOpen: false,
     imageUrl: ''
   });
 
+  const toggleField = (fieldName: string) => {
+    const newExpanded = new Set(expandedFields);
+    if (newExpanded.has(fieldName)) {
+      newExpanded.delete(fieldName);
+    } else {
+      newExpanded.add(fieldName);
+    }
+    setExpandedFields(newExpanded);
+  };
+
   const tabs = [
     { id: 'logos' as TabType, label: 'Logo Ayarları', icon: ImageIcon },
-    { id: 'contact' as TabType, label: 'İletişim Bilgileri', icon: Phone },
-    { id: 'footer' as TabType, label: 'Footer Menüler', icon: MenuIcon }
+    { id: 'header' as TabType, label: 'Başlık Ayarları', icon: Megaphone },
+    { id: 'footer' as TabType, label: 'Footer Ayarları', icon: MenuIcon }
   ];
 
   const [formData, setFormData] = useState({
@@ -43,7 +54,12 @@ export default function SiteConfigurationForm() {
     showContactPhone: true,
     footerEmail: '',
     footerPhone: '',
-    footerAddress: ''
+    footerAddress: '',
+    topBannerEnabled: false,
+    topBannerText: { tr: '', en: '', de: '', fr: '', es: '', it: '' },
+    topBannerBgColor: '#1e40af',
+    topBannerTextColor: '#ffffff',
+    topBannerLink: ''
   });
 
   useEffect(() => {
@@ -65,7 +81,12 @@ export default function SiteConfigurationForm() {
           showContactPhone: configData.showContactPhone ?? true,
           footerEmail: configData.footerEmail || '',
           footerPhone: configData.footerPhone || '',
-          footerAddress: configData.footerAddress || ''
+          footerAddress: configData.footerAddress || '',
+          topBannerEnabled: configData.topBannerEnabled ?? false,
+          topBannerText: configData.topBannerText || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
+          topBannerBgColor: configData.topBannerBgColor || '#1e40af',
+          topBannerTextColor: configData.topBannerTextColor || '#ffffff',
+          topBannerLink: configData.topBannerLink || ''
         });
         
         if (configData.headerLogo?.absolutePath) {
@@ -160,7 +181,13 @@ export default function SiteConfigurationForm() {
         footerEmail: formData.footerEmail,
         footerPhone: formData.footerPhone,
         footerAddress: formData.footerAddress,
-        footerMenus: Array.from(selectedFooterMenus).map(code => ({ code }))
+        footerMenus: Array.from(selectedFooterMenus).map(code => ({ code })),
+        topBannerEnabled: formData.topBannerEnabled,
+        // Banner pasifse null gönder
+        topBannerText: formData.topBannerEnabled ? formData.topBannerText : null,
+        topBannerBgColor: formData.topBannerEnabled ? formData.topBannerBgColor : null,
+        topBannerTextColor: formData.topBannerEnabled ? formData.topBannerTextColor : null,
+        topBannerLink: formData.topBannerEnabled ? formData.topBannerLink : null
       };
 
       const response = await siteConfigurationService.save(
@@ -292,9 +319,147 @@ export default function SiteConfigurationForm() {
               </Card>
             )}
 
-            {/* İletişim Bilgileri Tab */}
-            {activeTab === 'contact' && (
+            {/* Başlık Ayarları Tab */}
+            {activeTab === 'header' && (
               <>
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Üst Banner</h2>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="topBannerEnabled"
+                        checked={formData.topBannerEnabled}
+                        onChange={(e) => setFormData({ ...formData, topBannerEnabled: e.target.checked })}
+                        className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <label htmlFor="topBannerEnabled" className="text-sm font-medium text-gray-700">
+                        Üst Banner'ı Aktif Et
+                      </label>
+                    </div>
+
+                    {formData.topBannerEnabled && (
+                      <>
+                        <div className="border border-gray-200 rounded-lg overflow-hidden">
+                          <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
+                            <label className="text-sm font-medium text-gray-700">Banner Metni</label>
+                            <button
+                              type="button"
+                              onClick={() => toggleField('bannerText')}
+                              className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
+                            >
+                              <span className="text-base">{expandedFields.has('bannerText') ? '🌐' : '🌍'}</span>
+                              <span>Diğer Diller</span>
+                              <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
+                              <span className="text-gray-400">{expandedFields.has('bannerText') ? '▼' : '▶'}</span>
+                            </button>
+                          </div>
+                          <div className="p-4 space-y-3">
+                            <Input
+                              placeholder="🇹🇷 Türkçe - Kampanya duyurusu..."
+                              value={formData.topBannerText.tr}
+                              onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, tr: e.target.value } })}
+                            />
+                            
+                            {expandedFields.has('bannerText') && (
+                              <div className="space-y-3 pt-3 border-t border-gray-200">
+                                <Input
+                                  placeholder="🇬🇧 English - Campaign announcement..."
+                                  value={formData.topBannerText.en}
+                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, en: e.target.value } })}
+                                />
+                                <Input
+                                  placeholder="🇩🇪 Deutsch - Kampagnenankündigung..."
+                                  value={formData.topBannerText.de}
+                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, de: e.target.value } })}
+                                />
+                                <Input
+                                  placeholder="🇫🇷 Français - Annonce de campagne..."
+                                  value={formData.topBannerText.fr}
+                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, fr: e.target.value } })}
+                                />
+                                <Input
+                                  placeholder="🇪🇸 Español - Anuncio de campaña..."
+                                  value={formData.topBannerText.es}
+                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, es: e.target.value } })}
+                                />
+                                <Input
+                                  placeholder="🇮🇹 Italiano - Annuncio della campagna..."
+                                  value={formData.topBannerText.it}
+                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, it: e.target.value } })}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <Input
+                          label="Banner Linki (Opsiyonel)"
+                          value={formData.topBannerLink}
+                          onChange={(e) => setFormData({ ...formData, topBannerLink: e.target.value })}
+                          placeholder="https://..."
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Arka Plan Rengi
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                type="color"
+                                value={formData.topBannerBgColor}
+                                onChange={(e) => setFormData({ ...formData, topBannerBgColor: e.target.value })}
+                                className="w-12 h-10 rounded border border-gray-300"
+                              />
+                              <Input
+                                value={formData.topBannerBgColor}
+                                onChange={(e) => setFormData({ ...formData, topBannerBgColor: e.target.value })}
+                                placeholder="#1e40af"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Yazı Rengi
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                type="color"
+                                value={formData.topBannerTextColor}
+                                onChange={(e) => setFormData({ ...formData, topBannerTextColor: e.target.value })}
+                                className="w-12 h-10 rounded border border-gray-300"
+                              />
+                              <Input
+                                value={formData.topBannerTextColor}
+                                onChange={(e) => setFormData({ ...formData, topBannerTextColor: e.target.value })}
+                                placeholder="#ffffff"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Banner Önizleme */}
+                        <div className="border-t border-gray-200 pt-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Önizleme
+                          </label>
+                          <div 
+                            style={{ 
+                              backgroundColor: formData.topBannerBgColor,
+                              color: formData.topBannerTextColor
+                            }}
+                            className="p-3 text-center text-sm font-medium rounded"
+                          >
+                            {formData.topBannerText.tr || 'Banner metni buraya gelecek...'}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </Card>
+
                 <Card className="p-6">
                   <h2 className="text-xl font-semibold mb-4">Header İletişim</h2>
                   <div className="space-y-4">
@@ -323,7 +488,12 @@ export default function SiteConfigurationForm() {
                     </div>
                   </div>
                 </Card>
+              </>
+            )}
 
+            {/* Footer Ayarları Tab */}
+            {activeTab === 'footer' && (
+              <>
                 <Card className="p-6">
                   <h2 className="text-xl font-semibold mb-4">Footer İletişim Bilgileri</h2>
                   <div className="space-y-4">
@@ -356,47 +526,44 @@ export default function SiteConfigurationForm() {
                     </div>
                   </div>
                 </Card>
-              </>
-            )}
 
-            {/* Footer Menüler Tab */}
-            {activeTab === 'footer' && (
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Footer Menü Ayarları</h2>
-              <p className="text-sm text-gray-600 mb-4">
-                Footer'da gösterilecek public menüleri seçin
-              </p>
-              
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {publicMenus.length === 0 ? (
-                  <p className="text-sm text-gray-500 italic">Public menü bulunamadı</p>
-                ) : (
-                  publicMenus.map((menu) => (
-                    <div
-                      key={menu.code}
-                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <input
-                        type="checkbox"
-                        id={`menu-${menu.code}`}
-                        checked={selectedFooterMenus.has(menu.code)}
-                        onChange={() => toggleFooterMenu(menu.code)}
-                        className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <label
-                        htmlFor={`menu-${menu.code}`}
-                        className="flex-1 text-sm font-medium text-gray-700 cursor-pointer"
-                      >
-                        {menu.name?.tr || menu.code}
-                      </label>
-                      {menu.icon && (
-                        <span className="text-gray-400 text-sm">{menu.icon}</span>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-              </Card>
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Footer Menü Ayarları</h2>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Footer'da gösterilecek public menüleri seçin
+                  </p>
+                  
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {publicMenus.length === 0 ? (
+                      <p className="text-sm text-gray-500 italic">Public menü bulunamadı</p>
+                    ) : (
+                      publicMenus.map((menu) => (
+                        <div
+                          key={menu.code}
+                          className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            id={`menu-${menu.code}`}
+                            checked={selectedFooterMenus.has(menu.code)}
+                            onChange={() => toggleFooterMenu(menu.code)}
+                            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <label
+                            htmlFor={`menu-${menu.code}`}
+                            className="flex-1 text-sm font-medium text-gray-700 cursor-pointer"
+                          >
+                            {menu.name?.tr || menu.code}
+                          </label>
+                          {menu.icon && (
+                            <span className="text-gray-400 text-sm">{menu.icon}</span>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </Card>
+              </>
             )}
           </div>
 
@@ -426,19 +593,19 @@ export default function SiteConfigurationForm() {
                   <li>• Önerilen boyut: 200x60 px</li>
                 </ul>
               )}
-              {activeTab === 'contact' && (
+              {activeTab === 'header' && (
                 <ul className="text-xs text-blue-800 space-y-1">
+                  <li>• Üst banner: Tüm sayfalarda en üstte görünür</li>
+                  <li>• Banner metni çok dilli destekler</li>
+                  <li>• Renkleri özelleştirebilirsiniz</li>
                   <li>• Header telefon: Üst menüde görünür</li>
-                  <li>• Footer bilgiler: Sayfa altında görünür</li>
-                  <li>• Tüm alanlar opsiyoneldir</li>
-                  <li>• Değişiklikler anında yansır</li>
                 </ul>
               )}
               {activeTab === 'footer' && (
                 <ul className="text-xs text-blue-800 space-y-1">
+                  <li>• Footer iletişim: Sayfa altında görünür</li>
                   <li>• Sadece PUBLIC menüler seçilebilir</li>
                   <li>• Seçilen menüler footer'da görünür</li>
-                  <li>• Menü sırası korunur</li>
                   <li>• İstediğiniz kadar menü seçebilirsiniz</li>
                 </ul>
               )}

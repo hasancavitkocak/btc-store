@@ -13,6 +13,34 @@ import { sendEmail, createProductContactEmailBody, createCallRequestEmailBody } 
 import { useAuthStore } from './useAuthStore';
 import { publicService, MenuItem } from '../services/public.service';
 
+export interface SiteConfiguration {
+  id?: number;
+  headerLogo?: {
+    absolutePath: string;
+  };
+  footerLogo?: {
+    absolutePath: string;
+  };
+  contactPhone?: string;
+  showContactPhone?: boolean;
+  footerEmail?: string;
+  footerPhone?: string;
+  footerAddress?: string;
+  footerMenus?: MenuItem[];
+  topBannerEnabled?: boolean;
+  topBannerText?: {
+    tr?: string;
+    en?: string;
+    de?: string;
+    fr?: string;
+    es?: string;
+    it?: string;
+  };
+  topBannerBgColor?: string;
+  topBannerTextColor?: string;
+  topBannerLink?: string;
+}
+
 interface StoreState {
   header: HeaderData;
   banners: Banner[];
@@ -26,7 +54,7 @@ interface StoreState {
   callRequests: CallRequest[];
   productContactForms: ProductContactForm[];
   menuItems: MenuItem[];
-  siteConfiguration: any;
+  siteConfiguration: SiteConfiguration | null;
   isLoadingBanners: boolean;
   isLoadingCategories: boolean;
   isLoadingPartners: boolean;

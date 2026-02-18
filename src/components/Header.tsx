@@ -34,21 +34,6 @@ export default function Header() {
 
   return (
     <>
-      {header.topBanner && (
-        <div
-          className="text-white text-center py-2 px-4 text-sm"
-          style={{ backgroundColor: header.topBanner.bgColor }}
-        >
-          {header.topBanner.link ? (
-            <Link href={header.topBanner.link} className="hover:underline">
-              {t(header.topBanner.textKey)}
-            </Link>
-          ) : (
-            <span>{t(header.topBanner.textKey)}</span>
-          )}
-        </div>
-      )}
-
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <Container>
           <div className="flex items-center justify-between py-4">
