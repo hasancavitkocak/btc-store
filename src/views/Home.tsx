@@ -202,7 +202,7 @@ export default function Home() {
                 <div className={`flex flex-col md:flex-row gap-12 items-center ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
                   {/* Image skeleton */}
                   <div className="w-full md:w-1/2">
-                    <div className="aspect-[4/3] bg-gray-300 rounded-2xl animate-pulse"></div>
+                    <div className="aspect-[5/3] bg-gray-300 rounded-2xl animate-pulse"></div>
                   </div>
                   
                   {/* Content skeleton */}

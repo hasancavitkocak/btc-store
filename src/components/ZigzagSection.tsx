@@ -64,7 +64,7 @@ export default function ZigzagSection({
               <img
                 src={image}
                 alt={imageAlt}
-                className="w-full h-auto object-contain drop-shadow-2xl"
+                className="w-full h-auto max-h-[600px] object-contain drop-shadow-2xl"
               />
             </div>
           </div>

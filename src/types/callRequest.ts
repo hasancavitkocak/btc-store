@@ -5,6 +5,7 @@ export enum CallRequestStatus {
   CUSTOMER_INFORMED = 'CUSTOMER_INFORMED',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
+  CLOSED = 'CLOSED',
 }
 
 export enum CallRequestActionType {
@@ -27,8 +28,11 @@ export interface CallRequest {
   message?: string;
   status: CallRequestStatus;
   assignedGroup?: string;
+  assignedGroups?: string; // Semicolon separated
   assignedUserId?: number;
   assignedUserName?: string;
+  assignedUserIds?: number[]; // Multiple users
+  assignedUserNames?: string[]; // Multiple user names
   completedAt?: string;
   gdprConsent: boolean;
   ipAddress?: string;
@@ -60,6 +64,7 @@ export const STATUS_LABELS: Record<CallRequestStatus, string> = {
   [CallRequestStatus.CUSTOMER_INFORMED]: 'Müşteri Bilgilendirildi',
   [CallRequestStatus.COMPLETED]: 'Tamamlandı',
   [CallRequestStatus.CANCELLED]: 'İptal Edildi',
+  [CallRequestStatus.CLOSED]: 'Kapatıldı',
 };
 
 export const STATUS_COLORS: Record<CallRequestStatus, string> = {
@@ -69,6 +74,7 @@ export const STATUS_COLORS: Record<CallRequestStatus, string> = {
   [CallRequestStatus.CUSTOMER_INFORMED]: 'bg-indigo-100 text-indigo-800',
   [CallRequestStatus.COMPLETED]: 'bg-green-100 text-green-800',
   [CallRequestStatus.CANCELLED]: 'bg-red-100 text-red-800',
+  [CallRequestStatus.CLOSED]: 'bg-gray-100 text-gray-800',
 };
 
 export const ACTION_TYPE_LABELS: Record<CallRequestActionType, string> = {

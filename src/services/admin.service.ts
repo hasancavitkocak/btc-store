@@ -192,6 +192,7 @@ export const parameterService = {
 // User servisleri
 export const userService = {
   getAll: () => apiClient.get('/v1/users'),
+  search: (query: string) => apiClient.get(`/v1/users/search?query=${encodeURIComponent(query)}`),
   getByCode: (code: string) => apiClient.get(`/v1/users/${code}`),
   save: (data: any, pictureFile?: File, removePicture?: boolean) => {
     const formData = new FormData();
@@ -241,10 +242,16 @@ export const callRequestService = {
   getMyRequests: () => apiClient.get<any>('/v1/call-requests/my-requests'),
   assignToGroup: (id: number, groupCode: string) => 
     apiClient.post<any>(`/v1/call-requests/${id}/assign-group?groupCode=${groupCode}`),
+  assignToGroups: (id: number, groupCodes: string[]) => 
+    apiClient.post<any>(`/v1/call-requests/${id}/assign-groups`, groupCodes),
   assignToUser: (id: number, userId: number) => 
     apiClient.post<any>(`/v1/call-requests/${id}/assign-user?userId=${userId}`),
+  assignToUsers: (id: number, userIds: number[]) => 
+    apiClient.post<any>(`/v1/call-requests/${id}/assign-users`, userIds),
   updateStatus: (id: number, status: string, comment?: string) => 
     apiClient.post<any>(`/v1/call-requests/${id}/update-status?status=${status}${comment ? `&comment=${encodeURIComponent(comment)}` : ''}`),
+  closeRequest: (id: number, comment?: string) => 
+    apiClient.post<any>(`/v1/call-requests/${id}/close${comment ? `?comment=${encodeURIComponent(comment)}` : ''}`),
   getHistory: (id: number) => apiClient.get<any>(`/v1/call-requests/${id}/history`),
 };
 

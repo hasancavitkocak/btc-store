@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, User, Mail, Phone, Calendar, MapPin, 
   CheckCircle, UserPlus, Users, MessageSquare, Clock,
-  Shield
+  Shield, X, XCircle
 } from 'lucide-react';
-import { callRequestService, userGroupService } from '@/services/admin.service';
+import { callRequestService, userGroupService, userService } from '@/services/admin.service';
 import { 
   CallRequest, 
   CallRequestHistory, 
@@ -25,6 +25,14 @@ interface Props {
   requestId: number;
 }
 
+interface UserOption {
+  id: number;
+  username: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 export default function CallRequestDetail({ requestId }: Props) {
   const router = useRouter();
   const [request, setRequest] = useState<CallRequest | null>(null);
@@ -32,15 +40,37 @@ export default function CallRequestDetail({ requestId }: Props) {
   const [loading, setLoading] = useState(true);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showCloseModal, setShowCloseModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<CallRequestStatus | ''>('');
   const [comment, setComment] = useState('');
-  const [groupCode, setGroupCode] = useState('');
+  const [closeComment, setCloseComment] = useState('');
+  
+  // Multi-select states
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserOption[]>([]);
   const [userGroups, setUserGroups] = useState<any[]>([]);
+  
+  // User search
+  const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [userSearchResults, setUserSearchResults] = useState<UserOption[]>([]);
+  const [searchingUsers, setSearchingUsers] = useState(false);
 
   useEffect(() => {
     loadData();
     loadUserGroups();
   }, [requestId]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (userSearchQuery.length >= 2) {
+        searchUsers();
+      } else {
+        setUserSearchResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [userSearchQuery]);
 
   const loadData = async () => {
     try {
@@ -51,12 +81,10 @@ export default function CallRequestDetail({ requestId }: Props) {
       ]);
 
       if (requestResponse.status === 'SUCCESS' && requestResponse.data) {
-        // Handle wrapped data
         const actualRequestData = requestResponse.data.data || requestResponse.data;
         setRequest(actualRequestData as CallRequest);
       }
       if (historyResponse.status === 'SUCCESS' && historyResponse.data) {
-        // Handle wrapped data
         const actualHistoryData = historyResponse.data.data || historyResponse.data;
         const historyArray = Array.isArray(actualHistoryData) ? actualHistoryData : [];
         setHistory(historyArray as CallRequestHistory[]);
@@ -72,13 +100,28 @@ export default function CallRequestDetail({ requestId }: Props) {
     try {
       const response = await userGroupService.getAll();
       if (response.status === 'SUCCESS' && response.data) {
-        // Handle wrapped data
-        const actualData = response.data.data || response.data;
+        const actualData = (response.data as any).data || response.data;
         const dataArray = Array.isArray(actualData) ? actualData : [];
         setUserGroups(dataArray);
       }
     } catch (error) {
       console.error('User groups yüklenirken hata:', error);
+    }
+  };
+
+  const searchUsers = async () => {
+    try {
+      setSearchingUsers(true);
+      const response = await userService.search(userSearchQuery);
+      if (response.status === 'SUCCESS' && response.data) {
+        const actualData = (response.data as any).data || response.data;
+        const dataArray = Array.isArray(actualData) ? actualData : [];
+        setUserSearchResults(dataArray);
+      }
+    } catch (error) {
+      console.error('Kullanıcı arama hatası:', error);
+    } finally {
+      setSearchingUsers(false);
     }
   };
 
@@ -97,18 +140,74 @@ export default function CallRequestDetail({ requestId }: Props) {
     }
   };
 
-  const handleAssignToGroup = async () => {
-    if (!groupCode) return;
+  const handleAssign = async () => {
+    if (selectedGroups.length === 0 && selectedUsers.length === 0) {
+      alert('En az bir grup veya kullanıcı seçmelisiniz');
+      return;
+    }
 
     try {
-      await callRequestService.assignToGroup(requestId, groupCode);
+      // Assign to groups
+      if (selectedGroups.length > 0) {
+        if (selectedGroups.length === 1) {
+          await callRequestService.assignToGroup(requestId, selectedGroups[0]);
+        } else {
+          await callRequestService.assignToGroups(requestId, selectedGroups);
+        }
+      }
+
+      // Assign to users
+      if (selectedUsers.length > 0) {
+        const userIds = selectedUsers.map(u => u.id);
+        if (userIds.length === 1) {
+          await callRequestService.assignToUser(requestId, userIds[0]);
+        } else {
+          await callRequestService.assignToUsers(requestId, userIds);
+        }
+      }
+
       setShowAssignModal(false);
-      setGroupCode('');
+      setSelectedGroups([]);
+      setSelectedUsers([]);
+      setUserSearchQuery('');
+      setUserSearchResults([]);
       loadData();
     } catch (error) {
-      console.error('Gruba atanırken hata:', error);
-      alert('Gruba atanırken bir hata oluştu');
+      console.error('Atama yapılırken hata:', error);
+      alert('Atama yapılırken bir hata oluştu');
     }
+  };
+
+  const handleCloseRequest = async () => {
+    try {
+      await callRequestService.closeRequest(requestId, closeComment);
+      setShowCloseModal(false);
+      setCloseComment('');
+      loadData();
+    } catch (error) {
+      console.error('Çağrı kapatılırken hata:', error);
+      alert('Çağrı kapatılırken bir hata oluştu');
+    }
+  };
+
+  const toggleGroup = (groupCode: string) => {
+    setSelectedGroups(prev => 
+      prev.includes(groupCode) 
+        ? prev.filter(g => g !== groupCode)
+        : [...prev, groupCode]
+    );
+  };
+
+  const addUser = (user: UserOption) => {
+    if (!selectedUsers.find(u => u.id === user.id)) {
+      setSelectedUsers(prev => [...prev, user]);
+    }
+    setUserSearchQuery('');
+    setUserSearchResults([]);
+  };
+
+  const removeUser = (userId: number) => {
+    setSelectedUsers(prev => prev.filter(u => u.id !== userId));
   };
 
   const formatDate = (dateString: string) => {
@@ -314,20 +413,20 @@ export default function CallRequestDetail({ requestId }: Props) {
             <div className="space-y-3">
               <div>
                 <div className="text-sm text-gray-500">Oluşturulma</div>
-                <div className="text-sm font-medium text-gray-900">{formatDate(request.createdDate)}</div>
+                <div className="text-sm font-medium text-gray-900">{formatDate(request.createdDate!)}</div>
               </div>
               
-              {request.assignedGroup && (
+              {request.assignedGroups && (
                 <div>
-                  <div className="text-sm text-gray-500">Atanan Grup</div>
-                  <div className="text-sm font-medium text-gray-900">{request.assignedGroup}</div>
+                  <div className="text-sm text-gray-500">Atanan Gruplar</div>
+                  <div className="text-sm font-medium text-gray-900">{request.assignedGroups.split(';').join(', ')}</div>
                 </div>
               )}
               
-              {request.assignedUserName && (
+              {request.assignedUserNames && request.assignedUserNames.length > 0 && (
                 <div>
-                  <div className="text-sm text-gray-500">Atanan Kullanıcı</div>
-                  <div className="text-sm font-medium text-gray-900">{request.assignedUserName}</div>
+                  <div className="text-sm text-gray-500">Atanan Kullanıcılar</div>
+                  <div className="text-sm font-medium text-gray-900">{request.assignedUserNames.join(', ')}</div>
                 </div>
               )}
               
@@ -349,7 +448,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                 className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
               >
                 <Users className="w-4 h-4" />
-                Gruba Ata
+                Atama Yap
               </Button>
               
               <Button
@@ -358,6 +457,15 @@ export default function CallRequestDetail({ requestId }: Props) {
               >
                 <CheckCircle className="w-4 h-4" />
                 Durum Güncelle
+              </Button>
+
+              <Button
+                onClick={() => setShowCloseModal(true)}
+                className="w-full bg-gray-600 hover:bg-gray-700 flex items-center justify-center gap-2"
+                disabled={request.status === CallRequestStatus.CLOSED}
+              >
+                <XCircle className="w-4 h-4" />
+                Çağrıyı Kapat
               </Button>
 
               <div className="pt-3 border-t border-gray-200">
@@ -384,16 +492,17 @@ export default function CallRequestDetail({ requestId }: Props) {
         isOpen={showStatusModal}
         onClose={() => setShowStatusModal(false)}
         title="Durum Güncelle"
+        size="md"
       >
-        <div className="space-y-4">
+        <div className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
               Yeni Durum
             </label>
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as CallRequestStatus)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             >
               <option value="">Durum Seçin</option>
               {Object.entries(STATUS_LABELS).map(([key, label]) => (
@@ -403,19 +512,19 @@ export default function CallRequestDetail({ requestId }: Props) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
               Yorum (Opsiyonel)
             </label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
               placeholder="Durum değişikliği hakkında not ekleyin..."
             />
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-4 border-t border-gray-200">
             <Button
               onClick={() => setShowStatusModal(false)}
               variant="outline"
@@ -426,7 +535,7 @@ export default function CallRequestDetail({ requestId }: Props) {
             <Button
               onClick={handleUpdateStatus}
               disabled={!selectedStatus}
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Güncelle
             </Button>
@@ -434,45 +543,225 @@ export default function CallRequestDetail({ requestId }: Props) {
         </div>
       </Modal>
 
-      {/* Assign to Group Modal */}
+      {/* Assign Modal */}
       <Modal
         isOpen={showAssignModal}
-        onClose={() => setShowAssignModal(false)}
-        title="Gruba Ata"
+        onClose={() => {
+          setShowAssignModal(false);
+          setSelectedGroups([]);
+          setSelectedUsers([]);
+          setUserSearchQuery('');
+          setUserSearchResults([]);
+        }}
+        title="Atama Yap"
+        size="lg"
       >
-        <div className="space-y-4">
+        <div className="p-6 space-y-6">
+          {/* Group Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Grup Seçin
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Gruplar (Çoklu Seçim)
             </label>
-            <select
-              value={groupCode}
-              onChange={(e) => setGroupCode(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">Grup Seçin</option>
-              {userGroups.map((group) => (
-                <option key={group.code} value={group.code}>
-                  {group.name || group.code}
-                </option>
-              ))}
-            </select>
+            <div className="border border-gray-300 rounded-lg p-4 max-h-60 overflow-y-auto bg-gray-50">
+              {userGroups.length === 0 ? (
+                <p className="text-sm text-gray-500 text-center py-4">Grup bulunamadı</p>
+              ) : (
+                <div className="space-y-2">
+                  {userGroups.map((group) => (
+                    <label key={group.code} className="flex items-center gap-3 p-3 hover:bg-white rounded-lg cursor-pointer transition-colors border border-transparent hover:border-blue-200">
+                      <input
+                        type="checkbox"
+                        checked={selectedGroups.includes(group.code)}
+                        onChange={() => toggleGroup(group.code)}
+                        className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 focus:ring-2"
+                      />
+                      <span className="text-sm font-medium text-gray-700">{group.name || group.code}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+            {selectedGroups.length > 0 && (
+              <div className="mt-3 flex items-center gap-2">
+                <div className="flex-1 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+                  <span className="text-sm font-medium text-blue-700">
+                    {selectedGroups.length} grup seçildi
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSelectedGroups([])}
+                  className="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  Temizle
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="flex gap-3">
+          {/* Divider */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500 font-medium">VE/VEYA</span>
+            </div>
+          </div>
+
+          {/* User Search & Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Kullanıcılar (Arama ile Ekle)
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={userSearchQuery}
+                onChange={(e) => setUserSearchQuery(e.target.value)}
+                placeholder="Kullanıcı ara (isim, email, kullanıcı adı)..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              />
+              {searchingUsers && (
+                <div className="absolute right-3 top-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                </div>
+              )}
+            </div>
+            
+            {/* Search Results */}
+            {userSearchResults.length > 0 && (
+              <div className="mt-3 border border-gray-300 rounded-lg max-h-64 overflow-y-auto bg-white shadow-lg">
+                {userSearchResults.map((user) => (
+                  <button
+                    key={user.id}
+                    onClick={() => addUser(user)}
+                    disabled={selectedUsers.some(u => u.id === user.id)}
+                    className="w-full text-left p-4 hover:bg-blue-50 border-b border-gray-200 last:border-b-0 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">{user.username}</div>
+                        {user.email && <div className="text-sm text-gray-500 mt-1">{user.email}</div>}
+                        {(user.firstName || user.lastName) && (
+                          <div className="text-sm text-gray-600 mt-1">{user.firstName} {user.lastName}</div>
+                        )}
+                      </div>
+                      {selectedUsers.some(u => u.id === user.id) && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Seçildi</span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {userSearchQuery.length > 0 && userSearchQuery.length < 2 && (
+              <p className="mt-2 text-sm text-gray-500">En az 2 karakter girin...</p>
+            )}
+
+            {userSearchQuery.length >= 2 && !searchingUsers && userSearchResults.length === 0 && (
+              <p className="mt-2 text-sm text-gray-500">Kullanıcı bulunamadı</p>
+            )}
+
+            {/* Selected Users */}
+            {selectedUsers.length > 0 && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm font-medium text-gray-700">Seçili Kullanıcılar ({selectedUsers.length}):</div>
+                  <button
+                    onClick={() => setSelectedUsers([])}
+                    className="text-xs text-red-600 hover:text-red-700 font-medium"
+                  >
+                    Tümünü Kaldır
+                  </button>
+                </div>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {selectedUsers.map((user) => (
+                    <div key={user.id} className="flex items-center justify-between bg-blue-50 border border-blue-200 p-3 rounded-lg">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 truncate">{user.username}</div>
+                        {user.email && <div className="text-xs text-gray-500 truncate mt-1">{user.email}</div>}
+                      </div>
+                      <button
+                        onClick={() => removeUser(user.id)}
+                        className="ml-3 p-1.5 hover:bg-blue-100 rounded-lg transition-colors flex-shrink-0"
+                        title="Kaldır"
+                      >
+                        <X className="w-4 h-4 text-gray-600" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-4 border-t border-gray-200">
             <Button
-              onClick={() => setShowAssignModal(false)}
+              onClick={() => {
+                setShowAssignModal(false);
+                setSelectedGroups([]);
+                setSelectedUsers([]);
+                setUserSearchQuery('');
+                setUserSearchResults([]);
+              }}
               variant="outline"
               className="flex-1"
             >
               İptal
             </Button>
             <Button
-              onClick={handleAssignToGroup}
-              disabled={!groupCode}
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              onClick={handleAssign}
+              disabled={selectedGroups.length === 0 && selectedUsers.length === 0}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              Ata
+              Ata ({selectedGroups.length + selectedUsers.length})
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Close Request Modal */}
+      <Modal
+        isOpen={showCloseModal}
+        onClose={() => setShowCloseModal(false)}
+        title="Çağrıyı Kapat"
+        size="md"
+      >
+        <div className="p-6 space-y-5">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <p className="text-sm text-amber-800">
+              Bu çağrıyı kapatmak istediğinizden emin misiniz? Kapatılan çağrılar sonlandırılmış olarak işaretlenir.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Kapanış Notu (Opsiyonel)
+            </label>
+            <textarea
+              value={closeComment}
+              onChange={(e) => setCloseComment(e.target.value)}
+              rows={4}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
+              placeholder="Çağrının kapatılma sebebini açıklayın..."
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4 border-t border-gray-200">
+            <Button
+              onClick={() => setShowCloseModal(false)}
+              variant="outline"
+              className="flex-1"
+            >
+              İptal
+            </Button>
+            <Button
+              onClick={handleCloseRequest}
+              className="flex-1 bg-gray-600 hover:bg-gray-700"
+            >
+              Kapat
             </Button>
           </div>
         </div>
