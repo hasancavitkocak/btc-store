@@ -135,6 +135,7 @@
     "subtitle": "Leave your information, we'll reach you as soon as possible",
     "name": "Your Name",
     "surname": "Your Surname",
+    "email": "Your Email Address",
     "phone": "Your Phone Number",
     "message": "Your Message (Optional)",
     "messagePlaceholder": "If you have a message you'd like to share with us, you can write it here...",

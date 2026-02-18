@@ -232,3 +232,30 @@ export const siteConfigurationService = {
     return apiClient.upload('/v1/site-configuration', formData);
   },
 };
+
+// Call Request servisleri
+export const callRequestService = {
+  getAll: () => apiClient.get<any>('/v1/call-requests'),
+  getById: (id: number) => apiClient.get<any>(`/v1/call-requests/${id}`),
+  getByStatus: (status: string) => apiClient.get<any>(`/v1/call-requests/status/${status}`),
+  getMyRequests: () => apiClient.get<any>('/v1/call-requests/my-requests'),
+  assignToGroup: (id: number, groupCode: string) => 
+    apiClient.post<any>(`/v1/call-requests/${id}/assign-group?groupCode=${groupCode}`),
+  assignToUser: (id: number, userId: number) => 
+    apiClient.post<any>(`/v1/call-requests/${id}/assign-user?userId=${userId}`),
+  updateStatus: (id: number, status: string, comment?: string) => 
+    apiClient.post<any>(`/v1/call-requests/${id}/update-status?status=${status}${comment ? `&comment=${encodeURIComponent(comment)}` : ''}`),
+  getHistory: (id: number) => apiClient.get<any>(`/v1/call-requests/${id}/history`),
+};
+
+// Email Template servisleri
+export const emailTemplateService = {
+  getAll: () => apiClient.get<any>('/v1/email-templates'),
+  getActive: () => apiClient.get<any>('/v1/email-templates/active'),
+  getByCode: (code: string) => apiClient.get<any>(`/v1/email-templates/${code}`),
+  save: (data: any) => apiClient.post<any>('/v1/email-templates', data),
+  delete: (code: string) => apiClient.delete<any>(`/v1/email-templates/${code}`),
+  // SearchController endpoint'lerini kullan
+  getAllModels: () => apiClient.get<any>('/v1/search/all-item-models'),
+  getModelFields: (modelName: string) => apiClient.get<any>(`/v1/search/all-item-fields/${modelName}`),
+};

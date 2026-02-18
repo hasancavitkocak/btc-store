@@ -25,12 +25,13 @@ export default function CallRequest() {
   const [formData, setFormData] = useState({
     name: '',
     surname: '',
+    email: '',
     phone: '',
     message: '',
     kvkkAccepted: false
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!formData.kvkkAccepted) {
@@ -38,20 +39,38 @@ export default function CallRequest() {
       return;
     }
 
-    const submission = {
-      id: Date.now().toString(),
-      ...formData,
-      createdAt: new Date().toISOString()
-    };
+    try {
+      // Backend'e gönder
+      const response = await fetch('http://localhost:9090/webapp/api/v1/public/call-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customerName: `${formData.name} ${formData.surname}`.trim(),
+          customerEmail: formData.email,
+          customerPhone: formData.phone,
+          message: formData.message,
+          gdprConsent: formData.kvkkAccepted,
+        }),
+      });
 
-    addCallRequest(submission);
-    console.log('Call Request Submitted:', submission);
+      if (!response.ok) {
+        throw new Error('Form gönderilemedi');
+      }
 
-    setShowToast(true);
+      const result = await response.json();
+      console.log('Call Request Submitted:', result);
 
-    setTimeout(() => {
-      router.push('/');
-    }, 2000);
+      setShowToast(true);
+
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
+    } catch (error) {
+      console.error('Form gönderme hatası:', error);
+      alert('Form gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
+    }
   };
 
   return (
@@ -84,6 +103,14 @@ export default function CallRequest() {
                   required
                 />
               </div>
+
+              <Input
+                type="email"
+                label={t('callRequest.email')}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
 
               <PhoneInput
                 label={t('callRequest.phone')}
