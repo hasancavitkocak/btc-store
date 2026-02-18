@@ -5,15 +5,18 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, User, Mail, Phone, Calendar, MapPin, 
   CheckCircle, UserPlus, Users, MessageSquare, Clock,
-  Shield, X, XCircle
+  Shield, X, XCircle, AlertCircle
 } from 'lucide-react';
 import { callRequestService, userGroupService, userService } from '@/services/admin.service';
 import { 
   CallRequest, 
   CallRequestHistory, 
-  CallRequestStatus, 
+  CallRequestStatus,
+  CallRequestPriority,
   STATUS_LABELS, 
   STATUS_COLORS,
+  PRIORITY_LABELS,
+  PRIORITY_COLORS,
   ACTION_TYPE_LABELS 
 } from '@/types/callRequest';
 import { ApiResponse } from '@/lib/api';
@@ -39,9 +42,11 @@ export default function CallRequestDetail({ requestId }: Props) {
   const [history, setHistory] = useState<CallRequestHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showPriorityModal, setShowPriorityModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showCloseModal, setShowCloseModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<CallRequestStatus | ''>('');
+  const [selectedPriority, setSelectedPriority] = useState<CallRequestPriority | ''>('');
   const [comment, setComment] = useState('');
   const [closeComment, setCloseComment] = useState('');
   
@@ -140,6 +145,20 @@ export default function CallRequestDetail({ requestId }: Props) {
     }
   };
 
+  const handleUpdatePriority = async () => {
+    if (!selectedPriority) return;
+
+    try {
+      await callRequestService.updatePriority(requestId, selectedPriority);
+      setShowPriorityModal(false);
+      setSelectedPriority('');
+      loadData();
+    } catch (error) {
+      console.error('Öncelik güncellenirken hata:', error);
+      alert('Öncelik güncellenirken bir hata oluştu');
+    }
+  };
+
   const handleAssign = async () => {
     if (selectedGroups.length === 0 && selectedUsers.length === 0) {
       alert('En az bir grup veya kullanıcı seçmelisiniz');
@@ -228,6 +247,14 @@ export default function CallRequestDetail({ requestId }: Props) {
     );
   };
 
+  const getPriorityBadge = (priority: CallRequestPriority) => {
+    return (
+      <span className={`px-4 py-2 rounded-full text-sm font-semibold ${PRIORITY_COLORS[priority]}`}>
+        {PRIORITY_LABELS[priority]}
+      </span>
+    );
+  };
+
   if (loading) {
     return (
       <div className="p-8">
@@ -266,10 +293,10 @@ export default function CallRequestDetail({ requestId }: Props) {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
               Call Request #{request.id}
             </h1>
-            <p className="text-gray-600">{request.subject || 'Konu belirtilmemiş'}</p>
           </div>
           <div className="flex items-center gap-3">
             {getStatusBadge(request.status)}
+            {getPriorityBadge(request.priority)}
           </div>
         </div>
       </div>
@@ -412,6 +439,16 @@ export default function CallRequestDetail({ requestId }: Props) {
             <h3 className="font-semibold text-gray-900 mb-4">Hızlı Bilgi</h3>
             <div className="space-y-3">
               <div>
+                <div className="text-sm text-gray-500">Durum</div>
+                <div className="mt-1">{getStatusBadge(request.status)}</div>
+              </div>
+              
+              <div>
+                <div className="text-sm text-gray-500">Öncelik</div>
+                <div className="mt-1">{getPriorityBadge(request.priority)}</div>
+              </div>
+              
+              <div>
                 <div className="text-sm text-gray-500">Oluşturulma</div>
                 <div className="text-sm font-medium text-gray-900">{formatDate(request.createdDate!)}</div>
               </div>
@@ -466,6 +503,14 @@ export default function CallRequestDetail({ requestId }: Props) {
                 >
                   <CheckCircle className="w-4 h-4" />
                   Durum Güncelle
+                </Button>
+
+                <Button
+                  onClick={() => setShowPriorityModal(true)}
+                  className="w-full bg-orange-600 hover:bg-orange-700 flex items-center justify-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4" />
+                  Öncelik Güncelle
                 </Button>
 
                 <Button
@@ -545,6 +590,61 @@ export default function CallRequestDetail({ requestId }: Props) {
               onClick={handleUpdateStatus}
               disabled={!selectedStatus}
               className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              Güncelle
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Priority Update Modal */}
+      <Modal
+        isOpen={showPriorityModal}
+        onClose={() => setShowPriorityModal(false)}
+        title="Öncelik Güncelle"
+        size="md"
+      >
+        <div className="p-6 space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Yeni Öncelik
+            </label>
+            <select
+              value={selectedPriority}
+              onChange={(e) => setSelectedPriority(e.target.value as CallRequestPriority)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+            >
+              <option value="">Öncelik Seçin</option>
+              {Object.entries(PRIORITY_LABELS).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm text-blue-800">
+              <strong>Öncelik Seviyeleri:</strong>
+            </p>
+            <ul className="text-sm text-blue-700 mt-2 space-y-1">
+              <li>• <strong>Düşük:</strong> Standart takip</li>
+              <li>• <strong>Orta:</strong> Normal öncelik (varsayılan)</li>
+              <li>• <strong>Yüksek:</strong> Hızlı yanıt gerekli</li>
+              <li>• <strong>Acil:</strong> Anında müdahale gerekli</li>
+            </ul>
+          </div>
+
+          <div className="flex gap-3 pt-4 border-t border-gray-200">
+            <Button
+              onClick={() => setShowPriorityModal(false)}
+              variant="outline"
+              className="flex-1"
+            >
+              İptal
+            </Button>
+            <Button
+              onClick={handleUpdatePriority}
+              disabled={!selectedPriority}
+              className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Güncelle
             </Button>

@@ -4,7 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Phone, Mail, User, Calendar, CheckCircle } from 'lucide-react';
 import { callRequestService } from '@/services/admin.service';
-import { CallRequest, CallRequestStatus, STATUS_LABELS, STATUS_COLORS } from '@/types/callRequest';
+import { 
+  CallRequest, 
+  CallRequestStatus, 
+  STATUS_LABELS, 
+  STATUS_COLORS,
+  PRIORITY_LABELS,
+  PRIORITY_COLORS
+} from '@/types/callRequest';
 import { ApiResponse } from '@/lib/api';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
@@ -144,11 +151,11 @@ export default function MyCallRequests() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {request.subject || 'Konu Belirtilmemiş'}
-                      </h3>
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
                         {getStatusBadge(request.status)}
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${PRIORITY_COLORS[request.priority]}`}>
+                          {PRIORITY_LABELS[request.priority]}
+                        </span>
                         {request.createdDate && (
                           <span className={`text-sm font-medium ${getPriorityColor(request.createdDate)}`}>
                             {(() => {

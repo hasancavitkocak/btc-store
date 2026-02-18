@@ -4,7 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Filter, Phone, Mail, User, Calendar, Clock } from 'lucide-react';
 import { callRequestService } from '@/services/admin.service';
-import { CallRequest, CallRequestStatus, STATUS_LABELS, STATUS_COLORS } from '@/types/callRequest';
+import { 
+  CallRequest, 
+  CallRequestStatus, 
+  STATUS_LABELS, 
+  STATUS_COLORS,
+  PRIORITY_LABELS,
+  PRIORITY_COLORS
+} from '@/types/callRequest';
 import { ApiResponse } from '@/lib/api';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
@@ -54,7 +61,7 @@ export default function CallRequestsAdmin() {
       request.customerName.toLowerCase().includes(searchLower) ||
       request.customerEmail.toLowerCase().includes(searchLower) ||
       request.customerPhone.includes(searchTerm) ||
-      (request.subject && request.subject.toLowerCase().includes(searchLower))
+      (request.message && request.message.toLowerCase().includes(searchLower))
     );
   });
 
@@ -123,7 +130,7 @@ export default function CallRequestsAdmin() {
           <div className="flex-1">
             <input
               type="text"
-              placeholder="İsim, email, telefon veya konu ile ara..."
+              placeholder="İsim, email, telefon veya mesaj ile ara..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -154,9 +161,6 @@ export default function CallRequestsAdmin() {
                   Müşteri Bilgileri
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Konu
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Durum
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -173,13 +177,13 @@ export default function CallRequestsAdmin() {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     Yükleniyor...
                   </td>
                 </tr>
               ) : filteredRequests.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
                     {searchTerm ? 'Arama kriterlerine uygun sonuç bulunamadı' : 'Henüz call request bulunmuyor'}
                   </td>
                 </tr>
@@ -200,20 +204,20 @@ export default function CallRequestsAdmin() {
                           <Phone className="w-4 h-4 text-gray-400" />
                           {request.customerPhone}
                         </div>
+                        {request.message && (
+                          <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                            {request.message}
+                          </div>
+                        )}
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 font-medium">
-                        {request.subject || '-'}
-                      </div>
-                      {request.message && (
-                        <div className="text-sm text-gray-600 mt-1 line-clamp-2">
-                          {request.message}
-                        </div>
-                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusBadge(request.status)}
+                      <div className="flex flex-col gap-2">
+                        {getStatusBadge(request.status)}
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${PRIORITY_COLORS[request.priority]}`}>
+                          {PRIORITY_LABELS[request.priority]}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm space-y-1">

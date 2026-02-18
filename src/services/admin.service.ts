@@ -250,6 +250,8 @@ export const callRequestService = {
     apiClient.post<any>(`/v1/call-requests/${id}/assign-users`, userIds),
   updateStatus: (id: number, status: string, comment?: string) => 
     apiClient.post<any>(`/v1/call-requests/${id}/update-status?status=${status}${comment ? `&comment=${encodeURIComponent(comment)}` : ''}`),
+  updatePriority: (id: number, priority: string) => 
+    apiClient.post<any>(`/v1/call-requests/${id}/update-priority?priority=${priority}`),
   closeRequest: (id: number, comment?: string) => 
     apiClient.post<any>(`/v1/call-requests/${id}/close${comment ? `?comment=${encodeURIComponent(comment)}` : ''}`),
   getHistory: (id: number) => apiClient.get<any>(`/v1/call-requests/${id}/history`),
