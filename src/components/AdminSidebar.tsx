@@ -35,7 +35,6 @@ const menuGroups: MenuGroup[] = [
   {
     title: 'İçerik Yönetimi',
     items: [
-      { icon: Settings, labelKey: 'admin.header', path: '/admin/header' },
       { icon: Image, labelKey: 'admin.banners', path: '/admin/banners' },
       { icon: FolderTree, labelKey: 'admin.categories', path: '/admin/categories' },
       { icon: Package, labelKey: 'admin.products', path: '/admin/products' },
@@ -49,7 +48,6 @@ const menuGroups: MenuGroup[] = [
   {
     title: 'Form & İletişim',
     items: [
-      { icon: MessageSquare, labelKey: 'admin.forms', path: '/admin/forms' },
       { 
         icon: Shield, 
         labelKey: 'KVKK / GDPR', 
@@ -57,7 +55,7 @@ const menuGroups: MenuGroup[] = [
       },
       { 
         icon: Phone, 
-        labelKey: 'Call Requests', 
+        labelKey: 'Çağrı Talepleri', 
         path: '/admin/call-requests',
         subItems: [
           { labelKey: '📋 Tüm Çağrılar', path: '/admin/call-requests' },
