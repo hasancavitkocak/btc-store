@@ -198,10 +198,24 @@ export default function MyCallRequests() {
                         <span>{formatDate(request.createdDate)}</span>
                       </div>
                     )}
-                    {request.assignedGroup && (
+                    
+                    {/* Assigned Users */}
+                    {request.assignedUserNames && request.assignedUserNames.length > 0 && (
+                      <div className="text-sm">
+                        <span className="text-gray-500">Atanan: </span>
+                        <span className="font-medium text-gray-700">
+                          {request.assignedUserNames.join(', ')}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {/* Assigned Groups */}
+                    {request.assignedGroups && (
                       <div className="text-sm">
                         <span className="text-gray-500">Grup: </span>
-                        <span className="font-medium text-gray-700">{request.assignedGroup}</span>
+                        <span className="font-medium text-gray-700">
+                          {request.assignedGroups.split(';').join(', ')}
+                        </span>
                       </div>
                     )}
                   </div>

@@ -442,47 +442,56 @@ export default function CallRequestDetail({ requestId }: Props) {
           {/* Actions */}
           <Card className="p-6">
             <h3 className="font-semibold text-gray-900 mb-4">İşlemler</h3>
-            <div className="space-y-3">
-              <Button
-                onClick={() => setShowAssignModal(true)}
-                className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
-              >
-                <Users className="w-4 h-4" />
-                Atama Yap
-              </Button>
-              
-              <Button
-                onClick={() => setShowStatusModal(true)}
-                className="w-full bg-green-600 hover:bg-green-700 flex items-center justify-center gap-2"
-              >
-                <CheckCircle className="w-4 h-4" />
-                Durum Güncelle
-              </Button>
-
-              <Button
-                onClick={() => setShowCloseModal(true)}
-                className="w-full bg-gray-600 hover:bg-gray-700 flex items-center justify-center gap-2"
-                disabled={request.status === CallRequestStatus.CLOSED}
-              >
-                <XCircle className="w-4 h-4" />
-                Çağrıyı Kapat
-              </Button>
-
-              <div className="pt-3 border-t border-gray-200">
-                <a
-                  href={`mailto:${request.customerEmail}`}
-                  className="block w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium text-center transition-colors mb-2"
-                >
-                  Mail Gönder
-                </a>
-                <a
-                  href={`tel:${request.customerPhone}`}
-                  className="block w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium text-center transition-colors"
-                >
-                  Telefon Et
-                </a>
+            
+            {request.status === CallRequestStatus.CLOSED ? (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2 text-red-700">
+                  <XCircle className="w-5 h-5" />
+                  <span className="font-medium">Bu çağrı kapatılmıştır. İşlem yapılamaz.</span>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-3">
+                <Button
+                  onClick={() => setShowAssignModal(true)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
+                >
+                  <Users className="w-4 h-4" />
+                  Atama Yap
+                </Button>
+                
+                <Button
+                  onClick={() => setShowStatusModal(true)}
+                  className="w-full bg-green-600 hover:bg-green-700 flex items-center justify-center gap-2"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  Durum Güncelle
+                </Button>
+
+                <Button
+                  onClick={() => setShowCloseModal(true)}
+                  className="w-full bg-gray-600 hover:bg-gray-700 flex items-center justify-center gap-2"
+                >
+                  <XCircle className="w-4 h-4" />
+                  Çağrıyı Kapat
+                </Button>
+
+                <div className="pt-3 border-t border-gray-200">
+                  <a
+                    href={`mailto:${request.customerEmail}`}
+                    className="block w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium text-center transition-colors mb-2"
+                  >
+                    Mail Gönder
+                  </a>
+                  <a
+                    href={`tel:${request.customerPhone}`}
+                    className="block w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium text-center transition-colors"
+                  >
+                    Telefon Et
+                  </a>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
       </div>

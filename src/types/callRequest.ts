@@ -19,6 +19,29 @@ export enum CallRequestActionType {
   CANCELLED = 'CANCELLED',
 }
 
+export interface LocalizedDescription {
+  tr?: string;
+  en?: string;
+  de?: string;
+  fr?: string;
+  es?: string;
+  it?: string;
+}
+
+export interface AssignedGroupInfo {
+  code: string;
+  name: string; // Default name (usually Turkish)
+  description?: LocalizedDescription; // All language descriptions
+}
+
+export interface AssignedUserInfo {
+  id: number;
+  username: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 export interface CallRequest {
   id: number;
   customerName: string;
@@ -27,12 +50,21 @@ export interface CallRequest {
   subject?: string;
   message?: string;
   status: CallRequestStatus;
-  assignedGroup?: string;
+  
+  // Multi-assign fields (detailed)
+  assignedGroupsList?: AssignedGroupInfo[];
+  assignedUsersList?: AssignedUserInfo[];
+  
+  // Simple representations (backward compatibility)
   assignedGroups?: string; // Semicolon separated
+  assignedUserNames?: string[]; // Array of usernames
+  
+  // Deprecated fields (backward compatibility)
+  assignedGroup?: string;
   assignedUserId?: number;
   assignedUserName?: string;
-  assignedUserIds?: number[]; // Multiple users
-  assignedUserNames?: string[]; // Multiple user names
+  assignedUserIds?: number[];
+  
   completedAt?: string;
   gdprConsent: boolean;
   ipAddress?: string;

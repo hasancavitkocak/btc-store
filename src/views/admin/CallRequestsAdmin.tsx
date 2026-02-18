@@ -216,18 +216,53 @@ export default function CallRequestsAdmin() {
                       {getStatusBadge(request.status)}
                     </td>
                     <td className="px-6 py-4">
-                      {request.assignedUserName ? (
-                        <div className="text-sm">
-                          <div className="font-medium text-gray-900">{request.assignedUserName}</div>
-                          {request.assignedGroup && (
-                            <div className="text-gray-600 text-xs">{request.assignedGroup}</div>
-                          )}
-                        </div>
-                      ) : request.assignedGroup ? (
-                        <div className="text-sm text-gray-600">{request.assignedGroup}</div>
-                      ) : (
-                        <span className="text-sm text-gray-400 italic">Atanmamış</span>
-                      )}
+                      <div className="text-sm space-y-1">
+                        {/* Assigned Users - Use detailed list if available */}
+                        {request.assignedUsersList && request.assignedUsersList.length > 0 ? (
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {request.assignedUsersList.length === 1 
+                                ? request.assignedUsersList[0].username
+                                : `${request.assignedUsersList.length} Kullanıcı`}
+                            </div>
+                            {request.assignedUsersList.length > 1 && (
+                              <div className="text-xs text-gray-600">
+                                {request.assignedUsersList.map(u => u.username).join(', ')}
+                              </div>
+                            )}
+                          </div>
+                        ) : request.assignedUserNames && request.assignedUserNames.length > 0 && (
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {request.assignedUserNames.length === 1 
+                                ? request.assignedUserNames[0]
+                                : `${request.assignedUserNames.length} Kullanıcı`}
+                            </div>
+                            {request.assignedUserNames.length > 1 && (
+                              <div className="text-xs text-gray-600">
+                                {request.assignedUserNames.join(', ')}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
+                        {/* Assigned Groups - Use detailed list if available */}
+                        {request.assignedGroupsList && request.assignedGroupsList.length > 0 ? (
+                          <div className="text-xs text-gray-600">
+                            Grup: {request.assignedGroupsList.map(g => g.name || g.code).join(', ')}
+                          </div>
+                        ) : request.assignedGroups && (
+                          <div className="text-xs text-gray-600">
+                            Grup: {request.assignedGroups.split(';').join(', ')}
+                          </div>
+                        )}
+                        
+                        {/* Not assigned */}
+                        {!request.assignedUsersList?.length && !request.assignedUserNames?.length && 
+                         !request.assignedGroupsList?.length && !request.assignedGroups && (
+                          <span className="text-gray-400 italic">Atanmamış</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {request.createdDate ? (
