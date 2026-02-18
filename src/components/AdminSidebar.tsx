@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, LogOut, ChevronDown, ChevronRight, Phone, Mail } from 'lucide-react';
+import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, LogOut, ChevronDown, ChevronRight, Phone, Mail, Shield } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useState, useEffect } from 'react';
 
@@ -50,7 +50,11 @@ const menuGroups: MenuGroup[] = [
     title: 'Form & İletişim',
     items: [
       { icon: MessageSquare, labelKey: 'admin.forms', path: '/admin/forms' },
-      { icon: FileText, labelKey: 'admin.kvkk', path: '/admin/kvkk' },
+      { 
+        icon: Shield, 
+        labelKey: 'KVKK / GDPR', 
+        path: '/admin/legal-documents'
+      },
       { 
         icon: Phone, 
         labelKey: 'Call Requests', 
