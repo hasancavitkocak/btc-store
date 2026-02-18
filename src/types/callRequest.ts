@@ -75,8 +75,47 @@ export interface CallRequest {
   assignedUserIds?: number[];
   
   completedAt?: string;
-  gdprConsent: boolean;
   ipAddress?: string;
+  
+  // Accepted legal document (full object from backend)
+  acceptedLegalDocument?: {
+    id?: number;
+    code?: string;
+    version?: string;
+    documentType?: string;
+    title?: {
+      tr?: string;
+      en?: string;
+      de?: string;
+      fr?: string;
+      es?: string;
+      it?: string;
+    };
+    shortText?: {
+      tr?: string;
+      en?: string;
+      de?: string;
+      fr?: string;
+      es?: string;
+      it?: string;
+    };
+    content?: {
+      tr?: string;
+      en?: string;
+      de?: string;
+      fr?: string;
+      es?: string;
+      it?: string;
+    };
+    effectiveDate?: string;
+    isCurrentVersion?: boolean;
+    active?: boolean;
+    createdDate?: string;
+    createdBy?: string;
+    lastModifiedDate?: string;
+    lastModifiedBy?: string;
+  };
+  
   siteId?: number;
   siteCode?: string;
   createdDate?: string;

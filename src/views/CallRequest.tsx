@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Section from '../components/Section';
 import Card from '../components/Card';
@@ -14,13 +13,14 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import RichContentRenderer from '../components/RichContentRenderer';
 import Toast from '../components/Toast';
+import { LegalDocument } from '../types/legalDocument';
 
 export default function CallRequest() {
   const t = useTranslations();
   const router = useRouter();
-  const { kvkk, addCallRequest } = useStore();
-  const [showKvkkModal, setShowKvkkModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [privacyDocument, setPrivacyDocument] = useState<LegalDocument | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -28,13 +28,33 @@ export default function CallRequest() {
     email: '',
     phone: '',
     message: '',
-    kvkkAccepted: false
+    privacyAccepted: false
   });
+
+  // Fetch current Privacy Policy document on mount
+  useEffect(() => {
+    const fetchPrivacyDocument = async () => {
+      try {
+        const response = await fetch('http://localhost:9090/webapp/api/v1/public/legal-documents/privacy-policy/current');
+        if (response.ok) {
+          const result = await response.json();
+          if (result.status === 'SUCCESS' && result.data) {
+            setPrivacyDocument(result.data);
+          }
+        }
+      } catch (error) {
+        console.error('Privacy Policy document fetch error:', error);
+      }
+    };
+
+    fetchPrivacyDocument();
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!formData.kvkkAccepted) {
+    // Privacy Policy kontrolü - sadece doküman varsa zorunlu
+    if (privacyDocument && !formData.privacyAccepted) {
       alert(t('callRequest.kvkk'));
       return;
     }
@@ -51,7 +71,9 @@ export default function CallRequest() {
           customerEmail: formData.email,
           customerPhone: formData.phone,
           message: formData.message,
-          gdprConsent: formData.kvkkAccepted,
+          acceptedLegalDocument: privacyDocument && formData.privacyAccepted ? {
+            code: privacyDocument.code
+          } : null,
         }),
       });
 
@@ -71,6 +93,36 @@ export default function CallRequest() {
       console.error('Form gönderme hatası:', error);
       alert('Form gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
     }
+  };
+
+  // Get current language from locale
+  const getCurrentLanguage = (): keyof LegalDocument['shortText'] => {
+    // You can get this from your i18n context or locale
+    return 'tr'; // Default to Turkish
+  };
+
+  const getPrivacyShortText = () => {
+    if (!privacyDocument?.shortText) {
+      return t('callRequest.kvkk');
+    }
+    const lang = getCurrentLanguage();
+    return privacyDocument.shortText[lang] || privacyDocument.shortText.tr || t('callRequest.kvkk');
+  };
+
+  const getPrivacyContent = () => {
+    if (!privacyDocument?.content) {
+      return '';
+    }
+    const lang = getCurrentLanguage();
+    return privacyDocument.content[lang] || privacyDocument.content.tr || '';
+  };
+
+  const getPrivacyTitle = () => {
+    if (!privacyDocument?.title) {
+      return t('kvkk.title');
+    }
+    const lang = getCurrentLanguage();
+    return privacyDocument.title[lang] || privacyDocument.title.tr || t('kvkk.title');
   };
 
   return (
@@ -127,26 +179,29 @@ export default function CallRequest() {
                 placeholder={t('callRequest.messagePlaceholder')}
               />
 
-              <div className="flex items-start gap-3 bg-blue-50 p-5 rounded-xl border border-blue-100">
-                <input
-                  type="checkbox"
-                  id="kvkk"
-                  checked={formData.kvkkAccepted}
-                  onChange={(e) => setFormData({ ...formData, kvkkAccepted: e.target.checked })}
-                  required
-                  className="mt-1 w-5 h-5 text-blue-900 border-gray-300 rounded focus:ring-2 focus:ring-blue-900"
-                />
-                <label htmlFor="kvkk" className="text-sm text-gray-700 flex-1 leading-relaxed">
-                  {t('callRequest.kvkk')}
-                  <button
-                    type="button"
-                    onClick={() => setShowKvkkModal(true)}
-                    className="text-blue-900 hover:underline ml-2 font-semibold"
-                  >
-                    ({t('callRequest.viewKvkk')})
-                  </button>
-                </label>
-              </div>
+              {/* Privacy Policy checkbox - sadece doküman varsa göster */}
+              {privacyDocument && (
+                <div className="flex items-start gap-3 bg-blue-50 p-5 rounded-xl border border-blue-100">
+                  <input
+                    type="checkbox"
+                    id="privacy"
+                    checked={formData.privacyAccepted}
+                    onChange={(e) => setFormData({ ...formData, privacyAccepted: e.target.checked })}
+                    required
+                    className="mt-1 w-5 h-5 text-blue-900 border-gray-300 rounded focus:ring-2 focus:ring-blue-900"
+                  />
+                  <label htmlFor="privacy" className="text-sm text-gray-700 flex-1 leading-relaxed">
+                    {getPrivacyShortText()}
+                    <button
+                      type="button"
+                      onClick={() => setShowPrivacyModal(true)}
+                      className="text-blue-900 hover:underline ml-2 font-semibold"
+                    >
+                      ({t('callRequest.viewKvkk')})
+                    </button>
+                  </label>
+                </div>
+              )}
 
               <Button type="submit" fullWidth size="lg" className="text-lg shadow-lg hover:shadow-xl transition-all bg-blue-900 hover:bg-blue-800">
                 {t('callRequest.submit')}
@@ -155,16 +210,22 @@ export default function CallRequest() {
           </Card>
         </div>
 
-        <Modal
-          isOpen={showKvkkModal}
-          onClose={() => setShowKvkkModal(false)}
-          title={t('kvkk.title')}
-          size="lg"
-        >
-          <div className="p-6">
-            <RichContentRenderer htmlContent={kvkk.htmlContent} />
-          </div>
-        </Modal>
+        {/* Modal - sadece doküman varsa göster */}
+        {privacyDocument && (
+          <Modal
+            isOpen={showPrivacyModal}
+            onClose={() => setShowPrivacyModal(false)}
+            title={getPrivacyTitle()}
+            size="lg"
+          >
+            <div className="p-6">
+              <RichContentRenderer htmlContent={getPrivacyContent()} />
+              <div className="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-500">
+                Versiyon: {privacyDocument.version}
+              </div>
+            </div>
+          </Modal>
+        )}
 
         {showToast && (
           <Toast

@@ -48,6 +48,7 @@ export default function CallRequestDetail({ requestId }: Props) {
   const [selectedStatus, setSelectedStatus] = useState<CallRequestStatus | ''>('');
   const [selectedPriority, setSelectedPriority] = useState<CallRequestPriority | ''>('');
   const [comment, setComment] = useState('');
+  const [showLegalDocumentDetails, setShowLegalDocumentDetails] = useState(false);
   const [closeComment, setCloseComment] = useState('');
   
   // Multi-select states
@@ -354,12 +355,97 @@ export default function CallRequestDetail({ requestId }: Props) {
                 </div>
               )}
 
-              {request.gdprConsent && (
-                <div className="flex items-center gap-3 bg-green-50 p-3 rounded-lg">
-                  <Shield className="w-5 h-5 text-green-600" />
-                  <div className="text-sm text-green-700">
-                    KVKK/GDPR onayı verilmiş
-                  </div>
+              {request.acceptedLegalDocument && (
+                <div className="bg-green-50 rounded-lg border border-green-100 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setShowLegalDocumentDetails(!showLegalDocumentDetails)}
+                    className="w-full flex items-center justify-between p-4 hover:bg-green-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Shield className="w-5 h-5 text-green-600" />
+                      <div className="text-left">
+                        <div className="text-sm text-green-700 font-semibold">
+                          Gizlilik Sözleşmesi Onayı Verilmiş
+                        </div>
+                        <div className="text-xs text-green-600 mt-0.5">
+                          {showLegalDocumentDetails ? 'Detayları gizle' : 'Detayları görmek için tıklayın'}
+                        </div>
+                      </div>
+                    </div>
+                    <svg
+                      className={`w-5 h-5 text-green-600 transition-transform duration-200 ${
+                        showLegalDocumentDetails ? 'rotate-180' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {showLegalDocumentDetails && (
+                    <div className="border-t border-green-200 animate-fadeIn">
+                      <div className="p-4 space-y-2 text-xs bg-white">
+                        {/* Document Type */}
+                        {request.acceptedLegalDocument.documentType && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500 font-medium min-w-[100px]">Tip:</span>
+                            <span className="text-gray-700 bg-green-50 px-2 py-1 rounded">
+                              {request.acceptedLegalDocument.documentType}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Title */}
+                        {request.acceptedLegalDocument.title?.tr && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500 font-medium min-w-[100px]">Başlık:</span>
+                            <span className="text-gray-700">{request.acceptedLegalDocument.title.tr}</span>
+                          </div>
+                        )}
+                        
+                        {/* Version */}
+                        {request.acceptedLegalDocument.version && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500 font-medium min-w-[100px]">Versiyon:</span>
+                            <span className="text-green-700 font-semibold">{request.acceptedLegalDocument.version}</span>
+                          </div>
+                        )}
+                        
+                        {/* Effective Date */}
+                        {request.acceptedLegalDocument.effectiveDate && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500 font-medium min-w-[100px]">Yürürlük Tarihi:</span>
+                            <span className="text-gray-700">
+                              {new Date(request.acceptedLegalDocument.effectiveDate).toLocaleDateString('tr-TR')}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Code */}
+                        {request.acceptedLegalDocument.code && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500 font-medium min-w-[100px]">Kod:</span>
+                            <span className="text-gray-600 font-mono text-[10px]">
+                              {request.acceptedLegalDocument.code}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Short Text Preview */}
+                        {request.acceptedLegalDocument.shortText?.tr && (
+                          <div className="pt-2 border-t border-gray-200">
+                            <span className="text-gray-500 font-medium">Onaylanan Metin:</span>
+                            <p className="text-gray-700 italic mt-1 bg-gray-50 p-2 rounded">
+                              "{request.acceptedLegalDocument.shortText.tr}"
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
