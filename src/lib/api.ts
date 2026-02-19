@@ -56,8 +56,23 @@ class ApiClient {
 
     this.refreshPromise = (async () => {
       try {
-        const refreshToken = getCookie('refreshToken');
-        if (!refreshToken) return false;
+        // Try auth refresh token first, then admin
+        const authRefreshToken = getCookie('authRefreshToken');
+        const adminRefreshToken = getCookie('refreshToken');
+        const refreshToken = authRefreshToken || adminRefreshToken;
+        const isAuthMode = !!authRefreshToken;
+        
+        if (!refreshToken) {
+          // Refresh token yok, cookie'leri temizle
+          if (isAuthMode) {
+            deleteCookie('authAccessToken');
+            deleteCookie('authRefreshToken');
+          } else {
+            deleteCookie('accessToken');
+            deleteCookie('refreshToken');
+          }
+          return false;
+        }
 
         const response = await fetch(`${this.baseURL}/v1/refresh-token/refresh`, {
           method: 'POST',
@@ -66,17 +81,47 @@ class ApiClient {
           credentials: 'include',
         });
 
-        if (!response.ok) return false;
+        if (!response.ok) {
+          // Refresh başarısız, cookie'leri temizle
+          console.error('Token refresh failed with status:', response.status);
+          if (isAuthMode) {
+            deleteCookie('authAccessToken');
+            deleteCookie('authRefreshToken');
+          } else {
+            deleteCookie('accessToken');
+            deleteCookie('refreshToken');
+          }
+          return false;
+        }
 
         const data: AuthToken = await response.json();
         
-        console.log('Token refreshed successfully');
+        // Data kontrolü - eğer gerekli alanlar yoksa cookie'leri temizle
+        if (!data || !data.accessToken || !data.refreshToken) {
+          console.error('Invalid token data received');
+          if (isAuthMode) {
+            deleteCookie('authAccessToken');
+            deleteCookie('authRefreshToken');
+          } else {
+            deleteCookie('accessToken');
+            deleteCookie('refreshToken');
+          }
+          return false;
+        }
         
-        setCookie('accessToken', data.accessToken, 7);
-        setCookie('refreshToken', data.refreshToken, 30);
+        console.log('Token refreshed successfully', isAuthMode ? '(Auth Mode)' : '(Admin Mode)');
+        
+        // Save tokens based on mode
+        if (isAuthMode) {
+          setCookie('authAccessToken', data.accessToken);
+          setCookie('authRefreshToken', data.refreshToken);
+        } else {
+          setCookie('accessToken', data.accessToken);
+          setCookie('refreshToken', data.refreshToken);
+        }
         
         // JWT'den kullanıcı bilgilerini decode et ve store'u güncelle
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && isAuthMode) {
           try {
             const { decodeJwt } = await import('@/lib/jwt');
             const { useAuthStore } = await import('@/store/useAuthStore');
@@ -102,6 +147,17 @@ class ApiClient {
         return true;
       } catch (error) {
         console.error('Token refresh failed:', error);
+        // Hata durumunda cookie'leri temizle
+        const authRefreshToken = getCookie('authRefreshToken');
+        const isAuthMode = !!authRefreshToken;
+        
+        if (isAuthMode) {
+          deleteCookie('authAccessToken');
+          deleteCookie('authRefreshToken');
+        } else {
+          deleteCookie('accessToken');
+          deleteCookie('refreshToken');
+        }
         return false;
       } finally {
         this.refreshPromise = null;
@@ -117,7 +173,11 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const { params, skipAuth, ...options } = config;
     const url = this.buildUrl(endpoint, params);
-    const token = getCookie('accessToken');
+    
+    // Try auth token first, then admin token
+    const authToken = getCookie('authAccessToken');
+    const adminToken = getCookie('accessToken');
+    const token = authToken || adminToken;
     
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -136,11 +196,18 @@ class ApiClient {
       });
 
       // Token expired, try refresh
-      if (response.status === 401 && !skipAuth && !endpoint.includes('/login')) {
+      if ((response.status === 401 || response.status === 403) && !skipAuth && !endpoint.includes('/login')) {
+        // Hangi modda olduğumuzu refresh denemeden önce belirle
+        const wasAuthMode = !!getCookie('authRefreshToken');
+        
         const refreshed = await this.refreshAccessToken();
         
         if (refreshed) {
-          const newToken = getCookie('accessToken');
+          // Get the new token (auth or admin)
+          const newAuthToken = getCookie('authAccessToken');
+          const newAdminToken = getCookie('accessToken');
+          const newToken = newAuthToken || newAdminToken;
+          
           if (newToken) {
             headers.Authorization = `Bearer ${newToken}`;
             response = await fetch(url, {
@@ -150,12 +217,20 @@ class ApiClient {
             });
           }
         } else {
-          // Refresh failed, clear tokens and redirect to login
-          deleteCookie('accessToken');
-          deleteCookie('refreshToken');
-          
-          if (typeof window !== 'undefined' && !window.location.pathname.includes('/admin/login')) {
-            window.location.href = '/admin/login';
+          // Refresh failed - wasAuthMode'a göre yönlendir
+          if (wasAuthMode) {
+            // Auth mode - sadece auth store'u temizle, anasayfaya git
+            if (typeof window !== 'undefined') {
+              const { useAuthStore } = await import('@/store/useAuthStore');
+              useAuthStore.getState().setCurrentUser(null);
+              // Admin paneline gitme, anasayfaya git
+              window.location.href = '/';
+            }
+          } else {
+            // Admin mode - admin login'e git
+            if (typeof window !== 'undefined' && !window.location.pathname.includes('/admin/login')) {
+              window.location.href = '/admin/login';
+            }
           }
           
           return {

@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ArrowLeft, ChevronLeft, ChevronRight, Check, MessageCircle } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Check, MessageCircle, FileText, Download } from 'lucide-react';
 import Container from '../components/Container';
 import Button from '../components/Button';
 import { productService, ProductData, CategoryData } from '../services/product.service';
+import { documentService, ProductDocument } from '../services/document.service';
+import { usePublicAuthStore } from '../store/usePublicAuthStore';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -17,6 +19,9 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [documents, setDocuments] = useState<ProductDocument[]>([]);
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const { isAuthenticated } = usePublicAuthStore();
 
   // Convert video URL to embed URL
   const getEmbedUrl = (url: string): string => {
@@ -59,6 +64,12 @@ export default function ProductDetail() {
     }
   }, [code]);
 
+  useEffect(() => {
+    if (code && isAuthenticated) {
+      loadDocuments(code);
+    }
+  }, [code, isAuthenticated]);
+
   const loadProduct = async (productCode: string) => {
     try {
       setLoading(true);
@@ -68,6 +79,21 @@ export default function ProductDetail() {
       console.error('Error loading product:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadDocuments = async (productCode: string) => {
+    try {
+      setDocumentsLoading(true);
+      console.log('Loading documents for product:', productCode);
+      console.log('Is authenticated:', isAuthenticated);
+      const docs = await documentService.getProductDocuments(productCode);
+      console.log('Documents received:', docs);
+      setDocuments(docs);
+    } catch (error) {
+      console.error('Error loading documents:', error);
+    } finally {
+      setDocumentsLoading(false);
     }
   };
 
@@ -319,12 +345,85 @@ export default function ProductDetail() {
 
           {/* Product Description */}
           {product.description?.tr && (
-            <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
+            <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-12">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Ürün Açıklaması</h3>
               <div 
                 className="prose prose-sm lg:prose-lg max-w-none text-gray-700"
                 dangerouslySetInnerHTML={{ __html: product.description.tr }}
               />
+            </div>
+          )}
+
+          {/* Product Documents - Only for authenticated users */}
+          {isAuthenticated && (
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-6 lg:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Ürün Dokümanları</h3>
+              </div>
+
+              {documentsLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="mt-4 text-gray-600">Dokümanlar yükleniyor...</p>
+                </div>
+              ) : documents.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {documents.map((doc) => {
+                    const title = doc.title?.tr || doc.title?.en || 'Doküman';
+                    const description = doc.description?.tr || doc.description?.en;
+                    
+                    return (
+                      <div
+                        key={doc.id}
+                        className="p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <FileText className="w-6 h-6 text-blue-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-gray-900 mb-1">
+                              {title}
+                            </h4>
+                            {description && (
+                              <p className="text-sm text-gray-600 mb-3">{description}</p>
+                            )}
+                            {doc.medias && doc.medias.length > 0 && (
+                              <div className="space-y-2">
+                                {doc.medias.map((media, idx) => (
+                                  <a
+                                    key={idx}
+                                    href={media.absolutePath}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                    <span className="truncate">{media.name || `Dosya ${idx + 1}`}</span>
+                                    {media.size && (
+                                      <span className="text-xs text-gray-500">
+                                        ({(media.size / 1024 / 1024).toFixed(2)} MB)
+                                      </span>
+                                    )}
+                                  </a>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-600">
+                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p>Bu ürün için henüz doküman eklenmemiş.</p>
+                </div>
+              )}
             </div>
           )}
         </Container>
