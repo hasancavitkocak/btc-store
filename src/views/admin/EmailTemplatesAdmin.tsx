@@ -7,6 +7,8 @@ import { emailTemplateService } from '@/services/admin.service';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 import Modal from '@/components/Modal';
+import Toast from '@/components/Toast';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 interface EmailTemplate {
   id: number;
@@ -26,6 +28,12 @@ export default function EmailTemplatesAdmin() {
   const [loading, setLoading] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; code: string; name: string }>({
+    isOpen: false,
+    code: '',
+    name: ''
+  });
 
   useEffect(() => {
     loadTemplates();
@@ -50,26 +58,30 @@ export default function EmailTemplatesAdmin() {
         setTemplates(mappedData as EmailTemplate[]);
       } else {
         setTemplates([]);
+        setToast({ message: 'Template listesi yüklenemedi', type: 'error' });
       }
     } catch (error) {
       console.error('Email templates yüklenirken hata:', error);
       setTemplates([]);
+      setToast({ message: 'Email templates yüklenirken hata oluştu', type: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (code: string) => {
-    if (!confirm('Bu email template\'i silmek istediğinizden emin misiniz?')) {
-      return;
-    }
-
     try {
-      await emailTemplateService.delete(code);
-      loadTemplates();
+      const response = await emailTemplateService.delete(code);
+      
+      if (response.status === 'SUCCESS') {
+        setToast({ message: 'Template başarıyla silindi', type: 'success' });
+        loadTemplates();
+      } else {
+        setToast({ message: response.errorMessage || 'Template silinemedi', type: 'error' });
+      }
     } catch (error) {
       console.error('Template silinirken hata:', error);
-      alert('Template silinirken bir hata oluştu');
+      setToast({ message: 'Template silinirken hata oluştu', type: 'error' });
     }
   };
 
@@ -240,7 +252,11 @@ export default function EmailTemplatesAdmin() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleDelete(template.code)}
+                          onClick={() => setDeleteDialog({ 
+                            isOpen: true, 
+                            code: template.code, 
+                            name: template.templateName 
+                          })}
                           className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -261,8 +277,9 @@ export default function EmailTemplatesAdmin() {
           isOpen={showPreviewModal}
           onClose={() => setShowPreviewModal(false)}
           title={`Önizleme: ${selectedTemplate.templateName}`}
+          size="lg"
         >
-          <div className="space-y-4">
+          <div className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Konu
@@ -298,6 +315,30 @@ export default function EmailTemplatesAdmin() {
           </div>
         </Modal>
       )}
+
+      {/* Toast Notifications */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ isOpen: false, code: '', name: '' })}
+        onConfirm={() => {
+          handleDelete(deleteDialog.code);
+          setDeleteDialog({ isOpen: false, code: '', name: '' });
+        }}
+        title="Template Sil"
+        message={`"${deleteDialog.name}" template'ini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
+        confirmText="Sil"
+        cancelText="İptal"
+        type="danger"
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import Card from '@/components/Card';
 import Input from '@/components/Input';
 import Textarea from '@/components/Textarea';
 import Modal from '@/components/Modal';
+import Toast from '@/components/Toast';
 
 interface Props {
   templateCode?: string;
@@ -43,6 +44,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
   const [showLivePreview, setShowLivePreview] = useState(false);
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [fields, setFields] = useState<FieldInfo[]>([]);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [formData, setFormData] = useState<EmailTemplateData>({
     code: '',
     templateName: '',
@@ -169,14 +171,16 @@ export default function EmailTemplateForm({ templateCode }: Props) {
       const response = await emailTemplateService.save(submitData);
       
       if (response.status === 'SUCCESS') {
-        alert('Email template başarıyla kaydedildi!');
-        router.push('/admin/email-templates');
+        setToast({ message: 'Email template başarıyla kaydedildi!', type: 'success' });
+        setTimeout(() => {
+          router.push('/admin/email-templates');
+        }, 1500);
       } else {
-        alert('Kaydetme sırasında bir hata oluştu');
+        setToast({ message: response.errorMessage || 'Kaydetme sırasında bir hata oluştu', type: 'error' });
       }
     } catch (error) {
       console.error('Template kaydedilirken hata:', error);
-      alert('Kaydetme sırasında bir hata oluştu');
+      setToast({ message: 'Kaydetme sırasında bir hata oluştu', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -489,8 +493,9 @@ export default function EmailTemplateForm({ templateCode }: Props) {
         isOpen={showPreview}
         onClose={() => setShowPreview(false)}
         title="Template Önizleme"
+        size="lg"
       >
-        <div className="space-y-4">
+        <div className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Konu
@@ -525,6 +530,15 @@ export default function EmailTemplateForm({ templateCode }: Props) {
           </Button>
         </div>
       </Modal>
+
+      {/* Toast Notifications */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }
