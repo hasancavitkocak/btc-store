@@ -14,54 +14,56 @@ export default function AdminLayoutWrapper({
   const { isAuthenticated, initializeAuth } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Hydration kontrolü ve auth initialize
+  // Auth'u initialize et
   useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+    const init = async () => {
+      await initializeAuth();
+      setIsInitialized(true);
+    };
+    init();
+  }, [initializeAuth]);
 
-  // Auth'u initialize et (pathname değiştiğinde de)
+  // Token kontrolü ve redirect - pathname veya auth state değiştiğinde
   useEffect(() => {
-    if (isHydrated) {
-      initializeAuth(); // JWT'den kullanıcı bilgilerini yükle
-    }
-  }, [isHydrated, pathname, initializeAuth]);
+    if (!isInitialized) return;
+    
+    // Login sayfasındaysa kontrol yapma
+    if (pathname === '/admin/login') return;
 
-  useEffect(() => {
-    if (!isHydrated) return;
-
-    // Allow access to login page without authentication
-    if (pathname === '/admin/login') {
-      if (isAuthenticated) {
-        router.push('/admin');
-      }
-      return;
-    }
-
-    // Token var mı kontrol et
     const hasToken = getCookie('accessToken');
     
     // Token yoksa ve authenticated değilse login'e yönlendir
     if (!hasToken && !isAuthenticated) {
       router.push('/admin/login');
     }
-  }, [isAuthenticated, router, pathname, isHydrated]);
+  }, [isInitialized, pathname, isAuthenticated, router]);
 
-  // Hydration tamamlanmadan hiçbir şey gösterme
-  if (!isHydrated) {
-    return null;
-  }
-
-  // Show login page without layout
+  // Login sayfası için özel durum - layout olmadan göster
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
 
-  // Token varsa içeriği göster (middleware zaten kontrol ediyor)
+  // Initialize edilmeden hiçbir şey gösterme
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">Yükleniyor...</div>
+      </div>
+    );
+  }
+
+  // Token kontrolü
   const hasToken = getCookie('accessToken');
+  
+  // Token yoksa ve authenticated değilse loading göster (redirect zaten yapılıyor)
   if (!hasToken && !isAuthenticated) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">Yönlendiriliyor...</div>
+      </div>
+    );
   }
 
   return <AdminLayout>{children}</AdminLayout>;
