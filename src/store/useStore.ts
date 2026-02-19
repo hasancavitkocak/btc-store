@@ -61,11 +61,13 @@ interface StoreState {
   isLoadingReferences: boolean;
   isLoadingMenus: boolean;
   isLoadingSiteConfiguration: boolean;
+  isLoadingStories: boolean;
   bannersFetched: boolean;
   categoriesFetched: boolean;
   partnersFetched: boolean;
   referencesFetched: boolean;
   menusFetched: boolean;
+  storiesFetched: boolean;
 
   updateHeader: (header: HeaderData) => void;
   addBanner: (banner: Banner) => void;
@@ -99,6 +101,8 @@ interface StoreState {
   fetchActiveReferences: () => Promise<void>;
   fetchPublicMenus: () => Promise<void>;
   fetchSiteConfiguration: () => Promise<void>;
+  fetchActiveSuccessStories: () => Promise<void>;
+  getSuccessStoryByCode: (code: string) => Story | undefined;
 }
 
 export const useStore = create<StoreState>()((set, get) => ({
@@ -121,11 +125,13 @@ export const useStore = create<StoreState>()((set, get) => ({
       isLoadingReferences: true, // Başlangıçta true olmalı
       isLoadingMenus: true, // Başlangıçta true olmalı
       isLoadingSiteConfiguration: true, // Başlangıçta true olmalı
+      isLoadingStories: true, // Başlangıçta true olmalı
       bannersFetched: false,
       categoriesFetched: false,
       partnersFetched: false,
       referencesFetched: false,
       menusFetched: false,
+      storiesFetched: false,
 
       updateHeader: (header) => set({ header }),
 
@@ -325,6 +331,46 @@ export const useStore = create<StoreState>()((set, get) => ({
         } finally {
           set({ isLoadingSiteConfiguration: false });
         }
+      },
+
+      fetchActiveSuccessStories: async () => {
+        const state = get();
+        if (state.storiesFetched) {
+          return;
+        }
+
+        set({ isLoadingStories: true });
+        try {
+          const response = await publicService.getActiveSuccessStories();
+          
+          if (response.status === 'SUCCESS' && response.data) {
+            const storyData = Array.isArray(response.data) 
+              ? response.data 
+              : (response.data.data || []);
+            
+            const mappedStories: Story[] = storyData.map((story: any, index: number) => ({
+              id: story.code,
+              company: story.company || '',
+              industry: story.sector?.name?.tr || story.sector?.name?.en || '',
+              title: story.title || { tr: '', en: '' },
+              htmlContent: story.htmlContent || { tr: '', en: '' },
+              image: story.media?.absolutePath || '',
+              videoUrl: story.videoUrl || '',
+              results: story.results || [],
+              active: story.active,
+              order: story.order || index
+            }));
+            set({ stories: mappedStories, storiesFetched: true });
+          }
+        } catch (error) {
+          console.error('Failed to fetch success stories:', error);
+        } finally {
+          set({ isLoadingStories: false });
+        }
+      },
+
+      getSuccessStoryByCode: (code: string) => {
+        return get().stories.find(s => s.id === code);
       },
 
       addBanner: (banner) =>

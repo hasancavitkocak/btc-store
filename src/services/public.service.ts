@@ -79,6 +79,26 @@ export interface Reference {
   showOnHome: boolean;
 }
 
+export interface Sector {
+  id: number;
+  code: string;
+  name: MultiLangText;
+}
+
+export interface SuccessStory {
+  id: number;
+  code: string;
+  company: string;
+  sector?: Sector;
+  title: MultiLangText;
+  htmlContent: MultiLangText;
+  media?: Media;
+  videoUrl?: string;
+  results?: string[];
+  order: number;
+  active: boolean;
+}
+
 export interface MenuItem {
   id: number;
   code: string;
@@ -160,5 +180,15 @@ export const publicService = {
   // Get current privacy policy document
   async getCurrentPrivacyPolicy() {
     return apiClient.get('/v1/public/legal-documents/privacy-policy/current', { skipAuth: true });
+  },
+
+  // Get active success stories
+  async getActiveSuccessStories() {
+    return apiClient.get<SuccessStory[]>('/v1/public/success-stories', { skipAuth: true });
+  },
+
+  // Get success story by code
+  async getSuccessStoryByCode(code: string) {
+    return apiClient.get<SuccessStory>(`/v1/public/success-stories/${code}`, { skipAuth: true });
   },
 };

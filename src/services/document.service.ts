@@ -26,11 +26,13 @@ class DocumentService {
   // Authenticated endpoint - requires token
   async getProductDocuments(productCode: string): Promise<ProductDocument[]> {
     console.log('Fetching documents for product:', productCode);
-    const response = await apiClient.get(`/v1/documents/product/${productCode}`);
+    const response = await apiClient.get<{ data: ProductDocument[] } | ProductDocument[]>(`/v1/documents/product/${productCode}`);
     console.log('Document API response:', response);
     
     if (response.status === 'SUCCESS' && response.data) {
-      const actualData = response.data.data || response.data;
+      const actualData = Array.isArray(response.data) 
+        ? response.data 
+        : (response.data as { data: ProductDocument[] }).data || [];
       console.log('Parsed document data:', actualData);
       return Array.isArray(actualData) ? actualData : [];
     }

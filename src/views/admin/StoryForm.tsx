@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Save, X, ArrowLeft } from 'lucide-react';
@@ -39,6 +39,11 @@ export default function StoryForm({ storyId }: StoryFormProps) {
     imageUrl: ''
   });
   
+  // Track if data has been loaded to prevent multiple loads
+  const dataLoadedRef = useRef(false);
+  const currentStoryIdRef = useRef<string | undefined>(undefined);
+  const sectorsLoadedRef = useRef(false);
+  
   const isEditing = !!storyId;
 
   const toggleField = (fieldName: string) => {
@@ -71,11 +76,36 @@ export default function StoryForm({ storyId }: StoryFormProps) {
   const [activeHtmlTab, setActiveHtmlTab] = useState<'tr' | 'en' | 'de' | 'fr' | 'es' | 'it'>('tr');
 
   useEffect(() => {
-    loadSectors();
-    if (storyId) {
+    // Only load sectors once
+    if (!sectorsLoadedRef.current) {
+      loadSectors();
+    }
+  }, []);
+
+  useEffect(() => {
+    // Reset dataLoaded flag if storyId changes
+    if (currentStoryIdRef.current !== storyId) {
+      dataLoadedRef.current = false;
+      currentStoryIdRef.current = storyId;
+    }
+    
+    // Only load story if we have a storyId and haven't loaded it yet
+    if (storyId && !dataLoadedRef.current) {
       loadStory();
     }
   }, [storyId]);
+
+  // Debug: formData değişikliklerini izle (remove after debugging)
+  useEffect(() => {
+    console.log('=== FORM DATA CHANGED ===');
+    console.log('formData.company:', formData.company);
+    console.log('formData.sector:', formData.sector);
+    console.log('formData.title:', formData.title);
+    console.log('formData.videoUrl:', formData.videoUrl);
+    console.log('formData.results:', formData.results);
+    console.log('formData.order:', formData.order);
+    console.log('formData.active:', formData.active);
+  }, [formData]);
 
   // Dropdown dışına tıklandığında kapat
   useEffect(() => {
@@ -92,41 +122,106 @@ export default function StoryForm({ storyId }: StoryFormProps) {
   }, [isSectorDropdownOpen]);
 
   const loadSectors = async () => {
+    // Prevent multiple calls
+    if (sectorsLoadedRef.current) {
+      console.log('Sectors already loaded, skipping...');
+      return;
+    }
+    
     try {
+      console.log('=== LOADING SECTORS (ONCE) ===');
       const response = await sectorService.getActive();
-      console.log('Sectors response:', response); // Debug için
+      console.log('Sectors response:', response);
       if (response.status === 'SUCCESS' && response.data) {
-        // Backend'den gelen data: response.data.data içinde array var
         const sectorsData = (response.data as any).data || response.data;
-        console.log('Parsed sectors:', sectorsData); // Debug için
+        console.log('Parsed sectors:', sectorsData);
         setSectors(Array.isArray(sectorsData) ? sectorsData : []);
+        sectorsLoadedRef.current = true;
       }
     } catch (error) {
       console.error('Error loading sectors:', error);
-      setSectors([]); // Hata durumunda boş array
+      setSectors([]);
     }
   };
 
   const loadStory = async () => {
+    // Prevent multiple calls
+    if (dataLoadedRef.current) {
+      console.log('Story already loaded, skipping...');
+      return;
+    }
+    
     try {
+      console.log('=== LOADING STORY (ONCE) ===');
+      console.log('storyId:', storyId);
       setLoading(true);
       const response = await storyService.getByCode(storyId!);
+      
+      console.log('=== BACKEND RESPONSE ===');
+      console.log('Full response:', response);
+      console.log('response.data:', response.data);
       
       if (response.status === 'SUCCESS' && response.data) {
         const storyData = (response.data as any).data || response.data;
         
-        setFormData({
+        console.log('=== PARSED STORY DATA ===');
+        console.log('storyData:', storyData);
+        console.log('company:', storyData.company);
+        console.log('sector:', storyData.sector);
+        console.log('title:', storyData.title);
+        console.log('videoUrl:', storyData.videoUrl);
+        console.log('results:', storyData.results);
+        console.log('order:', storyData.order);
+        console.log('active:', storyData.active);
+        
+        // Clean taskStep from title and htmlContent objects
+        const cleanTitle = storyData.title ? {
+          tr: storyData.title.tr || '',
+          en: storyData.title.en || '',
+          de: storyData.title.de || '',
+          fr: storyData.title.fr || '',
+          es: storyData.title.es || '',
+          it: storyData.title.it || ''
+        } : { tr: '', en: '', de: '', fr: '', es: '', it: '' };
+        
+        const cleanHtmlContent = storyData.htmlContent ? {
+          tr: storyData.htmlContent.tr || '',
+          en: storyData.htmlContent.en || '',
+          de: storyData.htmlContent.de || '',
+          fr: storyData.htmlContent.fr || '',
+          es: storyData.htmlContent.es || '',
+          it: storyData.htmlContent.it || ''
+        } : { tr: '', en: '', de: '', fr: '', es: '', it: '' };
+        
+        const newFormData = {
           id: storyData.id,
           code: storyData.code,
           company: storyData.company || '',
           sector: storyData.sector || null,
-          title: storyData.title || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
-          htmlContent: storyData.htmlContent || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
+          title: cleanTitle,
+          htmlContent: cleanHtmlContent,
           videoUrl: storyData.videoUrl || '',
           results: storyData.results || [],
           order: storyData.order || 0,
           active: storyData.active ?? true
-        });
+        };
+        
+        console.log('=== NEW FORM DATA ===');
+        console.log('newFormData:', newFormData);
+        console.log('newFormData.company:', newFormData.company);
+        console.log('newFormData.sector:', newFormData.sector);
+        console.log('newFormData.title:', newFormData.title);
+        console.log('newFormData.videoUrl:', newFormData.videoUrl);
+        console.log('newFormData.results:', newFormData.results);
+        
+        setFormData(newFormData);
+        
+        // Mark as loaded to prevent re-loading
+        dataLoadedRef.current = true;
+        
+        console.log('=== AFTER setFormData ===');
+        console.log('Form data set successfully');
+        console.log('dataLoadedRef.current:', dataLoadedRef.current);
         
         if (storyData.media?.absolutePath) {
           setImageFiles([storyData.media.absolutePath]);
@@ -200,7 +295,19 @@ export default function StoryForm({ storyId }: StoryFormProps) {
         active: formData.active
       };
 
+      console.log('=== SENDING TO BACKEND ===');
+      console.log('storyData:', storyData);
+      console.log('company:', storyData.company);
+      console.log('sector:', storyData.sector);
+      console.log('title:', storyData.title);
+      console.log('videoUrl:', storyData.videoUrl);
+      console.log('results:', storyData.results);
+
       const response = await storyService.save(storyData, newMediaFile || undefined, shouldRemoveMedia);
+
+      console.log('=== BACKEND SAVE RESPONSE ===');
+      console.log('response:', response);
+      console.log('response.data:', response.data);
 
       if (response.status === 'ERROR') {
         setToast({ 
