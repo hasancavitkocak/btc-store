@@ -240,6 +240,8 @@ export const callRequestService = {
   getById: (id: number) => apiClient.get<any>(`/v1/call-requests/${id}`),
   getByStatus: (status: string) => apiClient.get<any>(`/v1/call-requests/status/${status}`),
   getMyRequests: () => apiClient.get<any>('/v1/call-requests/my-requests'),
+  getMyRequestsPageable: (page: number = 1) => 
+    apiClient.post<any>(`/v1/call-requests/my-requests/page/${page}`, {}),
   assignToGroup: (id: number, groupCode: string) => 
     apiClient.post<any>(`/v1/call-requests/${id}/assign-group?groupCode=${groupCode}`),
   assignToGroups: (id: number, groupCodes: string[]) => 

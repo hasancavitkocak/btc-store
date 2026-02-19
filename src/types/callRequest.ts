@@ -60,13 +60,13 @@ export interface CallRequest {
   priority: CallRequestPriority;
   status: CallRequestStatus;
   
-  // Multi-assign fields (detailed)
-  assignedGroupsList?: AssignedGroupInfo[];
-  assignedUsersList?: AssignedUserInfo[];
-  
-  // Simple representations (backward compatibility)
-  assignedGroups?: string; // Semicolon separated
-  assignedUserNames?: string[]; // Array of usernames
+  // Multi-assign fields
+  assignedGroups?: Array<{
+    id?: number;
+    code?: string;
+    description?: LocalizedDescription;
+  }>; // Array of group objects with localized descriptions
+  assignedUsers?: AssignedUserInfo[]; // Array of user info
   
   // Deprecated fields (backward compatibility)
   assignedGroup?: string;

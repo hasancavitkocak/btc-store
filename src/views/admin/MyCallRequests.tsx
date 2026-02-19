@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eye, Phone, Mail, User, Calendar, CheckCircle } from 'lucide-react';
+import { Eye, Phone, Mail, User, Calendar, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { callRequestService } from '@/services/admin.service';
 import { 
   CallRequest, 
@@ -16,31 +16,73 @@ import { ApiResponse } from '@/lib/api';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 
+interface PageInfo {
+  content: CallRequest[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
+
 export default function MyCallRequests() {
   const router = useRouter();
-  const [myRequests, setMyRequests] = useState<CallRequest[]>([]);
+  const [pageInfo, setPageInfo] = useState<PageInfo>({
+    content: [],
+    totalElements: 0,
+    totalPages: 0,
+    size: 10,
+    number: 0
+  });
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     loadMyRequests();
-  }, []);
+  }, [currentPage]);
 
   const loadMyRequests = async () => {
     try {
       setLoading(true);
-      const response = await callRequestService.getMyRequests();
+      // Page is 1-based for backend
+      const response = await callRequestService.getMyRequestsPageable(currentPage + 1);
+      
+      console.log('=== Full Response:', JSON.stringify(response, null, 2));
       
       if (response.status === 'SUCCESS' && response.data) {
-        // Response.data is wrapped again, so we need response.data.data
         const actualData = response.data.data || response.data;
-        const dataArray = Array.isArray(actualData) ? actualData : [];
-        setMyRequests(dataArray as CallRequest[]);
+        console.log('=== Actual Data:', JSON.stringify(actualData, null, 2));
+        console.log('=== Total Pages:', actualData.totalPages);
+        console.log('=== Total Elements:', actualData.totalElements);
+        
+        // Backend pageNumber is 1-based, convert to 0-based for frontend
+        const pageInfo = {
+          content: actualData.content || [],
+          totalElements: actualData.totalElements || 0,
+          totalPages: actualData.totalPages || 0,
+          size: actualData.pageSize || 10,
+          number: (actualData.pageNumber || 1) - 1
+        };
+        
+        console.log('=== Setting PageInfo:', pageInfo);
+        setPageInfo(pageInfo);
       } else {
-        setMyRequests([]);
+        setPageInfo({
+          content: [],
+          totalElements: 0,
+          totalPages: 0,
+          size: 10,
+          number: currentPage
+        });
       }
     } catch (error) {
       console.error('Benim işlerim yüklenirken hata:', error);
-      setMyRequests([]);
+      setPageInfo({
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        size: 10,
+        number: currentPage
+      });
     } finally {
       setLoading(false);
     }
@@ -86,7 +128,7 @@ export default function MyCallRequests() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm text-gray-600 mb-1">Toplam İşlerim</div>
-              <div className="text-3xl font-bold text-gray-900">{myRequests.length}</div>
+              <div className="text-3xl font-bold text-gray-900">{pageInfo.totalElements}</div>
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
               <User className="w-8 h-8 text-blue-600" />
@@ -99,7 +141,7 @@ export default function MyCallRequests() {
             <div>
               <div className="text-sm text-gray-600 mb-1">Bugün Eklenen</div>
               <div className="text-3xl font-bold text-purple-600">
-                {myRequests.filter(r => {
+                {pageInfo.content.filter(r => {
                   if (!r.createdDate) return false;
                   const today = new Date().toDateString();
                   const createdDate = new Date(r.createdDate).toDateString();
@@ -118,7 +160,7 @@ export default function MyCallRequests() {
             <div>
               <div className="text-sm text-gray-600 mb-1">Acil (24 saat+)</div>
               <div className="text-3xl font-bold text-red-600">
-                {myRequests.filter(r => {
+                {pageInfo.content.filter(r => {
                   if (!r.createdDate) return false;
                   const hoursSinceCreated = (Date.now() - new Date(r.createdDate).getTime()) / (1000 * 60 * 60);
                   return hoursSinceCreated > 24;
@@ -138,13 +180,13 @@ export default function MyCallRequests() {
           <Card className="p-12 text-center">
             <p className="text-gray-500">Yükleniyor...</p>
           </Card>
-        ) : myRequests.length === 0 ? (
+        ) : pageInfo.content.length === 0 ? (
           <Card className="p-12 text-center">
             <p className="text-gray-500 mb-2">Size atanmış call request bulunmuyor</p>
             <p className="text-sm text-gray-400">Yeni işler atandığında burada görünecektir</p>
           </Card>
         ) : (
-          myRequests.map((request) => (
+          pageInfo.content.map((request) => (
             <Card key={request.id} className="p-6 hover:shadow-lg transition-shadow">
               <div className="flex flex-col lg:flex-row gap-6">
                 {/* Left: Customer Info */}
@@ -207,21 +249,21 @@ export default function MyCallRequests() {
                     )}
                     
                     {/* Assigned Users */}
-                    {request.assignedUserNames && request.assignedUserNames.length > 0 && (
+                    {request.assignedUsers && request.assignedUsers.length > 0 && (
                       <div className="text-sm">
                         <span className="text-gray-500">Atanan: </span>
                         <span className="font-medium text-gray-700">
-                          {request.assignedUserNames.join(', ')}
+                          {request.assignedUsers.map(u => u.username).join(', ')}
                         </span>
                       </div>
                     )}
                     
                     {/* Assigned Groups */}
-                    {request.assignedGroups && (
+                    {request.assignedGroups && request.assignedGroups.length > 0 && (
                       <div className="text-sm">
                         <span className="text-gray-500">Grup: </span>
                         <span className="font-medium text-gray-700">
-                          {request.assignedGroups.split(';').join(', ')}
+                          {request.assignedGroups.map(g => g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
                         </span>
                       </div>
                     )}
@@ -257,6 +299,64 @@ export default function MyCallRequests() {
           ))
         )}
       </div>
+
+      {/* Pagination */}
+      {!loading && pageInfo.totalElements > 0 && (
+        <div className="mt-6 flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            Toplam {pageInfo.totalElements} kayıt - Sayfa {pageInfo.number + 1} / {pageInfo.totalPages}
+          </div>
+          
+          {pageInfo.totalPages > 1 && (
+            <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+              disabled={currentPage === 0}
+              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            
+            <div className="flex gap-1">
+              {Array.from({ length: Math.min(5, pageInfo.totalPages) }, (_, i) => {
+                let pageNum;
+                if (pageInfo.totalPages <= 5) {
+                  pageNum = i;
+                } else if (currentPage < 3) {
+                  pageNum = i;
+                } else if (currentPage > pageInfo.totalPages - 4) {
+                  pageNum = pageInfo.totalPages - 5 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+                
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      currentPage === pageNum
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    {pageNum + 1}
+                  </button>
+                );
+              })}
+            </div>
+            
+            <Button
+              onClick={() => setCurrentPage(prev => Math.min(pageInfo.totalPages - 1, prev + 1))}
+              disabled={currentPage >= pageInfo.totalPages - 1}
+              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

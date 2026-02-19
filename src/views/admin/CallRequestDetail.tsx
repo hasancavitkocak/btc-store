@@ -539,17 +539,21 @@ export default function CallRequestDetail({ requestId }: Props) {
                 <div className="text-sm font-medium text-gray-900">{formatDate(request.createdDate!)}</div>
               </div>
               
-              {request.assignedGroups && (
+              {request.assignedGroups && request.assignedGroups.length > 0 && (
                 <div>
                   <div className="text-sm text-gray-500">Atanan Gruplar</div>
-                  <div className="text-sm font-medium text-gray-900">{request.assignedGroups.split(';').join(', ')}</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {request.assignedGroups.map(g => g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
+                  </div>
                 </div>
               )}
               
-              {request.assignedUserNames && request.assignedUserNames.length > 0 && (
+              {request.assignedUsers && request.assignedUsers.length > 0 && (
                 <div>
                   <div className="text-sm text-gray-500">Atanan Kullanıcılar</div>
-                  <div className="text-sm font-medium text-gray-900">{request.assignedUserNames.join(', ')}</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {request.assignedUsers.map(u => u.username).join(', ')}
+                  </div>
                 </div>
               )}
               
