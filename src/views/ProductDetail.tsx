@@ -1,24 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, ChevronLeft, ChevronRight, Check, MessageCircle } from 'lucide-react';
-import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Button from '../components/Button';
+import { productService, ProductData, CategoryData } from '../services/product.service';
 
 export default function ProductDetail() {
   const params = useParams();
-  const id = params?.id as string;
+  const code = params?.id as string;
   const t = useTranslations();
   const router = useRouter();
-  const { products, categories } = useStore();
+  const [product, setProduct] = useState<ProductData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const product = products.find((p) => p.id === id);
-  const category = product ? categories.find((c) => c.id === product.categoryId) : null;
+  useEffect(() => {
+    if (code) {
+      loadProduct(code);
+    }
+  }, [code]);
+
+  const loadProduct = async (productCode: string) => {
+    try {
+      setLoading(true);
+      const data = await productService.getPublicProductByCode(productCode);
+      setProduct(data);
+    } catch (error) {
+      console.error('Error loading product:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Container>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        </Container>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -35,14 +64,22 @@ export default function ProductDetail() {
     );
   }
 
-  const productImages = product.images || [product.image];
+  const productImages = product.images && product.images.length > 0 
+    ? product.images.map(img => img.absolutePath).filter(Boolean)
+    : product.mainImage?.absolutePath 
+    ? [product.mainImage.absolutePath]
+    : [];
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+    if (productImages.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+    }
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length);
+    if (productImages.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length);
+    }
   };
 
   return (
@@ -69,12 +106,28 @@ export default function ProductDetail() {
             {/* Left Side - Large Product Image */}
             <div className="w-full lg:w-[70%] order-1 lg:order-1 relative z-0">
               {/* Main Large Image */}
-              <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden group aspect-video lg:aspect-auto lg:h-[75vh] mb-6">
-                <img
-                  src={productImages[currentImageIndex]}
-                  alt={t(product.nameKey)}
-                  className="w-full h-full object-cover"
-                />
+              <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl shadow-xl overflow-hidden group aspect-video lg:aspect-auto lg:h-[75vh] mb-6 flex items-center justify-center">
+                {productImages.length > 0 ? (
+                  <img
+                    src={productImages[currentImageIndex]}
+                    alt={product.name?.tr || ''}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <svg
+                    className="w-48 h-48 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={0.8}
+                      d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                )}
 
                 {/* Image Navigation */}
                 {productImages.length > 1 && (
@@ -125,7 +178,7 @@ export default function ProductDetail() {
                     >
                       <img
                         src={img}
-                        alt={`${t(product.nameKey)} ${index + 1}`}
+                        alt={`${product.name?.tr} ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -138,16 +191,23 @@ export default function ProductDetail() {
             <div className="w-full lg:w-[30%] order-2 lg:order-2 relative z-0">
               <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8 relative lg:sticky lg:top-8">
                 {/* Product Info */}
-                {category && (
-                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mb-4">
-                    {t(category.nameKey)}
-                  </span>
+                {product.categories && product.categories.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {product.categories.map((category: CategoryData, index: number) => (
+                      <span 
+                        key={index}
+                        className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
+                      >
+                        {category.name?.tr}
+                      </span>
+                    ))}
+                  </div>
                 )}
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
-                  {t(product.nameKey)}
+                  {product.name?.tr}
                 </h1>
                 <p className="text-gray-600 mb-6">
-                  {t(product.shortDescKey)}
+                  {product.shortDescription?.tr}
                 </p>
 
                 {/* Contact Section */}
@@ -165,7 +225,7 @@ export default function ProductDetail() {
                   </div>
 
                   <div className="mt-6">
-                    <Link href={`/products/${product.id}/contact`}>
+                    <Link href={`/products/${product.code}/contact`}>
                       <Button
                         fullWidth
                         size="lg"
@@ -182,31 +242,36 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* Product Features - Full Width Below */}
+      {/* Product Features & Description - Full Width Below */}
       <div className="py-8 lg:py-12 bg-white">
         <Container>
-          <div className="mb-8">
-            <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 text-center">
-              {t('product.features')}
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-              {product.features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-3 lg:gap-4 p-4 lg:p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Check className="w-5 h-5 text-green-600" />
+          {/* Features */}
+          {product.features && product.features.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 text-center">
+                {t('product.features')}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                {product.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-3 lg:gap-4 p-4 lg:p-6 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-5 h-5 text-green-600" />
+                    </div>
+                    <span className="text-gray-700 font-medium">{feature}</span>
                   </div>
-                  <span className="text-gray-700 font-medium">{t(feature)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Product Content */}
-          {product.htmlContent && (
-            <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
-              <div className="prose prose-sm lg:prose-lg max-w-none text-gray-700">
-                <div dangerouslySetInnerHTML={{ __html: product.htmlContent }} />
+                ))}
               </div>
+            </div>
+          )}
+
+          {/* Product Description */}
+          {product.description?.tr && (
+            <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Ürün Açıklaması</h3>
+              <div 
+                className="prose prose-sm lg:prose-lg max-w-none text-gray-700"
+                dangerouslySetInnerHTML={{ __html: product.description.tr }}
+              />
             </div>
           )}
         </Container>
