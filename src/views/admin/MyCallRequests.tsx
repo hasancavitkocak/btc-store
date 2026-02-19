@@ -198,16 +198,6 @@ export default function MyCallRequests() {
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${PRIORITY_COLORS[request.priority]}`}>
                           {PRIORITY_LABELS[request.priority]}
                         </span>
-                        {request.createdDate && (
-                          <span className={`text-sm font-medium ${getPriorityColor(request.createdDate)}`}>
-                            {(() => {
-                              const hoursSinceCreated = (Date.now() - new Date(request.createdDate).getTime()) / (1000 * 60 * 60);
-                              if (hoursSinceCreated > 24) return '🔴 Acil';
-                              if (hoursSinceCreated > 12) return '🟠 Öncelikli';
-                              return '🟢 Normal';
-                            })()}
-                          </span>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -301,60 +291,37 @@ export default function MyCallRequests() {
       </div>
 
       {/* Pagination */}
-      {!loading && pageInfo.totalElements > 0 && (
-        <div className="mt-6 flex items-center justify-between">
+      {pageInfo.totalElements > 0 && (
+        <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
           <div className="text-sm text-gray-600">
-            Toplam {pageInfo.totalElements} kayıt - Sayfa {pageInfo.number + 1} / {pageInfo.totalPages}
+            Toplam <span className="font-medium">{pageInfo.totalElements}</span> kayıt
           </div>
           
-          {pageInfo.totalPages > 1 && (
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <Button
+              variant="outline"
+              size="sm"
               onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
-              disabled={currentPage === 0}
-              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={currentPage === 0 || loading}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
+              Önceki
             </Button>
             
-            <div className="flex gap-1">
-              {Array.from({ length: Math.min(5, pageInfo.totalPages) }, (_, i) => {
-                let pageNum;
-                if (pageInfo.totalPages <= 5) {
-                  pageNum = i;
-                } else if (currentPage < 3) {
-                  pageNum = i;
-                } else if (currentPage > pageInfo.totalPages - 4) {
-                  pageNum = pageInfo.totalPages - 5 + i;
-                } else {
-                  pageNum = currentPage - 2 + i;
-                }
-                
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      currentPage === pageNum
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
-                    {pageNum + 1}
-                  </button>
-                );
-              })}
-            </div>
+            <span className="text-sm text-gray-600 px-4">
+              Sayfa <span className="font-medium">{currentPage + 1}</span> / <span className="font-medium">{pageInfo.totalPages || 1}</span>
+            </span>
             
             <Button
+              variant="outline"
+              size="sm"
               onClick={() => setCurrentPage(prev => Math.min(pageInfo.totalPages - 1, prev + 1))}
-              disabled={currentPage >= pageInfo.totalPages - 1}
-              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={currentPage >= pageInfo.totalPages - 1 || loading}
             >
-              <ChevronRight className="w-5 h-5" />
+              Sonraki
+              <ChevronRight className="w-4 h-4" />
             </Button>
-            </div>
-          )}
+          </div>
         </div>
       )}
     </div>
