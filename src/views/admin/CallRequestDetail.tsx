@@ -451,6 +451,44 @@ export default function CallRequestDetail({ requestId }: Props) {
             </div>
           </Card>
 
+          {/* Product Info */}
+          {request.product && (
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">İlgili Ürün</h2>
+              <div className="flex gap-4">
+                {request.product.images && request.product.images.length > 0 && (
+                  <img
+                    src={request.product.images[0].absolutePath}
+                    alt={request.product.name?.tr || request.product.name?.en || 'Ürün'}
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
+                )}
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 text-lg mb-2">
+                    {request.product.name?.tr || request.product.name?.en || 'İsimsiz Ürün'}
+                  </h3>
+                  {request.product.shortDescription?.tr && (
+                    <p className="text-sm text-gray-600 mb-2">
+                      {request.product.shortDescription.tr}
+                    </p>
+                  )}
+                  {request.product.categories && request.product.categories.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {request.product.categories.map((cat) => (
+                        <span
+                          key={cat.id}
+                          className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
+                        >
+                          {cat.name?.tr || cat.name?.en || cat.code}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          )}
+
           {/* Message */}
           {request.message && (
             <Card className="p-6">

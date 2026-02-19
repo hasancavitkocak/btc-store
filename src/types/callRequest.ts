@@ -116,6 +116,26 @@ export interface CallRequest {
     lastModifiedBy?: string;
   };
   
+  // Product information
+  product?: {
+    id?: number;
+    code?: string;
+    name?: LocalizedDescription;
+    description?: LocalizedDescription;
+    shortDescription?: LocalizedDescription;
+    categories?: Array<{
+      id?: number;
+      code?: string;
+      name?: LocalizedDescription;
+    }>;
+    images?: Array<{
+      id?: number;
+      absolutePath?: string;
+      realFileName?: string;
+    }>;
+    active?: boolean;
+  };
+  
   siteId?: number;
   siteCode?: string;
   createdDate?: string;

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eye, Filter, Phone, Mail, User, Calendar, Clock } from 'lucide-react';
-import { callRequestService } from '@/services/admin.service';
+import { Eye, Phone, Mail, User, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { searchService, SearchFormData } from '@/services/search.service';
 import { 
   CallRequest, 
   CallRequestStatus, 
@@ -12,7 +12,6 @@ import {
   PRIORITY_LABELS,
   PRIORITY_COLORS
 } from '@/types/callRequest';
-import { ApiResponse } from '@/lib/api';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 
@@ -20,50 +19,65 @@ export default function CallRequestsAdmin() {
   const router = useRouter();
   const [callRequests, setCallRequests] = useState<CallRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [filterStatus, setFilterStatus] = useState<CallRequestStatus | 'ALL'>('ALL');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    loadCallRequests();
-  }, [filterStatus]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      loadCallRequests();
+    }
+  }, [page, filterStatus, mounted]);
 
   const loadCallRequests = async () => {
     try {
       setLoading(true);
-      const response = filterStatus === 'ALL' 
-        ? await callRequestService.getAll()
-        : await callRequestService.getByStatus(filterStatus);
       
-      console.log('API Response:', response);
-      console.log('Response data:', response.data);
+      const searchFormData: SearchFormData = {
+        filters: filterStatus !== 'ALL' ? [
+          {
+            name: 'status',
+            value: filterStatus
+          }
+        ] : [],
+        sort: { name: 'createdDate', direction: 'DESC' }
+      };
+
+      const response = await searchService.search<CallRequest>('call-request', searchFormData, page);
       
       if (response.status === 'SUCCESS' && response.data) {
-        // Response.data is wrapped again, so we need response.data.data
-        const actualData = response.data.data || response.data;
-        const dataArray = Array.isArray(actualData) ? actualData : [];
-        console.log('Setting callRequests:', dataArray);
-        setCallRequests(dataArray as CallRequest[]);
+        const pageData = (response.data as any).data;
+        
+        if (pageData && pageData.content) {
+          setCallRequests(pageData.content || []);
+          setTotalPages(pageData.totalPages || 0);
+          setTotalElements(pageData.totalElements || 0);
+        } else {
+          console.error('pageData structure is wrong:', pageData);
+          setCallRequests([]);
+          setTotalPages(0);
+          setTotalElements(0);
+        }
       } else {
-        console.log('Response not successful or no data');
         setCallRequests([]);
+        setTotalPages(0);
+        setTotalElements(0);
       }
     } catch (error) {
       console.error('Call requests yüklenirken hata:', error);
       setCallRequests([]);
+      setTotalPages(0);
+      setTotalElements(0);
     } finally {
       setLoading(false);
     }
   };
-
-  const filteredRequests = callRequests.filter(request => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      request.customerName.toLowerCase().includes(searchLower) ||
-      request.customerEmail.toLowerCase().includes(searchLower) ||
-      request.customerPhone.includes(searchTerm) ||
-      (request.message && request.message.toLowerCase().includes(searchLower))
-    );
-  });
 
   const getStatusBadge = (status: CallRequestStatus) => {
     return (
@@ -93,63 +107,36 @@ export default function CallRequestsAdmin() {
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
           Call Request Yönetimi
         </h1>
-        <p className="text-gray-600">Tüm müşteri çağrılarını görüntüleyin ve yönetin</p>
+        <p className="text-gray-600">Toplam {totalElements} call request</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setFilterStatus('ALL')}>
+        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus('ALL'); setPage(1); }}>
           <div className="text-sm text-gray-600 mb-1">Toplam</div>
-          <div className="text-2xl font-bold text-gray-900">{callRequests.length}</div>
+          <div className="text-2xl font-bold text-gray-900">{totalElements}</div>
         </Card>
-        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setFilterStatus(CallRequestStatus.PENDING)}>
+        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.PENDING); setPage(1); }}>
           <div className="text-sm text-gray-600 mb-1">Beklemede</div>
           <div className="text-2xl font-bold text-yellow-600">{getStatusCount(CallRequestStatus.PENDING)}</div>
         </Card>
-        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setFilterStatus(CallRequestStatus.ASSIGNED)}>
+        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.ASSIGNED); setPage(1); }}>
           <div className="text-sm text-gray-600 mb-1">Atandı</div>
           <div className="text-2xl font-bold text-blue-600">{getStatusCount(CallRequestStatus.ASSIGNED)}</div>
         </Card>
-        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setFilterStatus(CallRequestStatus.IN_PROGRESS)}>
+        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.IN_PROGRESS); setPage(1); }}>
           <div className="text-sm text-gray-600 mb-1">İşlemde</div>
           <div className="text-2xl font-bold text-purple-600">{getStatusCount(CallRequestStatus.IN_PROGRESS)}</div>
         </Card>
-        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setFilterStatus(CallRequestStatus.CUSTOMER_INFORMED)}>
+        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.CUSTOMER_INFORMED); setPage(1); }}>
           <div className="text-sm text-gray-600 mb-1">Bilgilendirildi</div>
           <div className="text-2xl font-bold text-indigo-600">{getStatusCount(CallRequestStatus.CUSTOMER_INFORMED)}</div>
         </Card>
-        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setFilterStatus(CallRequestStatus.COMPLETED)}>
+        <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.COMPLETED); setPage(1); }}>
           <div className="text-sm text-gray-600 mb-1">Tamamlandı</div>
           <div className="text-2xl font-bold text-green-600">{getStatusCount(CallRequestStatus.COMPLETED)}</div>
         </Card>
       </div>
-
-      {/* Filters */}
-      <Card className="p-4 mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="İsim, email, telefon veya mesaj ile ara..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <div className="flex gap-2">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as CallRequestStatus | 'ALL')}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="ALL">Tüm Durumlar</option>
-              {Object.entries(STATUS_LABELS).map(([key, label]) => (
-                <option key={key} value={key}>{label}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </Card>
 
       {/* Table */}
       <Card>
@@ -181,14 +168,14 @@ export default function CallRequestsAdmin() {
                     Yükleniyor...
                   </td>
                 </tr>
-              ) : filteredRequests.length === 0 ? (
+              ) : callRequests.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                    {searchTerm ? 'Arama kriterlerine uygun sonuç bulunamadı' : 'Henüz call request bulunmuyor'}
+                    Henüz call request bulunmuyor
                   </td>
                 </tr>
               ) : (
-                filteredRequests.map((request) => (
+                callRequests.map((request) => (
                   <tr key={request.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
@@ -221,49 +208,36 @@ export default function CallRequestsAdmin() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm space-y-1">
-                        {/* Assigned Users - Use detailed list if available */}
-                        {request.assignedUsersList && request.assignedUsersList.length > 0 ? (
+                        {/* Assigned Users */}
+                        {request.assignedUsers && request.assignedUsers.length > 0 ? (
                           <div>
                             <div className="font-medium text-gray-900">
-                              {request.assignedUsersList.length === 1 
-                                ? request.assignedUsersList[0].username
-                                : `${request.assignedUsersList.length} Kullanıcı`}
+                              {request.assignedUsers.length === 1 
+                                ? request.assignedUsers[0].username
+                                : `${request.assignedUsers.length} Kullanıcı`}
                             </div>
-                            {request.assignedUsersList.length > 1 && (
+                            {request.assignedUsers.length > 1 && (
                               <div className="text-xs text-gray-600">
-                                {request.assignedUsersList.map(u => u.username).join(', ')}
+                                {request.assignedUsers.map(u => u.username).join(', ')}
                               </div>
                             )}
                           </div>
-                        ) : request.assignedUserNames && request.assignedUserNames.length > 0 && (
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              {request.assignedUserNames.length === 1 
-                                ? request.assignedUserNames[0]
-                                : `${request.assignedUserNames.length} Kullanıcı`}
-                            </div>
-                            {request.assignedUserNames.length > 1 && (
-                              <div className="text-xs text-gray-600">
-                                {request.assignedUserNames.join(', ')}
-                              </div>
-                            )}
+                        ) : request.assignedUserName && (
+                          <div className="font-medium text-gray-900">
+                            {request.assignedUserName}
                           </div>
                         )}
                         
-                        {/* Assigned Groups - Use detailed list if available */}
-                        {request.assignedGroupsList && request.assignedGroupsList.length > 0 ? (
+                        {/* Assigned Groups */}
+                        {request.assignedGroups && request.assignedGroups.length > 0 && (
                           <div className="text-xs text-gray-600">
-                            Grup: {request.assignedGroupsList.map(g => g.name || g.code).join(', ')}
-                          </div>
-                        ) : request.assignedGroups && (
-                          <div className="text-xs text-gray-600">
-                            Grup: {request.assignedGroups.split(';').join(', ')}
+                            Grup: {request.assignedGroups.map(g => g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
                           </div>
                         )}
                         
                         {/* Not assigned */}
-                        {!request.assignedUsersList?.length && !request.assignedUserNames?.length && 
-                         !request.assignedGroupsList?.length && !request.assignedGroups && (
+                        {!request.assignedUsers?.length && !request.assignedUserName && 
+                         !request.assignedGroups?.length && (
                           <span className="text-gray-400 italic">Atanmamış</span>
                         )}
                       </div>
@@ -295,6 +269,41 @@ export default function CallRequestsAdmin() {
             </tbody>
           </table>
         </div>
+        
+        {/* Pagination */}
+        {totalElements > 0 && (
+          <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
+            <div className="text-sm text-gray-600">
+              Toplam <span className="font-medium">{totalElements}</span> kayıt
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1 || loading}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Önceki
+              </Button>
+              
+              <span className="text-sm text-gray-600 px-4">
+                Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+              </span>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages || loading}
+              >
+                Sonraki
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );
