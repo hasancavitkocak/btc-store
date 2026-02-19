@@ -29,7 +29,9 @@ export interface ProductData {
   images?: Array<{ code: string; absolutePath?: string }>;
   responsibleUser?: { code: string; username?: string; email?: string };
   features?: string[];
+  videoLink?: string;
   active: boolean;
+  deleted?: boolean;
 }
 
 export interface ProductFilterData {

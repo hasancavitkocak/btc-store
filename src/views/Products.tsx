@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -13,27 +13,103 @@ import { productService, ProductFilterData } from '../services/product.service';
 export default function Products() {
   const t = useTranslations();
   const searchParams = useSearchParams();
+  const [allProducts, setAllProducts] = useState<any[]>([]);
   const [filterData, setFilterData] = useState<ProductFilterData | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>(
     searchParams?.get('category') || ''
   );
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(
+    parseInt(searchParams?.get('page') || '1')
+  );
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observerTarget = useRef<HTMLDivElement>(null);
+  const mountedRef = useRef(false);
+  const lastLoadedPage = useRef(0);
+  const loadingRef = useRef(false);
 
   useEffect(() => {
-    loadProducts(selectedCategory, currentPage);
-  }, [selectedCategory, currentPage]);
+    // First mount only
+    if (!mountedRef.current && !loadingRef.current) {
+      mountedRef.current = true;
+      loadingRef.current = true;
+      const urlPage = parseInt(searchParams?.get('page') || '1');
+      lastLoadedPage.current = urlPage;
+      loadProducts(selectedCategory, urlPage, true).finally(() => {
+        loadingRef.current = false;
+      });
+    }
+  }, []);
 
-  const loadProducts = async (categoryCode: string, page: number) => {
+  useEffect(() => {
+    // Category changed - reset to page 1
+    if (mountedRef.current && !loadingRef.current) {
+      loadingRef.current = true;
+      setCurrentPage(1);
+      setAllProducts([]);
+      setHasMore(true);
+      lastLoadedPage.current = 1;
+      loadProducts(selectedCategory, 1, true).finally(() => {
+        loadingRef.current = false;
+      });
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    // Page changed by scroll - load more
+    if (mountedRef.current && currentPage > lastLoadedPage.current && !loadingRef.current) {
+      loadingRef.current = true;
+      lastLoadedPage.current = currentPage;
+      loadProducts(selectedCategory, currentPage, false).finally(() => {
+        loadingRef.current = false;
+      });
+    }
+  }, [currentPage]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading && !loadingMore && hasMore) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [loading, loadingMore, hasMore]);
+
+  const loadProducts = async (categoryCode: string, page: number, reset: boolean) => {
     try {
-      setLoading(true);
-      const response = await productService.getPublicProducts(categoryCode || undefined, page, 20);
-      console.log('API Response:', response);
+      if (reset) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
       
-      // Ensure we have valid data structure
+      const response = await productService.getPublicProducts(categoryCode || undefined, page, 20);
+      
       if (response) {
+        const newProducts = response.products || [];
+        
+        if (reset) {
+          setAllProducts(newProducts);
+        } else {
+          setAllProducts((prev) => [...prev, ...newProducts]);
+        }
+        
         setFilterData({
-          products: response.products || [],
+          products: newProducts,
           availableCategories: response.availableCategories || [],
           selectedCategory: response.selectedCategory,
           totalProducts: response.totalProducts || 0,
@@ -41,26 +117,22 @@ export default function Products() {
           pageSize: response.pageSize || 20,
           totalPages: response.totalPages || 0
         });
+        
+        setHasMore(page < (response.totalPages || 0));
+        
+        // Update URL
+        updateURL(categoryCode, page);
       }
     } catch (error) {
       console.error('Error loading products:', error);
-      // Set empty data on error
-      setFilterData({
-        products: [],
-        availableCategories: [],
-        totalProducts: 0,
-        pageNumber: 1,
-        pageSize: 20,
-        totalPages: 0
-      });
+      setHasMore(false);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
-  const handleCategoryChange = (categoryCode: string) => {
-    setSelectedCategory(categoryCode);
-    setCurrentPage(1); // Reset to first page when category changes
+  const updateURL = (categoryCode: string, page: number) => {
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       if (!categoryCode) {
@@ -68,122 +140,17 @@ export default function Products() {
       } else {
         url.searchParams.set('category', categoryCode);
       }
-      url.searchParams.delete('page'); // Reset page in URL
+      if (page > 1) {
+        url.searchParams.set('page', page.toString());
+      } else {
+        url.searchParams.delete('page');
+      }
       window.history.pushState({}, '', url);
     }
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const renderPagination = () => {
-    if (!filterData || filterData.totalPages <= 1) return null;
-
-    const pages = [];
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(filterData.totalPages, startPage + maxVisiblePages - 1);
-
-    if (endPage - startPage < maxVisiblePages - 1) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    // Previous button
-    pages.push(
-      <button
-        key="prev"
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className={`px-4 py-2 rounded-lg ${
-          currentPage === 1
-            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md'
-        }`}
-      >
-        ‹
-      </button>
-    );
-
-    // First page
-    if (startPage > 1) {
-      pages.push(
-        <button
-          key={1}
-          onClick={() => handlePageChange(1)}
-          className="px-4 py-2 rounded-lg bg-white text-gray-700 hover:bg-gray-50 shadow-md"
-        >
-          1
-        </button>
-      );
-      if (startPage > 2) {
-        pages.push(
-          <span key="dots1" className="px-2">
-            ...
-          </span>
-        );
-      }
-    }
-
-    // Page numbers
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          className={`px-4 py-2 rounded-lg ${
-            currentPage === i
-              ? 'bg-blue-900 text-white shadow-xl'
-              : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md'
-          }`}
-        >
-          {i}
-        </button>
-      );
-    }
-
-    // Last page
-    if (endPage < filterData.totalPages) {
-      if (endPage < filterData.totalPages - 1) {
-        pages.push(
-          <span key="dots2" className="px-2">
-            ...
-          </span>
-        );
-      }
-      pages.push(
-        <button
-          key={filterData.totalPages}
-          onClick={() => handlePageChange(filterData.totalPages)}
-          className="px-4 py-2 rounded-lg bg-white text-gray-700 hover:bg-gray-50 shadow-md"
-        >
-          {filterData.totalPages}
-        </button>
-      );
-    }
-
-    // Next button
-    pages.push(
-      <button
-        key="next"
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === filterData.totalPages}
-        className={`px-4 py-2 rounded-lg ${
-          currentPage === filterData.totalPages
-            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md'
-        }`}
-      >
-        ›
-      </button>
-    );
-
-    return (
-      <div className="flex justify-center items-center gap-2 mt-12">
-        {pages}
-      </div>
-    );
+  const handleCategoryChange = (categoryCode: string) => {
+    setSelectedCategory(categoryCode);
   };
 
   if (loading) {
@@ -254,7 +221,7 @@ export default function Products() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filterData.products && filterData.products.map((product) => (
+          {allProducts.map((product) => (
             <Link key={product.code} href={`/products/${product.code}`}>
               <Card hover className="group overflow-hidden h-full flex flex-col">
                 <div className="aspect-video overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center relative">
@@ -317,7 +284,16 @@ export default function Products() {
           </div>
         )}
 
-        {renderPagination()}
+        {/* Loading indicator for infinite scroll */}
+        {loadingMore && (
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-900"></div>
+            <p className="text-gray-500 mt-2">Daha fazla ürün yükleniyor...</p>
+          </div>
+        )}
+
+        {/* Observer target for infinite scroll */}
+        <div ref={observerTarget} className="h-4" />
       </Container>
     </Section>
   );

@@ -18,6 +18,41 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // Convert video URL to embed URL
+  const getEmbedUrl = (url: string): string => {
+    if (!url) return '';
+    
+    // YouTube
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      const videoId = url.includes('youtu.be') 
+        ? url.split('youtu.be/')[1]?.split('?')[0]
+        : url.split('v=')[1]?.split('&')[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+    }
+    
+    // Vimeo
+    if (url.includes('vimeo.com')) {
+      const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : url;
+    }
+    
+    // Dailymotion
+    if (url.includes('dailymotion.com')) {
+      const videoId = url.split('video/')[1]?.split('?')[0];
+      return videoId ? `https://www.dailymotion.com/embed/video/${videoId}` : url;
+    }
+    
+    // Wistia
+    if (url.includes('wistia.com')) {
+      const videoId = url.split('medias/')[1]?.split('?')[0];
+      return videoId ? `https://fast.wistia.net/embed/iframe/${videoId}` : url;
+    }
+    
+    // If already an embed URL or other format (like direct video files, other platforms), return as is
+    // This allows using any embed URL directly or custom video hosting
+    return url;
+  };
+
   useEffect(() => {
     if (code) {
       loadProduct(code);
@@ -183,6 +218,24 @@ export default function ProductDetail() {
                       />
                     </button>
                   ))}
+                </div>
+              )}
+
+              {/* Video Section */}
+              {product.videoLink && (
+                <div className="mt-6">
+                  <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
+                    Ürün Tanıtım Videosu
+                  </h3>
+                  <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-xl shadow-lg">
+                    <iframe
+                      src={getEmbedUrl(product.videoLink)}
+                      className="absolute top-0 left-0 w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
                 </div>
               )}
             </div>

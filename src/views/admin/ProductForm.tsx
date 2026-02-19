@@ -61,7 +61,9 @@ export default function ProductForm({ productId }: ProductFormProps) {
     categories: [] as Array<{ code: string; name: { tr: string; en: string }; active: boolean }>,
     responsibleUsers: [] as Array<{ code: string; username: string; email: string; picture?: { absolutePath: string } }>,
     features: [] as string[],
-    active: true
+    videoLink: '',
+    active: true,
+    deleted: false
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -149,7 +151,9 @@ export default function ProductForm({ productId }: ProductFormProps) {
           categories: productData.categories || [],
           responsibleUsers: productData.responsibleUsers || [],
           features: productData.features || [],
-          active: productData.active ?? true
+          videoLink: productData.videoLink || '',
+          active: productData.active ?? true,
+          deleted: productData.deleted ?? false
         });
         
         if (productData.images && productData.images.length > 0) {
@@ -312,9 +316,11 @@ export default function ProductForm({ productId }: ProductFormProps) {
         categories: formData.categories.map(c => ({ code: c.code })),
         responsibleUsers: formData.responsibleUsers.map(u => ({ code: u.code })),
         features: formData.features,
+        videoLink: formData.videoLink || undefined,
         mainImageIndex: mainImageIndex,
         imageCodesInOrder: imageCodesInOrder,
-        active: formData.active
+        active: formData.active,
+        deleted: formData.deleted
       };
 
       const response = await productService.save(
@@ -564,6 +570,22 @@ export default function ProductForm({ productId }: ProductFormProps) {
                   </div>
                 </div>
 
+                {/* Video Link */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Video Linki
+                    <span className="text-xs text-gray-500 ml-2">(YouTube, Vimeo, Dailymotion, Wistia vb.)</span>
+                  </label>
+                  <Input 
+                    value={formData.videoLink} 
+                    onChange={(e) => setFormData({ ...formData, videoLink: e.target.value })} 
+                    placeholder="https://www.youtube.com/watch?v=..." 
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Video platformu linkini veya direkt embed URL'ini girebilirsiniz.
+                  </p>
+                </div>
+
                 {/* Images with Main Image Selection */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -734,9 +756,15 @@ export default function ProductForm({ productId }: ProductFormProps) {
           <div className="space-y-6">
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Durum</h2>
-              <div className="flex items-center gap-3">
-                <input type="checkbox" id="active" checked={formData.active} onChange={(e) => setFormData({...formData, active: e.target.checked})} className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-                <label htmlFor="active" className="text-sm font-medium text-gray-700">Aktif</label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" id="active" checked={formData.active} onChange={(e) => setFormData({...formData, active: e.target.checked})} className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                  <label htmlFor="active" className="text-sm font-medium text-gray-700">Aktif</label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" id="deleted" checked={formData.deleted} onChange={(e) => setFormData({...formData, deleted: e.target.checked})} className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500" />
+                  <label htmlFor="deleted" className="text-sm font-medium text-gray-700">Silinmiş</label>
+                </div>
               </div>
             </Card>
 
