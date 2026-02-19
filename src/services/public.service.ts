@@ -133,4 +133,32 @@ export const publicService = {
   async getSiteConfiguration() {
     return apiClient.get('/v1/public/site-configuration', { skipAuth: true });
   },
+
+  // Create call request (public - no auth)
+  async createCallRequest(data: {
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string;
+    subject?: string;
+    message?: string;
+    acceptedLegalDocument?: { code: string };
+  }) {
+    return apiClient.post('/v1/public/call-requests', data, { skipAuth: true });
+  },
+
+  // Create product contact request (public - no auth)
+  async createProductContactRequest(productCode: string, data: {
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string;
+    message?: string;
+    acceptedLegalDocument?: { code: string };
+  }) {
+    return apiClient.post(`/v1/public/products/${productCode}/contact`, data, { skipAuth: true });
+  },
+
+  // Get current privacy policy document
+  async getCurrentPrivacyPolicy() {
+    return apiClient.get('/v1/public/legal-documents/privacy-policy/current', { skipAuth: true });
+  },
 };

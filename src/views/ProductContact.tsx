@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft } from 'lucide-react';
-import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Section from '../components/Section';
 import Card from '../components/Card';
@@ -16,15 +15,27 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import RichContentRenderer from '../components/RichContentRenderer';
 import Toast from '../components/Toast';
+import { productService, ProductData } from '../services/product.service';
+
+interface LegalDocument {
+  code: string;
+  title: { tr?: string; en?: string };
+  shortText: { tr?: string; en?: string };
+  content: { tr?: string; en?: string };
+  version?: string;
+}
 
 export default function ProductContact() {
   const params = useParams();
-  const id = params?.id as string;
+  const code = params?.id as string;
   const t = useTranslations();
   const router = useRouter();
-  const { products, addProductContactForm, kvkk } = useStore();
+  const [product, setProduct] = useState<ProductData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [showKvkkModal, setShowKvkkModal] = useState(false);
+  const [privacyDocument, setPrivacyDocument] = useState<LegalDocument | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -35,32 +46,133 @@ export default function ProductContact() {
     kvkkAccepted: false
   });
 
-  const product = products.find((p) => p.id === id);
+  useEffect(() => {
+    if (code) {
+      loadProduct(code);
+      loadPrivacyPolicy();
+    }
+  }, [code]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const loadProduct = async (productCode: string) => {
+    try {
+      setLoading(true);
+      const data = await productService.getPublicProductByCode(productCode);
+      setProduct(data);
+    } catch (error) {
+      console.error('Error loading product:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadPrivacyPolicy = async () => {
+    try {
+      const response = await fetch('http://localhost:9090/webapp/api/v1/public/legal-documents/privacy-policy/current');
+      if (response.ok) {
+        const result = await response.json();
+        if (result.status === 'SUCCESS' && result.data) {
+          setPrivacyDocument(result.data);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading privacy policy:', error);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!formData.kvkkAccepted) {
+    // Privacy Policy kontrolü - sadece doküman varsa zorunlu
+    if (privacyDocument && !formData.kvkkAccepted) {
       alert(t('callRequest.kvkk'));
       return;
     }
 
-    const submission = {
-      id: Date.now().toString(),
-      productId: id!,
-      ...formData,
-      createdAt: new Date().toISOString()
-    };
+    try {
+      setSubmitting(true);
+      
+      const response = await fetch(`http://localhost:9090/webapp/api/v1/public/products/${code}/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customerName: `${formData.name} ${formData.surname}`,
+          customerEmail: formData.email,
+          customerPhone: formData.phone,
+          message: formData.message,
+          product: {
+            code: code
+          },
+          acceptedLegalDocument: privacyDocument && formData.kvkkAccepted ? {
+            code: privacyDocument.code
+          } : null,
+        }),
+      });
 
-    addProductContactForm(submission);
-    console.log('Product Contact Form Submitted:', submission);
+      if (!response.ok) {
+        throw new Error('Form gönderilemedi');
+      }
 
-    setShowToast(true);
-
-    setTimeout(() => {
-      router.push(`/products/${id}`);
-    }, 2000);
+      const result = await response.json();
+      
+      if (result.status === 'SUCCESS') {
+        setShowToast(true);
+        setTimeout(() => {
+          router.push(`/products/${code}`);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Error submitting contact request:', error);
+      alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  const getCurrentLanguage = () => {
+    return 'tr'; // Default to Turkish, can be extended
+  };
+
+  const getPrivacyContent = () => {
+    if (!privacyDocument?.content) return '';
+    const lang = getCurrentLanguage();
+    return privacyDocument.content[lang as keyof typeof privacyDocument.content] || 
+           privacyDocument.content.tr || '';
+  };
+
+  const getPrivacyShortText = () => {
+    if (!privacyDocument?.shortText) {
+      return t('callRequest.kvkk');
+    }
+    const lang = getCurrentLanguage();
+    return privacyDocument.shortText[lang as keyof typeof privacyDocument.shortText] || 
+           privacyDocument.shortText.tr || 
+           t('callRequest.kvkk');
+  };
+
+  const getPrivacyTitle = () => {
+    if (!privacyDocument?.title) {
+      return t('kvkk.title');
+    }
+    const lang = getCurrentLanguage();
+    return privacyDocument.title[lang as keyof typeof privacyDocument.title] || 
+           privacyDocument.title.tr || 
+           t('kvkk.title');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Container>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        </Container>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -94,7 +206,7 @@ export default function ProductContact() {
               {t('productContact.title')}
             </h1>
             <p className="text-xl text-gray-600">
-              {t(product.nameKey)}
+              {product.name?.tr || product.code}
             </p>
           </div>
 
@@ -137,44 +249,61 @@ export default function ProductContact() {
                 placeholder={t('productContact.messagePlaceholder')}
               />
 
-              <div className="flex items-start gap-3 bg-blue-50 p-4 rounded-xl">
-                <input
-                  type="checkbox"
-                  id="kvkk"
-                  checked={formData.kvkkAccepted}
-                  onChange={(e) => setFormData({ ...formData, kvkkAccepted: e.target.checked })}
-                  required
-                  className="mt-1 w-5 h-5 text-blue-900 rounded focus:ring-2 focus:ring-blue-900"
-                />
-                <label htmlFor="kvkk" className="text-sm text-gray-700 flex-1">
-                  {t('callRequest.kvkk')}
-                  <button
-                    type="button"
-                    onClick={() => setShowKvkkModal(true)}
-                    className="text-blue-900 hover:underline ml-2 font-semibold"
-                  >
-                    ({t('callRequest.viewKvkk')})
-                  </button>
-                </label>
-              </div>
+              {/* Privacy Policy checkbox - sadece doküman varsa göster */}
+              {privacyDocument && (
+                <div className="flex items-start gap-3 bg-blue-50 p-5 rounded-xl border border-blue-100">
+                  <input
+                    type="checkbox"
+                    id="kvkk"
+                    checked={formData.kvkkAccepted}
+                    onChange={(e) => setFormData({ ...formData, kvkkAccepted: e.target.checked })}
+                    required
+                    className="mt-1 w-5 h-5 text-blue-900 border-gray-300 rounded focus:ring-2 focus:ring-blue-900"
+                  />
+                  <label htmlFor="kvkk" className="text-sm text-gray-700 flex-1 leading-relaxed">
+                    {getPrivacyShortText()}
+                    <button
+                      type="button"
+                      onClick={() => setShowKvkkModal(true)}
+                      className="text-blue-900 hover:underline ml-2 font-semibold"
+                    >
+                      ({t('callRequest.viewKvkk')})
+                    </button>
+                  </label>
+                </div>
+              )}
 
-              <Button type="submit" fullWidth size="lg" className="bg-blue-900 hover:bg-blue-800">
-                {t('productContact.submit')}
+              <Button 
+                type="submit" 
+                fullWidth 
+                size="lg" 
+                className="bg-blue-900 hover:bg-blue-800"
+                disabled={submitting}
+              >
+                {submitting ? 'Gönderiliyor...' : t('productContact.submit')}
               </Button>
             </form>
           </Card>
         </div>
 
-        <Modal
-          isOpen={showKvkkModal}
-          onClose={() => setShowKvkkModal(false)}
-          title={t('kvkk.title')}
-          size="lg"
-        >
-          <div className="p-6">
-            <RichContentRenderer htmlContent={kvkk.htmlContent} />
-          </div>
-        </Modal>
+        {/* Modal - sadece doküman varsa göster */}
+        {privacyDocument && (
+          <Modal
+            isOpen={showKvkkModal}
+            onClose={() => setShowKvkkModal(false)}
+            title={getPrivacyTitle()}
+            size="lg"
+          >
+            <div className="p-6">
+              <RichContentRenderer htmlContent={getPrivacyContent()} />
+              {privacyDocument.version && (
+                <div className="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-500">
+                  Versiyon: {privacyDocument.version}
+                </div>
+              )}
+            </div>
+          </Modal>
+        )}
 
         {showToast && (
           <Toast
