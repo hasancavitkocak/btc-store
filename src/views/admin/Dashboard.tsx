@@ -1,44 +1,194 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { LayoutDashboard, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, RefreshCw } from 'lucide-react';
+import { 
+  LayoutDashboard, Image, FolderTree, Package, Users, BookOpen, FileText, 
+  MessageSquare, RefreshCw, LucideIcon, Phone, Settings, UserCog, Mail, 
+  Shield, Globe, Menu, Building, Handshake, UsersRound, ShoppingCart, Tag,
+  Layers, Grid, List, Calendar, Clock, Bell, Star, Heart, Bookmark,
+  Search, Filter, Download, Upload, Edit, Trash2, Plus, Minus,
+  Check, X, AlertCircle, Info, HelpCircle, Eye, EyeOff, Lock,
+  Unlock, Key, Home, Briefcase, Award, Target, TrendingUp, BarChart,
+  PieChart, Activity, Zap, Cpu, Database, Server, Cloud, Wifi
+} from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Toast from '../../components/Toast';
+import { dashboardService, DashboardModule } from '../../services/admin.service';
 
 export default function Dashboard() {
   const t = useTranslations();
-  const { banners, categories, products, references, stories, callRequests, productContactForms, resetToDefaults } = useStore();
+  const { resetToDefaults } = useStore();
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [cardModules, setCardModules] = useState<DashboardModule[]>([]);
+  const [quickActionModules, setQuickActionModules] = useState<DashboardModule[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleReset = () => {
-    if (confirm('Tüm veriler varsayılan değerlere sıfırlanacak. Emin misiniz?')) {
-      // Store'u sıfırla
-      resetToDefaults();
-      
-      // Tüm localStorage'ı temizle
-      localStorage.clear();
-      
-      setToast({ message: 'Veriler başarıyla sıfırlandı! Sayfa yenileniyor...', type: 'success' });
-      setTimeout(() => {
-        window.location.href = '/admin/login';
-      }, 1500);
+  // Icon mapping
+  const iconMap: Record<string, LucideIcon> = {
+    // Yaygın kullanılanlar
+    LayoutDashboard,
+    Package,
+    ShoppingCart,
+    Users,
+    UsersRound,
+    UserCog,
+    Image,
+    FileText,
+    FolderTree,
+    BookOpen,
+    MessageSquare,
+    Mail,
+    Phone,
+    Settings,
+    Shield,
+    Globe,
+    Menu,
+    Building,
+    Handshake,
+    Home,
+    Briefcase,
+    
+    // Kategoriler ve organizasyon
+    Tag,
+    Layers,
+    Grid,
+    List,
+    
+    // Zaman ve takvim
+    Calendar,
+    Clock,
+    
+    // Bildirim ve işaretler
+    Bell,
+    Star,
+    Heart,
+    Bookmark,
+    Award,
+    Target,
+    
+    // Arama ve filtre
+    Search,
+    Filter,
+    
+    // Dosya işlemleri
+    Download,
+    Upload,
+    
+    // Düzenleme işlemleri
+    Edit,
+    Trash2,
+    Plus,
+    Minus,
+    Check,
+    X,
+    
+    // Bilgi ve uyarılar
+    AlertCircle,
+    Info,
+    HelpCircle,
+    
+    // Güvenlik
+    Eye,
+    EyeOff,
+    Lock,
+    Unlock,
+    Key,
+    
+    // Grafikler ve analiz
+    TrendingUp,
+    BarChart,
+    PieChart,
+    Activity,
+    
+    // Teknoloji
+    Zap,
+    Cpu,
+    Database,
+    Server,
+    Cloud,
+    Wifi,
+  };
+
+  const fetchAuthorizedModules = async () => {
+    try {
+      setLoading(true);
+      // CARD tipindeki modülleri count'larıyla birlikte al
+      const cardsResponse = await dashboardService.getAuthorizedModulesByTypeWithCounts('CARD');
+      const cardsData = (cardsResponse as any).data?.data || (cardsResponse as any).data || [];
+      setCardModules(cardsData);
+
+      // QUICK_ACTION tipindeki modülleri al
+      const quickActionsResponse = await dashboardService.getAuthorizedModulesByType('QUICK_ACTION');
+      const quickActionsData = (quickActionsResponse as any).data?.data || (quickActionsResponse as any).data || [];
+      setQuickActionModules(quickActionsData);
+    } catch (error) {
+      console.error('Failed to fetch authorized modules:', error);
+      setToast({ message: 'Modüller yüklenirken hata oluştu', type: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const stats = [
-    { icon: Image, label: t('admin.banners'), count: banners.length, link: '/admin/banners' },
-    { icon: FolderTree, label: t('admin.categories'), count: categories.length, link: '/admin/categories' },
-    { icon: Package, label: t('admin.products'), count: products.length, link: '/admin/products' },
-    { icon: Users, label: t('admin.references'), count: references.length, link: '/admin/references' },
-    { icon: BookOpen, label: t('admin.stories'), count: stories.length, link: '/admin/stories' },
-    { icon: MessageSquare, label: t('admin.forms'), count: callRequests.length + productContactForms.length, link: '/admin/forms' }
-  ];
+  useEffect(() => {
+    fetchAuthorizedModules();
+  }, []);
+
+  const handleRefresh = () => {
+    setToast({ message: 'Veriler yenileniyor...', type: 'success' });
+    fetchAuthorizedModules();
+  };
+
+  const stats = cardModules.map(module => {
+    const moduleName = module.name?.tr || module.name?.en || module.code;
+    return {
+      icon: iconMap[module.icon] || Package,
+      label: moduleName,
+      count: module.count || 0,
+      link: module.link
+    };
+  });
+
+  const quickActions = quickActionModules.map(module => {
+    const moduleName = module.name?.tr || module.name?.en || module.code;
+    const moduleDesc = module.description?.tr || module.description?.en || '';
+    return {
+      icon: iconMap[module.icon] || Settings,
+      title: moduleName,
+      description: moduleDesc,
+      link: module.link
+    };
+  });
+
+  if (loading) {
+    return (
+      <Section>
+        <Container>
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-gray-600">Yükleniyor...</div>
+          </div>
+        </Container>
+      </Section>
+    );
+  }
+
+  if (cardModules.length === 0 && quickActionModules.length === 0) {
+    return (
+      <Section>
+        <Container>
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Erişim Yetkiniz Bulunmuyor</h2>
+            <p className="text-gray-600">Bu panele erişim için yetkiniz bulunmamaktadır.</p>
+          </div>
+        </Container>
+      </Section>
+    );
+  }
 
   return (
     <Section>
@@ -52,11 +202,12 @@ export default function Dashboard() {
           </div>
           <Button
             variant="outline"
-            onClick={handleReset}
-            className="flex items-center gap-2 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white"
+            onClick={handleRefresh}
+            disabled={loading}
+            className="flex items-center gap-2"
           >
-            <RefreshCw className="w-4 h-4" />
-            Verileri Sıfırla
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Yenile
           </Button>
         </div>
 
@@ -81,31 +232,35 @@ export default function Dashboard() {
           })}
         </div>
 
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('admin.quickActions')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Link href="/admin/forms">
-              <Card hover className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {t('admin.viewForms')}
-                </h3>
-                <p className="text-gray-600">
-                  {callRequests.length + productContactForms.length} {t('admin.totalSubmissions')}
-                </p>
-              </Card>
-            </Link>
-            <Link href="/admin/header">
-              <Card hover className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {t('admin.updateHeader')}
-                </h3>
-                <p className="text-gray-600">
-                  {t('admin.manageLogoPhone')}
-                </p>
-              </Card>
-            </Link>
+        {quickActions.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Hızlı İşlemler</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {quickActions.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <Link key={action.title} href={action.link}>
+                    <Card hover className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="bg-orange-100 p-3 rounded-xl">
+                          <Icon className="w-6 h-6 text-orange-600" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            {action.title}
+                          </h3>
+                          <p className="text-gray-600 text-sm">
+                            {action.description}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {toast && (
           <Toast

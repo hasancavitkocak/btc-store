@@ -78,6 +78,11 @@ const menuGroups: MenuGroup[] = [
         path: '/admin/site-configuration'
       },
       { 
+        icon: LayoutDashboard, 
+        labelKey: 'Dashboard Modülleri', 
+        path: '/admin/dashboard-modules'
+      },
+      { 
         icon: Settings, 
         labelKey: 'admin.menus', 
         path: '/admin/menus/admin',

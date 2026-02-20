@@ -270,3 +270,37 @@ export const emailTemplateService = {
   getAllModels: () => apiClient.get<any>('/v1/search/all-item-models'),
   getModelFields: (modelName: string) => apiClient.get<any>(`/v1/search/all-item-fields/${modelName}`),
 };
+
+// Dashboard servisleri
+export interface DashboardModule {
+  code: string;
+  link: string;
+  icon: string;
+  displayOrder: number;
+  active: boolean;
+  showCount: boolean;
+  searchItemType?: string; // SearchService için model tipi (örn: BannerModel)
+  searchFilters?: string; // JSON formatında filtreler
+  moduleType: string; // CARD, QUICK_ACTION
+  name: {
+    tr?: string;
+    en?: string;
+  };
+  description?: {
+    tr?: string;
+    en?: string;
+  };
+  userGroups?: any[];
+  count?: number; // Backend'den gelen dinamik count
+}
+
+export const dashboardService = {
+  getAuthorizedModules: () => apiClient.get<DashboardModule[]>('/v1/dashboard/modules'),
+  getAuthorizedModulesByType: (moduleType: string) => apiClient.get<DashboardModule[]>(`/v1/dashboard/modules/by-type/${moduleType}`),
+  getAuthorizedModulesByTypeWithCounts: (moduleType: string) => apiClient.get<DashboardModule[]>(`/v1/dashboard/modules/by-type/${moduleType}/with-counts`),
+  getAllModules: () => apiClient.get<DashboardModule[]>('/v1/dashboard/modules/all'),
+  getActiveModules: () => apiClient.get<DashboardModule[]>('/v1/dashboard/modules/active'),
+  getByCode: (code: string) => apiClient.get<DashboardModule>(`/v1/dashboard/modules/${code}`),
+  save: (data: any) => apiClient.post<DashboardModule>('/v1/dashboard/modules', data),
+  delete: (code: string) => apiClient.delete(`/v1/dashboard/modules/${code}`),
+};
