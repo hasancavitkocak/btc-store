@@ -47,7 +47,7 @@ export default function Footer() {
               )}
             </div>
             <p className="text-gray-400 mb-4">
-              İşletmeniz için özel tasarlanmış yazılım çözümleri
+              {t('footer.description')}
             </p>
           </div>
 
@@ -63,7 +63,7 @@ export default function Footer() {
               </div>
             ) : footerMenus.length > 0 ? (
               <>
-                <h4 className="text-white font-semibold mb-4">Hızlı Linkler</h4>
+                <h4 className="text-white font-semibold mb-4">{t('footer.quickLinks')}</h4>
                 <nav className="flex flex-col gap-2">
                   {footerMenus.map((menu: any) => (
                     <Link
@@ -78,14 +78,14 @@ export default function Footer() {
               </>
             ) : (
               <div>
-                <h4 className="text-white font-semibold mb-4">Hızlı Linkler</h4>
-                <p className="text-gray-500 text-sm">Menü bulunamadı</p>
+                <h4 className="text-white font-semibold mb-4">{t('footer.quickLinks')}</h4>
+                <p className="text-gray-500 text-sm">{t('footer.noMenuFound')}</p>
               </div>
             )}
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">İletişim</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.contact')}</h4>
             {isLoadingSiteConfiguration ? (
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 py-6 text-center text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} BTC Store. Tüm hakları saklıdır.</p>
+          <p>&copy; {new Date().getFullYear()} BTC Store. {t('footer.allRightsReserved')}.</p>
         </div>
       </Container>
     </footer>

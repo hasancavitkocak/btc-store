@@ -3,7 +3,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { ArrowLeft } from 'lucide-react';
 import Container from '../components/Container';
 import Section from '../components/Section';
@@ -16,6 +16,7 @@ import Modal from '../components/Modal';
 import RichContentRenderer from '../components/RichContentRenderer';
 import Toast from '../components/Toast';
 import { productService, ProductData } from '../services/product.service';
+import { getLocalizedText, SupportedLocale } from '../lib/i18n-utils';
 
 interface LegalDocument {
   code: string;
@@ -29,6 +30,7 @@ export default function ProductContact() {
   const params = useParams();
   const code = params?.id as string;
   const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -130,35 +132,23 @@ export default function ProductContact() {
     }
   };
 
-  const getCurrentLanguage = () => {
-    return 'tr'; // Default to Turkish, can be extended
-  };
-
   const getPrivacyContent = () => {
     if (!privacyDocument?.content) return '';
-    const lang = getCurrentLanguage();
-    return privacyDocument.content[lang as keyof typeof privacyDocument.content] || 
-           privacyDocument.content.tr || '';
+    return getLocalizedText(privacyDocument.content, locale);
   };
 
   const getPrivacyShortText = () => {
     if (!privacyDocument?.shortText) {
       return t('callRequest.kvkk');
     }
-    const lang = getCurrentLanguage();
-    return privacyDocument.shortText[lang as keyof typeof privacyDocument.shortText] || 
-           privacyDocument.shortText.tr || 
-           t('callRequest.kvkk');
+    return getLocalizedText(privacyDocument.shortText, locale) || t('callRequest.kvkk');
   };
 
   const getPrivacyTitle = () => {
     if (!privacyDocument?.title) {
       return t('kvkk.title');
     }
-    const lang = getCurrentLanguage();
-    return privacyDocument.title[lang as keyof typeof privacyDocument.title] || 
-           privacyDocument.title.tr || 
-           t('kvkk.title');
+    return getLocalizedText(privacyDocument.title, locale) || t('kvkk.title');
   };
 
   if (loading) {
@@ -206,7 +196,7 @@ export default function ProductContact() {
               {t('productContact.title')}
             </h1>
             <p className="text-xl text-gray-600">
-              {product.name?.tr || product.code}
+              {getLocalizedText(product.name, locale) || product.code}
             </p>
           </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import Container from '../components/Container';
 import Section from '../components/Section';
@@ -14,9 +14,11 @@ import Modal from '../components/Modal';
 import RichContentRenderer from '../components/RichContentRenderer';
 import Toast from '../components/Toast';
 import { LegalDocument } from '../types/legalDocument';
+import { getLocalizedText, SupportedLocale } from '../lib/i18n-utils';
 
 export default function CallRequest() {
   const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -95,34 +97,25 @@ export default function CallRequest() {
     }
   };
 
-  // Get current language from locale
-  const getCurrentLanguage = (): keyof LegalDocument['shortText'] => {
-    // You can get this from your i18n context or locale
-    return 'tr'; // Default to Turkish
-  };
-
   const getPrivacyShortText = () => {
     if (!privacyDocument?.shortText) {
       return t('callRequest.kvkk');
     }
-    const lang = getCurrentLanguage();
-    return privacyDocument.shortText[lang] || privacyDocument.shortText.tr || t('callRequest.kvkk');
+    return getLocalizedText(privacyDocument.shortText, locale) || t('callRequest.kvkk');
   };
 
   const getPrivacyContent = () => {
     if (!privacyDocument?.content) {
       return '';
     }
-    const lang = getCurrentLanguage();
-    return privacyDocument.content[lang] || privacyDocument.content.tr || '';
+    return getLocalizedText(privacyDocument.content, locale);
   };
 
   const getPrivacyTitle = () => {
     if (!privacyDocument?.title) {
       return t('kvkk.title');
     }
-    const lang = getCurrentLanguage();
-    return privacyDocument.title[lang] || privacyDocument.title.tr || t('kvkk.title');
+    return getLocalizedText(privacyDocument.title, locale) || t('kvkk.title');
   };
 
   return (

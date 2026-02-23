@@ -40,6 +40,10 @@ class ApiClient {
   private buildUrl(endpoint: string, params?: Record<string, string | number | boolean>): string {
     const url = new URL(`${this.baseURL}${endpoint}`);
     
+    // Get current locale and add as isoCode parameter
+    const locale = getCookie('NEXT_LOCALE') || 'tr';
+    url.searchParams.append('isoCode', locale);
+    
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         url.searchParams.append(key, String(value));
@@ -179,8 +183,12 @@ class ApiClient {
     const adminToken = getCookie('accessToken');
     const token = authToken || adminToken;
     
+    // Get current locale from cookie
+    const locale = getCookie('NEXT_LOCALE') || 'tr';
+    
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      'Accept-Language': locale, // Add language header
       ...(options.headers as Record<string, string>),
     };
 
@@ -306,10 +314,18 @@ class ApiClient {
     return this.post<AuthToken>('/v1/refresh-token/refresh', { refreshToken }, { skipAuth: true });
   }
 
+  // Menu endpoints
+  async getMenusByType(menuType: 'ADMIN_PANEL' | 'PUBLIC'): Promise<ApiResponse<any>> {
+    return this.get(`/v1/menu-link-items/by-type/${menuType}`);
+  }
+
   // Upload helper
   async upload<T>(endpoint: string, formData: FormData, config?: RequestConfig): Promise<ApiResponse<T>> {
     const token = getCookie('accessToken');
-    const headers: Record<string, string> = {};
+    const locale = getCookie('NEXT_LOCALE') || 'tr';
+    const headers: Record<string, string> = {
+      'Accept-Language': locale, // Add language header
+    };
 
     // Content-Type'ı ekleme - browser otomatik ekleyecek
     if (token && !config?.skipAuth) {

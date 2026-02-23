@@ -25,10 +25,8 @@ export default function AdminLoginPage() {
       const result = await login(username, password);
       
       if (result.success) {
-        // Login başarılı - router.push ile yönlendir
-        // Store zaten persist ile kaydedildi, layout token'ı görecek
-        router.push('/admin');
-        router.refresh(); // Layout'ı yeniden render et
+        // Login başarılı - sayfa yenilenerek dil değişikliği uygulanacak
+        window.location.href = '/admin';
       } else {
         setError(result.error || 'Kullanıcı adı veya şifre hatalı');
         setIsLoading(false);

@@ -152,6 +152,11 @@ export const useAuthStore = create<AuthState>()(
               };
             }
             
+            // Token'dan gelen dili cookie'ye kaydet
+            if (decoded.language) {
+              setCookie('NEXT_LOCALE', decoded.language);
+            }
+            
             // Save user data to store
             const currentUser: CurrentUser = {
               username: decoded.username,

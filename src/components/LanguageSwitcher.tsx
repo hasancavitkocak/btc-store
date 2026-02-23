@@ -9,7 +9,7 @@ import { GB } from 'country-flag-icons/react/3x2';
 import { DE } from 'country-flag-icons/react/3x2';
 import { FR } from 'country-flag-icons/react/3x2';
 import { ES } from 'country-flag-icons/react/3x2';
-import { SA } from 'country-flag-icons/react/3x2';
+import { IT } from 'country-flag-icons/react/3x2';
 
 const languages = [
   { code: 'tr', name: 'Türkçe', Flag: TR },
@@ -17,7 +17,7 @@ const languages = [
   { code: 'de', name: 'Deutsch', Flag: DE },
   { code: 'fr', name: 'Français', Flag: FR },
   { code: 'es', name: 'Español', Flag: ES },
-  { code: 'ar', name: 'العربية', Flag: SA }
+  { code: 'it', name: 'Italiano', Flag: IT }
 ];
 
 export default function LanguageSwitcher() {

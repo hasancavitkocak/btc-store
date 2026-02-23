@@ -168,7 +168,10 @@
     "search": "Search",
     "filter": "Filter",
     "all": "All",
-    "back": "Back"
+    "back": "Back",
+    "seeMore": "See More",
+    "viewAll": "View All",
+    "products": "products"
   },
   "kvkk": {
     "title": "Personal Data Protection",
@@ -189,6 +192,10 @@
     "documents": "Documents",
     "sectors": "Sectors",
     "menus": "Menu Management",
+    "callRequests": "Call Requests",
+    "emailTemplates": "Email Templates",
+    "siteSettings": "Site Settings",
+    "parameters": "Parameters",
     "logout": "Logout",
     "welcome": "Welcome to the admin panel",
     "quickActions": "Quick Actions",
@@ -318,9 +325,11 @@
     "title": "Our Partners",
     "subtitle": "We work with leading companies in the industry"
   },
-  "common": {
-    "learnMore": "Learn More",
-    "seeMore": "See More",
-    "viewAll": "View All"
+  "footer": {
+    "description": "Software solutions specially designed for your business",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "noMenuFound": "No menu found",
+    "allRightsReserved": "All rights reserved"
   }
 }

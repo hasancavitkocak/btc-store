@@ -2,170 +2,163 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, LogOut, ChevronDown, ChevronRight, Phone, Mail, Shield } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, LogOut, ChevronDown, ChevronRight, Phone, Mail, Shield, LucideIcon, Edit, Trash2, Plus, Eye, Save, Upload, Download, Search, Filter, Calendar, Clock, CheckCircle, XCircle, AlertTriangle, User, Lock, Key, Globe, Database, Server, Cloud, Activity, BarChart, PieChart, TrendingUp, Award, Target, Briefcase } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useState, useEffect } from 'react';
+import { apiClient } from '@/lib/api';
+import { MenuLinkItemData, LocalizeData } from '@/types/menu';
 
-interface SubMenuItem {
-  labelKey: string;
-  path: string;
-}
+// Icon mapping - backend'den gelen icon string'ini Lucide icon'a çevir
+const iconMap: Record<string, LucideIcon> = {
+  'LayoutDashboard': LayoutDashboard,
+  'Settings': Settings,
+  'Image': Image,
+  'FolderTree': FolderTree,
+  'Package': Package,
+  'Users': Users,
+  'BookOpen': BookOpen,
+  'FileText': FileText,
+  'MessageSquare': MessageSquare,
+  'Phone': Phone,
+  'Mail': Mail,
+  'Shield': Shield,
+  'Edit': Edit,
+  'Trash2': Trash2,
+  'Plus': Plus,
+  'Eye': Eye,
+  'Save': Save,
+  'Upload': Upload,
+  'Download': Download,
+  'Search': Search,
+  'Filter': Filter,
+  'Calendar': Calendar,
+  'Clock': Clock,
+  'CheckCircle': CheckCircle,
+  'XCircle': XCircle,
+  'AlertTriangle': AlertTriangle,
+  'User': User,
+  'Lock': Lock,
+  'Key': Key,
+  'Globe': Globe,
+  'Database': Database,
+  'Server': Server,
+  'Cloud': Cloud,
+  'Activity': Activity,
+  'BarChart': BarChart,
+  'PieChart': PieChart,
+  'TrendingUp': TrendingUp,
+  'Award': Award,
+  'Target': Target,
+  'Briefcase': Briefcase,
+};
 
-interface MenuItem {
-  icon: any;
-  labelKey: string;
-  path: string;
-  permission?: 'manage_users';
-  subItems?: SubMenuItem[];
-}
+const getIcon = (iconName?: string): LucideIcon => {
+  if (!iconName) return Settings;
+  return iconMap[iconName] || Settings;
+};
 
-interface MenuGroup {
-  title: string;
-  items: MenuItem[];
-}
+// URL mapping - backend'den URL gelmezse code'a göre URL oluştur
+const urlMap: Record<string, string> = {
+  'dashboard': '/admin',
+  'product_management': '/admin/products',
+  'category_management': '/admin/categories',
+  'sectors': '/admin/sectors',
+  'documents': '/admin/documents',
+  'banner_management': '/admin/banners',
+  'success_stories': '/admin/stories',
+  'reference_management': '/admin/references',
+  'partners': '/admin/partners',
+  'call_requests': '/admin/call-requests',
+  'all_calls': '/admin/call-requests',
+  'my_tasks': '/admin/call-requests/my-requests',
+  'data_privacy_compliance': '/admin/legal-documents',
+  'email_templates': '/admin/email-templates',
+  'site_configurations': '/admin/site-configuration',
+  'dashboard_modules': '/admin/dashboard-modules',
+  'menu_management': '/admin/menus',
+  'admin_menus': '/admin/menus/admin',
+  'public_menus': '/admin/menus/public',
+  'parameters': '/admin/parameters',
+  'user_management': '/admin/users',
+  'users': '/admin/users',
+  'roles': '/admin/user-groups',
+  'permissions': '/admin/user-roles',
+};
 
-const menuGroups: MenuGroup[] = [
-  {
-    title: '',
-    items: [
-      { icon: LayoutDashboard, labelKey: 'admin.dashboard', path: '/admin' }
-    ]
-  },
-  {
-    title: 'İçerik Yönetimi',
-    items: [
-      { icon: Image, labelKey: 'admin.banners', path: '/admin/banners' },
-      { icon: FolderTree, labelKey: 'admin.categories', path: '/admin/categories' },
-      { icon: Package, labelKey: 'admin.products', path: '/admin/products' },
-      { icon: BookOpen, labelKey: 'admin.stories', path: '/admin/stories' },
-      { icon: Users, labelKey: 'admin.references', path: '/admin/references' },
-      { icon: Users, labelKey: 'admin.partners', path: '/admin/partners' },
-      { icon: FileText, labelKey: 'admin.documents', path: '/admin/documents' },
-      { icon: FolderTree, labelKey: 'admin.sectors', path: '/admin/sectors' }
-    ]
-  },
-  {
-    title: 'Form & İletişim',
-    items: [
-      { 
-        icon: Shield, 
-        labelKey: 'KVKK / GDPR', 
-        path: '/admin/legal-documents'
-      },
-      { 
-        icon: Phone, 
-        labelKey: 'Çağrı Talepleri', 
-        path: '/admin/call-requests',
-        subItems: [
-          { labelKey: '📋 Tüm Çağrılar', path: '/admin/call-requests' },
-          { labelKey: '👤 Benim İşlerim', path: '/admin/call-requests/my-requests' }
-        ]
-      },
-      { 
-        icon: Mail, 
-        labelKey: 'Email Templates', 
-        path: '/admin/email-templates'
-      }
-    ]
-  },
-  {
-    title: 'Sistem',
-    items: [
-      { 
-        icon: Settings, 
-        labelKey: 'Site Ayarları', 
-        path: '/admin/site-configuration'
-      },
-      { 
-        icon: LayoutDashboard, 
-        labelKey: 'Dashboard Modülleri', 
-        path: '/admin/dashboard-modules'
-      },
-      { 
-        icon: Settings, 
-        labelKey: 'admin.menus', 
-        path: '/admin/menus/admin',
-        subItems: [
-          { labelKey: '⚙️ Admin Menüler', path: '/admin/menus/admin' },
-          { labelKey: '🌐 Public Menüler', path: '/admin/menus/public' }
-        ]
-      },
-      { 
-        icon: Settings, 
-        labelKey: 'Parametreler', 
-        path: '/admin/parameters'
-      },
-      { 
-        icon: Users, 
-        labelKey: 'admin.users', 
-        path: '/admin/users',
-        // permission: 'manage_users' as const, // Geçici olarak kapalı
-        subItems: [
-          { labelKey: '👥 Kullanıcılar', path: '/admin/users' },
-          { labelKey: '🏢 Roller', path: '/admin/user-groups' },
-          { labelKey: '🔐 Yetkiler', path: '/admin/user-roles' }
-        ]
-      }
-    ]
-  }
-];
+const getMenuUrl = (menu: MenuLinkItemData): string => {
+  return menu.url || urlMap[menu.code] || '#';
+};
 
 export default function AdminSidebar() {
-  const t = useTranslations();
+  const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const currentUser = useAuthStore((state) => state.currentUser);
-  const hasPermission = useAuthStore((state) => state.hasPermission);
+  const hasUserGroup = useAuthStore((state) => state.hasUserGroup);
   const logout = useAuthStore((state) => state.logout);
-  const [openGroups, setOpenGroups] = useState<number[]>([0, 1, 2, 3]); // Tüm grupları başlangıçta aç
+  
+  // Kullanıcının dilini auth store'dan al, yoksa locale kullan
+  const userLanguage = currentUser?.language || locale;
+  
+  const [menus, setMenus] = useState<MenuLinkItemData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [openSubMenus, setOpenSubMenus] = useState<string[]>([]);
 
-  // Aktif grubu otomatik aç
+  // Menüleri servisten çek
   useEffect(() => {
-    menuGroups.forEach((group, index) => {
-      const hasActiveItem = group.items.some(item => {
-        // Ana item kontrolü
-        const isMainActive = pathname === item.path || (item.path !== '/admin' && pathname?.startsWith(item.path + '/'));
-        // Alt item kontrolü
-        const hasActiveSubItem = item.subItems?.some((subItem: SubMenuItem) => 
-          pathname === subItem.path || pathname?.startsWith(subItem.path + '/')
-        );
-        return isMainActive || hasActiveSubItem;
-      });
-      if (hasActiveItem && !openGroups.includes(index)) {
-        setOpenGroups(prev => [...prev, index]);
+    const fetchMenus = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.getMenusByType('ADMIN_PANEL');
+        
+        if (response.status === 'SUCCESS' && response.data) {
+          // Backend'den gelen data ServiceResponseData içinde wrap edilmiş
+          // response.data.data içinde asıl menü array'i var
+          const actualData = response.data.data || response.data;
+          const menuData = Array.isArray(actualData) ? actualData : [];
+          console.log('Menüler yüklendi:', menuData.length, 'adet menü');
+          setMenus(menuData);
+        } else {
+          console.error('Menüler yüklenemedi:', response.errorMessage);
+          setMenus([]);
+        }
+      } catch (error) {
+        console.error('Menü yükleme hatası:', error);
+        setMenus([]);
+      } finally {
+        setLoading(false);
       }
-    });
+    };
+
+    if (currentUser) {
+      fetchMenus();
+    }
+  }, [currentUser]);
+
+  // Aktif menüyü otomatik aç
+  useEffect(() => {
+    if (menus.length === 0) return;
 
     // Alt menüleri otomatik aç
-    menuGroups.forEach(group => {
-      group.items.forEach(item => {
-        if (item.subItems) {
-          const hasActiveSubItem = item.subItems.some((subItem: SubMenuItem) => 
-            pathname === subItem.path || pathname?.startsWith(subItem.path + '/')
-          );
-          if (hasActiveSubItem && !openSubMenus.includes(item.path)) {
-            setOpenSubMenus(prev => [...prev, item.path]);
-          }
+    menus.forEach(menu => {
+      if (menu.subMenuLinkItems && menu.subMenuLinkItems.length > 0) {
+        const hasActiveSubItem = menu.subMenuLinkItems.some((subItem) => {
+          const subUrl = getMenuUrl(subItem);
+          return pathname === subUrl || pathname?.startsWith(subUrl + '/');
+        });
+        if (hasActiveSubItem && !openSubMenus.includes(menu.code)) {
+          setOpenSubMenus(prev => [...prev, menu.code]);
         }
-      });
+      }
     });
-  }, [pathname]);
+  }, [pathname, menus]);
 
-  const toggleGroup = (index: number) => {
-    setOpenGroups(prev => 
-      prev.includes(index) 
-        ? prev.filter(i => i !== index)
-        : [...prev, index]
-    );
-  };
-
-  const toggleSubMenu = (path: string) => {
+  const toggleSubMenu = (code: string) => {
     setOpenSubMenus(prev => 
-      prev.includes(path) 
-        ? prev.filter(p => p !== path)
-        : [...prev, path]
+      prev.includes(code) 
+        ? prev.filter(c => c !== code)
+        : [...prev, code]
     );
   };
 
@@ -173,6 +166,40 @@ export default function AdminSidebar() {
     logout();
     router.push('/admin/login');
   };
+
+  // Kullanıcının menüye erişim yetkisi var mı kontrol et
+  const hasMenuAccess = (menu: MenuLinkItemData): boolean => {
+    if (!menu.userGroups || menu.userGroups.length === 0) return true;
+    
+    return menu.userGroups.some(group => hasUserGroup(group.code));
+  };
+
+  // Menü adını kullanıcının diline göre al
+  const getMenuName = (name: LocalizeData): string => {
+    if (!name) return '';
+    
+    // taskStep alanını çıkar
+    const { taskStep, ...translations } = name;
+    
+    // Kullanıcının diline göre çeviriyi al
+    const translation = translations[userLanguage] || translations['tr'] || translations['en'] || '';
+    return typeof translation === 'string' ? translation : '';
+  };
+
+  // Root menüleri filtrele ve sırala
+  const rootMenus = Array.isArray(menus)
+    ? menus
+        .filter(menu => menu.isRoot && menu.active && hasMenuAccess(menu))
+        .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
+    : [];
+
+  if (loading) {
+    return (
+      <aside className="w-64 bg-gray-900 text-white h-screen sticky top-0 flex items-center justify-center">
+        <div className="text-gray-400">Yükleniyor...</div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="w-64 bg-gray-900 text-white h-screen sticky top-0 flex flex-col">
@@ -203,105 +230,91 @@ export default function AdminSidebar() {
         )}
 
         <nav className="space-y-2">
-          {menuGroups.map((group, groupIndex) => (
-            <div key={groupIndex}>
-              {group.title && (
-                <button
-                  onClick={() => toggleGroup(groupIndex)}
-                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-200 transition-colors"
-                >
-                  <span>{group.title}</span>
-                  {openGroups.includes(groupIndex) ? (
-                    <ChevronDown className="w-4 h-4" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4" />
-                  )}
-                </button>
-              )}
-              
-              {(openGroups.includes(groupIndex) || !group.title) && (
-                <div className="space-y-1 mt-1">
-                  {group.items.map((item) => {
-                    // Check permission if required
-                    if (item.permission && !hasPermission(item.permission)) {
-                      return null;
-                    }
+          {rootMenus.map((menu) => {
+            const Icon = getIcon(menu.icon);
+            const menuUrl = getMenuUrl(menu);
+            const hasSubItems = menu.subMenuLinkItems && menu.subMenuLinkItems.length > 0;
+            
+            // Alt menüleri filtrele ve sırala
+            const subMenus = hasSubItems 
+              ? menu.subMenuLinkItems
+                  .filter(sub => sub.active && hasMenuAccess(sub))
+                  .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
+              : [];
+            
+            // Ana item veya alt itemlerden biri aktif mi?
+            const isActive = pathname === menuUrl || 
+                            (menuUrl !== '/admin' && pathname?.startsWith(menuUrl + '/'));
+            const hasActiveSubItem = subMenus.some((subItem) => {
+              const subUrl = getMenuUrl(subItem);
+              return pathname === subUrl || pathname?.startsWith(subUrl + '/');
+            });
+            const isSubMenuOpen = openSubMenus.includes(menu.code);
 
-                    const Icon = item.icon;
-                    const hasSubItems = item.subItems && item.subItems.length > 0;
+            return (
+              <div key={menu.code}>
+                {hasSubItems && subMenus.length > 0 ? (
+                  <>
+                    <button
+                      onClick={() => toggleSubMenu(menu.code)}
+                      className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg transition-colors ${
+                        isActive || hasActiveSubItem
+                          ? 'bg-blue-900 text-white shadow-lg'
+                          : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon className="w-4 h-4" />
+                        <span className="text-sm">{getMenuName(menu.name)}</span>
+                      </div>
+                      {isSubMenuOpen ? (
+                        <ChevronDown className="w-4 h-4" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4" />
+                      )}
+                    </button>
                     
-                    // Ana item veya alt itemlerden biri aktif mi?
-                    const isActive = pathname === item.path || 
-                                    (item.path !== '/admin' && pathname?.startsWith(item.path + '/'));
-                    const hasActiveSubItem = hasSubItems && item.subItems!.some((subItem: SubMenuItem) => 
-                      pathname === subItem.path || pathname?.startsWith(subItem.path + '/')
-                    );
-                    const isSubMenuOpen = openSubMenus.includes(item.path);
-
-                    return (
-                      <div key={item.path}>
-                        {hasSubItems ? (
-                          <>
-                            <button
-                              onClick={() => toggleSubMenu(item.path)}
-                              className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg transition-colors ${
-                                isActive || hasActiveSubItem
-                                  ? 'bg-blue-900 text-white shadow-lg'
-                                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    {isSubMenuOpen && (
+                      <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-700 pl-2">
+                        {subMenus.map((subItem) => {
+                          const subUrl = getMenuUrl(subItem);
+                          const isSubActive = pathname === subUrl || pathname?.startsWith(subUrl + '/');
+                          const SubIcon = getIcon(subItem.icon);
+                          
+                          return (
+                            <Link
+                              key={subItem.code}
+                              href={subUrl}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+                                isSubActive
+                                  ? 'bg-blue-800 text-white'
+                                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                               }`}
                             >
-                              <div className="flex items-center gap-3">
-                                <Icon className="w-4 h-4" />
-                                <span className="text-sm">{item.labelKey === 'Partnerler' ? item.labelKey : t(item.labelKey)}</span>
-                              </div>
-                              {isSubMenuOpen ? (
-                                <ChevronDown className="w-4 h-4" />
-                              ) : (
-                                <ChevronRight className="w-4 h-4" />
-                              )}
-                            </button>
-                            
-                            {isSubMenuOpen && (
-                              <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-700 pl-2">
-                                {item.subItems!.map((subItem: SubMenuItem) => {
-                                  const isSubActive = pathname === subItem.path || pathname?.startsWith(subItem.path + '/');
-                                  return (
-                                    <Link
-                                      key={subItem.path}
-                                      href={subItem.path}
-                                      className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                                        isSubActive
-                                          ? 'bg-blue-800 text-white'
-                                          : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                                      }`}
-                                    >
-                                      {subItem.labelKey}
-                                    </Link>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <Link
-                            href={item.path}
-                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors ${
-                              isActive
-                                ? 'bg-blue-900 text-white shadow-lg'
-                                : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                            }`}
-                          >
-                            <Icon className="w-4 h-4" />
-                            <span className="text-sm">{item.labelKey === 'Partnerler' ? item.labelKey : t(item.labelKey)}</span>
-                          </Link>
-                        )}
+                              <SubIcon className="w-3 h-3" />
+                              <span>{getMenuName(subItem.name)}</span>
+                            </Link>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ))}
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href={menuUrl}
+                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-blue-900 text-white shadow-lg'
+                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="text-sm">{getMenuName(menu.name)}</span>
+                  </Link>
+                )}
+              </div>
+            );
+          })}
         </nav>
       </div>
 

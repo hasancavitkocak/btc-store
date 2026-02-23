@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useStore } from '../store/useStore';
@@ -9,9 +9,11 @@ import Section from '../components/Section';
 import Button from '../components/Button';
 import Carousel from '../components/Carousel';
 import ZigzagSection from '../components/ZigzagSection';
+import { getLocalizedText, SupportedLocale } from '../lib/i18n-utils';
 
 export default function Home() {
   const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const { 
     banners, 
     categories, 

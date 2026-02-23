@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { ArrowLeft } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
@@ -11,11 +11,13 @@ import Section from '../components/Section';
 import Button from '../components/Button';
 import RichContentRenderer from '../components/RichContentRenderer';
 import ImageLightbox from '../components/ImageLightbox';
+import { getLocalizedText, SupportedLocale } from '../lib/i18n-utils';
 
 export default function StoryDetail() {
   const params = useParams();
   const id = params?.id as string;
   const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const { stories, fetchActiveSuccessStories, isLoadingStories } = useStore();
   const [lightbox, setLightbox] = useState<{ isOpen: boolean; imageUrl: string }>({
@@ -138,11 +140,11 @@ export default function StoryDetail() {
           </div>
 
           <h1 className="text-4xl font-bold text-gray-900 mb-8">
-            {story.title[t('locale') as keyof typeof story.title] || story.title.tr}
+            {getLocalizedText(story.title, locale)}
           </h1>
 
           <div className="bg-white rounded-2xl p-8 shadow-lg">
-            <RichContentRenderer htmlContent={story.htmlContent[t('locale') as keyof typeof story.htmlContent] || story.htmlContent.tr} />
+            <RichContentRenderer htmlContent={getLocalizedText(story.htmlContent, locale)} />
           </div>
 
           {/* Video Section - Show below content if videoUrl exists and image also exists */}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import Container from '../components/Container';
@@ -9,9 +9,11 @@ import Section from '../components/Section';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import { productService, ProductFilterData } from '../services/product.service';
+import { getLocalizedText, SupportedLocale } from '../lib/i18n-utils';
 
 export default function Products() {
   const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const searchParams = useSearchParams();
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [filterData, setFilterData] = useState<ProductFilterData | null>(null);
@@ -182,10 +184,10 @@ export default function Products() {
       <Container>
         <div className="text-center mb-16">
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6">
-            {filterData.selectedCategory?.name?.tr || (!selectedCategory ? t('menu.products') : '')}
+            {getLocalizedText(filterData.selectedCategory?.name, locale) || (!selectedCategory ? t('menu.products') : '')}
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
-            {filterData.selectedCategory?.description?.tr || (!selectedCategory ? t('home.categories.subtitle') : '')}
+            {getLocalizedText(filterData.selectedCategory?.description, locale) || (!selectedCategory ? t('home.categories.subtitle') : '')}
           </p>
           <p className="text-sm text-gray-500 mt-4">
             {filterData.totalProducts} {filterData.selectedCategory ? 'ürün bulundu' : t('common.products')}
@@ -214,7 +216,7 @@ export default function Products() {
                     : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg'
                 }`}
               >
-                {category.name?.tr || category.code}
+                {getLocalizedText(category.name, locale) || category.code}
               </button>
             ))}
           </div>
@@ -249,10 +251,10 @@ export default function Products() {
                 </div>
                 <div className="p-8 flex flex-col flex-grow">
                   <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-800 transition-colors">
-                    {product.name?.tr || ''}
+                    {getLocalizedText(product.name, locale)}
                   </h3>
                   <p className="text-gray-600 mb-6 text-lg flex-grow">
-                    {product.shortDescription?.tr || ''}
+                    {getLocalizedText(product.shortDescription, locale)}
                   </p>
                   
                   {/* Features */}

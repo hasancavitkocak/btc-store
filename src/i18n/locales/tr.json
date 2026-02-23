@@ -168,7 +168,10 @@
     "search": "Ara",
     "filter": "Filtrele",
     "all": "Tümü",
-    "back": "Geri"
+    "back": "Geri",
+    "seeMore": "Daha Fazla Göster",
+    "viewAll": "Tümünü Gör",
+    "products": "ürün"
   },
   "kvkk": {
     "title": "Kişisel Verilerin Korunması",
@@ -322,9 +325,11 @@
     "title": "Partnerlerimiz",
     "subtitle": "Sektörün önde gelen firmaları ile çalışıyoruz"
   },
-  "common": {
-    "learnMore": "Daha Fazla Bilgi",
-    "seeMore": "Daha Fazla Göster",
-    "viewAll": "Tümünü Gör"
+  "footer": {
+    "description": "İşletmeniz için özel tasarlanmış yazılım çözümleri",
+    "quickLinks": "Hızlı Linkler",
+    "contact": "İletişim",
+    "noMenuFound": "Menü bulunamadı",
+    "allRightsReserved": "Tüm hakları saklıdır"
   }
 }

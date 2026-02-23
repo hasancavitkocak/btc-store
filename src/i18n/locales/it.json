@@ -1,0 +1,335 @@
+{
+  "menu": {
+    "home": "Home",
+    "products": "Prodotti",
+    "references": "Referenze",
+    "stories": "Storie di Successo",
+    "contact": "Contatto"
+  },
+  "banner": {
+    "campaign": "🎉 Le campagne della nuova stagione sono iniziate! Clicca per esplorare",
+    "hero": {
+      "title": "Le Migliori Soluzioni per la Tua Azienda",
+      "subtitle": "Fai crescere la tua azienda con soluzioni software professionali",
+      "button": "Esplora i Prodotti"
+    },
+    "secondary": {
+      "title": "Storie di Successo",
+      "subtitle": "Scopri le esperienze dei nostri clienti",
+      "button": "Leggi le Storie"
+    }
+  },
+  "category": {
+    "crm": {
+      "name": "Sistemi CRM",
+      "description": "Gestisci le relazioni con i clienti, aumenta le vendite"
+    },
+    "finance": {
+      "name": "Gestione Finanziaria",
+      "description": "Controlla le tue operazioni finanziarie su un'unica piattaforma"
+    },
+    "hr": {
+      "name": "Risorse Umane",
+      "description": "Semplifica la gestione del personale"
+    },
+    "marketing": {
+      "name": "Automazione Marketing",
+      "description": "Automatizza le tue campagne di marketing"
+    },
+    "warehouse": {
+      "name": "Gestione Magazzino",
+      "description": "Ottimizza le operazioni di inventario e magazzino"
+    }
+  },
+  "product": {
+    "crmPro": {
+      "name": "CRM Pro",
+      "shortDesc": "Sistema avanzato di gestione delle relazioni con i clienti",
+      "feature1": "Vista cliente a 360 gradi",
+      "feature2": "Gestione pipeline di vendita",
+      "feature3": "Automazione marketing",
+      "content": "Gestisci efficacemente le relazioni con i clienti con CRM Pro"
+    },
+    "financeSuite": {
+      "name": "Finance Suite",
+      "shortDesc": "Pacchetto completo di gestione finanziaria",
+      "feature1": "Contabilità generale",
+      "feature2": "Gestione crediti/debiti",
+      "feature3": "Pianificazione del budget",
+      "content": "Semplifica le tue operazioni finanziarie"
+    },
+    "hrManager": {
+      "name": "HR Manager",
+      "shortDesc": "Sistema di gestione delle risorse umane",
+      "feature1": "Database del personale",
+      "feature2": "Tracciamento presenze",
+      "feature3": "Gestione ferie",
+      "content": "Gestisci la tua forza lavoro in modo efficiente"
+    },
+    "marketingHub": {
+      "name": "Marketing Hub",
+      "shortDesc": "Piattaforma di automazione marketing",
+      "feature1": "Campagne email",
+      "feature2": "Gestione social media",
+      "feature3": "Punteggio lead",
+      "content": "Cresci con potenti strumenti di marketing"
+    },
+    "warehouseSystem": {
+      "name": "Sistema Magazzino",
+      "shortDesc": "Sistema di gestione magazzino",
+      "feature1": "Tracciamento inventario",
+      "feature2": "Gestione ordini",
+      "feature3": "Scansione codici a barre",
+      "content": "Ottimizza il tuo inventario"
+    },
+    "crmLite": {
+      "name": "CRM Lite",
+      "shortDesc": "CRM per piccole imprese",
+      "feature1": "Gestione clienti di base",
+      "feature2": "Report semplici",
+      "content": "Inizia con CRM a un prezzo accessibile"
+    },
+    "viewDetails": "Vedi Dettagli",
+    "contactForProduct": "Contattaci per il Prodotto",
+    "contactDescription": "Contatta il nostro team per saperne di più su questo prodotto e come può aiutare la tua azienda.",
+    "features": "Caratteristiche del Prodotto"
+  },
+  "home": {
+    "categories": {
+      "title": "Le Nostre Soluzioni",
+      "subtitle": "Soluzioni software progettate specificamente per la tua azienda"
+    },
+    "partners": {
+      "title": "I Nostri Partner",
+      "subtitle": "Aziende tecnologiche leader con cui collaboriamo"
+    },
+    "references": {
+      "title": "Le Nostre Referenze",
+      "subtitle": "Aziende che si fidano di noi"
+    }
+  },
+  "references": {
+    "title": "Le Nostre Referenze",
+    "subtitle": "Aziende che utilizzano le nostre soluzioni e si fidano di noi"
+  },
+  "stories": {
+    "title": "Storie di Successo",
+    "subtitle": "Esperienze dei clienti e storie di successo"
+  },
+  "story": {
+    "techcorp": {
+      "title": "TechCorp Ha Aumentato le Vendite del 150%",
+      "content": "Storia di successo di TechCorp"
+    },
+    "globalsoft": {
+      "title": "GlobalSoft Ha Ottimizzato i Processi HR",
+      "content": "Storia di successo di GlobalSoft"
+    },
+    "innovatelab": {
+      "title": "InnovateLab Ha Scalato il Marketing",
+      "content": "Storia di successo di InnovateLab"
+    }
+  },
+  "callRequest": {
+    "title": "Richiedi una Chiamata",
+    "subtitle": "Lascia le tue informazioni, ti contatteremo presto",
+    "name": "Il Tuo Nome",
+    "surname": "Il Tuo Cognome",
+    "email": "Il Tuo Indirizzo Email",
+    "phone": "Il Tuo Numero di Telefono",
+    "message": "Il Tuo Messaggio (Opzionale)",
+    "messagePlaceholder": "Se hai un messaggio da condividere con noi, puoi scriverlo qui...",
+    "kvkk": "Ho letto e accetto la politica sulla privacy",
+    "submit": "Invia",
+    "success": "La tua richiesta è stata ricevuta con successo. Ti contatteremo al più presto.",
+    "viewKvkk": "Visualizza Politica sulla Privacy"
+  },
+  "productContact": {
+    "title": "Contattaci per il Prodotto",
+    "name": "Il Tuo Nome",
+    "surname": "Il Tuo Cognome",
+    "phone": "Il Tuo Numero di Telefono",
+    "email": "Il Tuo Indirizzo Email",
+    "message": "Il Tuo Messaggio",
+    "messagePlaceholder": "Puoi scrivere qui le tue domande sul prodotto...",
+    "submit": "Invia",
+    "success": "Il tuo messaggio è stato inviato con successo. Ti contatteremo al più presto."
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "contactUs": "Contattaci",
+    "learnMore": "Scopri di Più",
+    "close": "Chiudi",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "add": "Aggiungi",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "all": "Tutti",
+    "back": "Indietro",
+    "seeMore": "Vedi Altro",
+    "viewAll": "Vedi Tutto",
+    "products": "prodotti"
+  },
+  "kvkk": {
+    "title": "Protezione dei Dati Personali",
+    "text": "Testo sulla privacy"
+  },
+  "admin": {
+    "title": "Pannello di Amministrazione",
+    "dashboard": "Dashboard",
+    "header": "Impostazioni Intestazione",
+    "banners": "Gestione Banner",
+    "categories": "Gestione Categorie",
+    "products": "Gestione Prodotti",
+    "references": "Gestione Referenze",
+    "stories": "Storie di Successo",
+    "kvkk": "Politica sulla Privacy",
+    "forms": "Invii Moduli",
+    "partners": "Partner",
+    "documents": "Documenti",
+    "sectors": "Settori",
+    "menus": "Gestione Menu",
+    "callRequests": "Richieste di Chiamata",
+    "emailTemplates": "Modelli Email",
+    "siteSettings": "Impostazioni Sito",
+    "parameters": "Parametri",
+    "logout": "Esci",
+    "welcome": "Benvenuto nel pannello di amministrazione",
+    "quickActions": "Azioni Rapide",
+    "viewForms": "Visualizza Invii Moduli",
+    "totalSubmissions": "invii totali",
+    "updateHeader": "Aggiorna Impostazioni Intestazione",
+    "manageLogoPhone": "Gestisci logo, telefono e voci di menu",
+    "addBanner": "Aggiungi Banner",
+    "editBanner": "Modifica Banner",
+    "manageBanners": "Gestisci banner homepage",
+    "addCategory": "Aggiungi Categoria",
+    "editCategory": "Modifica Categoria",
+    "manageCategories": "Gestisci categorie prodotti",
+    "addProduct": "Aggiungi Prodotto",
+    "editProduct": "Modifica Prodotto",
+    "manageProducts": "Gestisci prodotti",
+    "addReference": "Aggiungi Referenza",
+    "editReference": "Modifica Referenza",
+    "manageReferences": "Gestisci referenze",
+    "addStory": "Aggiungi Storia",
+    "editStory": "Modifica Storia",
+    "manageStories": "Gestisci storie di successo",
+    "active": "Attivo",
+    "inactive": "Inattivo",
+    "order": "Ordine",
+    "titleKey": "Chiave Titolo (chiave traduzione)",
+    "subtitleKey": "Chiave Sottotitolo (chiave traduzione)",
+    "buttonTextKey": "Chiave Testo Pulsante (opzionale)",
+    "buttonLink": "Link Pulsante (opzionale)",
+    "imageUrl": "URL Immagine",
+    "deleteConfirm": "Sei sicuro di voler eliminare questo elemento?",
+    "bannerAdded": "Banner aggiunto con successo!",
+    "bannerUpdated": "Banner aggiornato con successo!",
+    "bannerDeleted": "Banner eliminato con successo!",
+    "categoryAdded": "Categoria aggiunta con successo!",
+    "categoryUpdated": "Categoria aggiornata con successo!",
+    "categoryDeleted": "Categoria eliminata con successo!",
+    "productAdded": "Prodotto aggiunto con successo!",
+    "productUpdated": "Prodotto aggiornato con successo!",
+    "productDeleted": "Prodotto eliminato con successo!",
+    "referenceAdded": "Referenza aggiunta con successo!",
+    "referenceUpdated": "Referenza aggiornata con successo!",
+    "referenceDeleted": "Referenza eliminata con successo!",
+    "storyAdded": "Storia aggiunta con successo!",
+    "storyUpdated": "Storia aggiornata con successo!",
+    "storyDeleted": "Storia eliminata con successo!",
+    "manageKvkk": "Gestisci politica sulla privacy",
+    "kvkkUpdated": "Politica sulla privacy aggiornata!",
+    "manageHeader": "Gestisci impostazioni intestazione e banner superiore",
+    "logoText": "Testo Logo",
+    "phoneNumber": "Numero di Telefono",
+    "topBanner": "Banner Superiore",
+    "bannerText": "Testo Banner (chiave traduzione)",
+    "bannerBgColor": "Colore Sfondo Banner",
+    "bannerLink": "Link Banner (opzionale)",
+    "enableBanner": "Abilita Banner",
+    "headerUpdated": "Impostazioni intestazione aggiornate!",
+    "saveChanges": "Salva Modifiche",
+    "callRequests": "Richieste di Chiamata",
+    "productContactForms": "Moduli Contatto Prodotto",
+    "noCallRequests": "Nessuna richiesta di chiamata ancora",
+    "noProductForms": "Nessun modulo contatto prodotto ancora",
+    "name": "Nome",
+    "surname": "Cognome",
+    "phone": "Telefono",
+    "email": "Email",
+    "message": "Messaggio",
+    "date": "Data",
+    "product": "Prodotto",
+    "kvkkAccepted": "Privacy Accettata",
+    "yes": "Sì",
+    "no": "No",
+    "status": "Stato",
+    "new": "Nuovo",
+    "inProgress": "In Corso",
+    "completed": "Completato",
+    "viewDetails": "Visualizza Dettagli",
+    "sendEmail": "Invia Email",
+    "changeStatus": "Cambia Stato",
+    "assignTo": "Assegna A",
+    "notes": "Note",
+    "addNote": "Aggiungi Nota",
+    "actions": "Azioni",
+    "users": "Gestione Utenti",
+    "userForm": {
+      "title": "Informazioni Utente",
+      "newUser": "Nuovo Utente",
+      "editUser": "Modifica Utente",
+      "username": "Nome Utente",
+      "firstName": "Nome",
+      "surname": "Cognome",
+      "email": "Email",
+      "phone": "Telefono",
+      "language": "Lingua",
+      "selectLanguage": "Seleziona lingua...",
+      "searchLanguage": "Cerca lingua...",
+      "password": "Password",
+      "newPassword": "Nuova Password (Compila per cambiare)",
+      "confirmPassword": "Conferma Password",
+      "userGroups": "Gruppi Utente",
+      "searchGroup": "Cerca gruppo...",
+      "selected": "selezionato",
+      "profilePicture": "Immagine Profilo",
+      "changePicture": "Cambia Immagine",
+      "uploadPicture": "Carica Immagine",
+      "status": "Stato",
+      "active": "Attivo",
+      "actions": "Azioni",
+      "save": "Salva",
+      "saving": "Salvataggio...",
+      "cancel": "Annulla",
+      "back": "Indietro",
+      "required": "è obbligatorio",
+      "usernameRequired": "Nome utente è obbligatorio",
+      "passwordRequired": "Password è obbligatoria",
+      "passwordMismatch": "Le password non corrispondono",
+      "userAdded": "Utente aggiunto",
+      "userUpdated": "Utente aggiornato",
+      "errorSaving": "Errore nel salvataggio utente",
+      "unexpectedError": "Si è verificato un errore imprevisto",
+      "noGroupsFound": "Nessun gruppo utente trovato",
+      "noSearchResults": "Nessun risultato di ricerca trovato",
+      "noLanguagesFound": "Nessuna lingua trovata"
+    }
+  },
+  "partners": {
+    "title": "I Nostri Partner",
+    "subtitle": "Lavoriamo con aziende leader del settore"
+  },
+  "footer": {
+    "description": "Soluzioni software progettate specificamente per la tua azienda",
+    "quickLinks": "Link Rapidi",
+    "contact": "Contatto",
+    "noMenuFound": "Nessun menu trovato",
+    "allRightsReserved": "Tutti i diritti riservati"
+  }
+}

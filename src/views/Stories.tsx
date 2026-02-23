@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { Trophy, ArrowRight } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import Container from '../components/Container';
 import Section from '../components/Section';
+import { getLocalizedText, SupportedLocale } from '../lib/i18n-utils';
 
 export default function Stories() {
   const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const { stories, fetchActiveSuccessStories, isLoadingStories } = useStore();
 
   useEffect(() => {
@@ -80,7 +82,7 @@ export default function Stories() {
                         </div>
                         
                         <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-900 transition-colors">
-                          {story.title[t('locale') as keyof typeof story.title] || story.title.tr}
+                          {getLocalizedText(story.title, locale)}
                         </h3>
                         
                         <div className="mt-auto flex items-center text-blue-900 font-medium group-hover:gap-2 transition-all">

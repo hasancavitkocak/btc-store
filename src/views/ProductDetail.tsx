@@ -3,18 +3,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { ArrowLeft, ChevronLeft, ChevronRight, Check, MessageCircle, FileText, Download } from 'lucide-react';
 import Container from '../components/Container';
 import Button from '../components/Button';
 import { productService, ProductData, CategoryData } from '../services/product.service';
 import { documentService, ProductDocument } from '../services/document.service';
 import { usePublicAuthStore } from '../store/usePublicAuthStore';
+import { getLocalizedText, SupportedLocale } from '../lib/i18n-utils';
 
 export default function ProductDetail() {
   const params = useParams();
   const code = params?.id as string;
   const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -171,7 +173,7 @@ export default function ProductDetail() {
                 {productImages.length > 0 ? (
                   <img
                     src={productImages[currentImageIndex]}
-                    alt={product.name?.tr || ''}
+                    alt={getLocalizedText(product.name, locale)}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -239,7 +241,7 @@ export default function ProductDetail() {
                     >
                       <img
                         src={img}
-                        alt={`${product.name?.tr} ${index + 1}`}
+                        alt={`${getLocalizedText(product.name, locale)} ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -277,16 +279,16 @@ export default function ProductDetail() {
                         key={index}
                         className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
                       >
-                        {category.name?.tr}
+                        {getLocalizedText(category.name, locale)}
                       </span>
                     ))}
                   </div>
                 )}
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
-                  {product.name?.tr}
+                  {getLocalizedText(product.name, locale)}
                 </h1>
                 <p className="text-gray-600 mb-6">
-                  {product.shortDescription?.tr}
+                  {getLocalizedText(product.shortDescription, locale)}
                 </p>
 
                 {/* Contact Section */}
@@ -344,12 +346,12 @@ export default function ProductDetail() {
           )}
 
           {/* Product Description */}
-          {product.description?.tr && (
+          {product.description && getLocalizedText(product.description, locale) && (
             <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-12">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Ürün Açıklaması</h3>
               <div 
                 className="prose prose-sm lg:prose-lg max-w-none text-gray-700"
-                dangerouslySetInnerHTML={{ __html: product.description.tr }}
+                dangerouslySetInnerHTML={{ __html: getLocalizedText(product.description, locale) }}
               />
             </div>
           )}
@@ -372,8 +374,8 @@ export default function ProductDetail() {
               ) : documents.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {documents.map((doc) => {
-                    const title = doc.title?.tr || doc.title?.en || 'Doküman';
-                    const description = doc.description?.tr || doc.description?.en;
+                    const title = getLocalizedText(doc.title, locale) || 'Doküman';
+                    const description = getLocalizedText(doc.description, locale);
                     
                     return (
                       <div
