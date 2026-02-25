@@ -1112,5 +1112,84 @@
     "contact": "Contact",
     "noMenuFound": "Aucun menu trouvé",
     "allRightsReserved": "Tous droits réservés"
+  },
+  "siteConfiguration": {
+    "title": "Configuration du Site",
+    "subtitle": "Gérer les paramètres généraux du système",
+    "tabs": {
+      "logos": "Paramètres du Logo",
+      "header": "Paramètres d'En-tête",
+      "footer": "Paramètres de Pied de Page"
+    },
+    "logos": {
+      "title": "Paramètres du Logo",
+      "currentHeaderLogo": "Logo Actuel (En-tête)",
+      "uploadNewHeaderLogo": "Télécharger un Nouveau Logo (En-tête)",
+      "headerLogoHint": "Téléchargez une nouvelle image pour changer le logo. Taille recommandée : 200x60 px (format PNG recommandé)",
+      "footerLogo": "Logo de Pied de Page",
+      "uploadNewFooterLogo": "Télécharger un Nouveau Logo de Pied de Page",
+      "footerLogoHint": "Téléchargez une nouvelle image pour changer le logo de pied de page",
+      "tips": {
+        "title": "💡 Paramètres du Logo",
+        "headerLogo": "• Logo d'en-tête : Apparaît dans le menu supérieur",
+        "footerLogo": "• Logo de pied de page : Apparaît en bas de la page",
+        "format": "• Format PNG recommandé (fond transparent)",
+        "size": "• Taille recommandée : 200x60 px"
+      }
+    },
+    "header": {
+      "topBanner": "Bannière Supérieure",
+      "enableTopBanner": "Activer la Bannière Supérieure",
+      "bannerText": "Texte de la Bannière",
+      "otherLanguages": "Autres Langues",
+      "bannerLink": "Lien de la Bannière (Optionnel)",
+      "bannerLinkPlaceholder": "https://...",
+      "backgroundColor": "Couleur de Fond",
+      "textColor": "Couleur du Texte",
+      "preview": "Aperçu",
+      "previewPlaceholder": "Le texte de la bannière apparaîtra ici...",
+      "headerContact": "Contact d'En-tête",
+      "contactPhone": "Téléphone de Contact",
+      "contactPhonePlaceholder": "+33 (5) 55 12 34 56",
+      "showContactPhone": "Afficher le Téléphone dans l'En-tête",
+      "contactPhoneHint": "Ce numéro de téléphone apparaîtra dans l'en-tête",
+      "tips": {
+        "title": "💡 Paramètres d'En-tête",
+        "topBanner": "• Bannière supérieure : Apparaît en haut de toutes les pages",
+        "multiLanguage": "• Le texte de la bannière prend en charge plusieurs langues",
+        "colors": "• Vous pouvez personnaliser les couleurs",
+        "headerPhone": "• Téléphone d'en-tête : Apparaît dans le menu supérieur"
+      }
+    },
+    "footer": {
+      "contactInfo": "Informations de Contact du Pied de Page",
+      "email": "E-mail",
+      "emailPlaceholder": "info@company.com",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+33 (5) 55 12 34 56",
+      "address": "Adresse",
+      "addressPlaceholder": "Adresse de l'entreprise...",
+      "menuSettings": "Paramètres du Menu de Pied de Page",
+      "menuSettingsDescription": "Sélectionnez les menus publics à afficher dans le pied de page",
+      "noPublicMenus": "Aucun menu public trouvé",
+      "tips": {
+        "title": "💡 Paramètres de Pied de Page",
+        "contactInfo": "• Contact de pied de page : Apparaît en bas de la page",
+        "publicMenus": "• Seuls les menus PUBLICS peuvent être sélectionnés",
+        "selectedMenus": "• Les menus sélectionnés apparaîtront dans le pied de page",
+        "unlimited": "• Vous pouvez sélectionner autant de menus que vous le souhaitez"
+      }
+    },
+    "actions": {
+      "title": "Actions",
+      "save": "Enregistrer les Modifications",
+      "saving": "Enregistrement..."
+    },
+    "messages": {
+      "loadError": "Erreur lors du chargement de la configuration",
+      "saveSuccess": "Configuration enregistrée",
+      "saveError": "Erreur lors de l'enregistrement de la configuration",
+      "unexpectedError": "Une erreur inattendue s'est produite"
+    }
   }
 }

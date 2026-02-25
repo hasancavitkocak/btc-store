@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Save, Image as ImageIcon, Megaphone, Menu as MenuIcon } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
@@ -11,10 +12,23 @@ import Toast from '../../components/Toast';
 import ImageUpload from '../../components/ImageUpload';
 import ImageLightbox from '../../components/ImageLightbox';
 import { siteConfigurationService, menuLinkItemService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 type TabType = 'logos' | 'header' | 'footer';
 
+// Dil bilgileri
+const languageInfo: Record<SupportedLocale, { code: string; name: string }> = {
+  tr: { code: 'TR', name: 'Türkçe' },
+  en: { code: 'EN', name: 'English' },
+  de: { code: 'DE', name: 'Deutsch' },
+  fr: { code: 'FR', name: 'Français' },
+  es: { code: 'ES', name: 'Español' },
+  it: { code: 'IT', name: 'Italiano' }
+};
+
 export default function SiteConfigurationForm() {
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [activeTab, setActiveTab] = useState<TabType>('logos');
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
@@ -32,6 +46,14 @@ export default function SiteConfigurationForm() {
     imageUrl: ''
   });
 
+  // Kullanıcının dilini en üste, diğerlerini sıraya koy
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
+
   const toggleField = (fieldName: string) => {
     const newExpanded = new Set(expandedFields);
     if (newExpanded.has(fieldName)) {
@@ -43,9 +65,9 @@ export default function SiteConfigurationForm() {
   };
 
   const tabs = [
-    { id: 'logos' as TabType, label: 'Logo Ayarları', icon: ImageIcon },
-    { id: 'header' as TabType, label: 'Başlık Ayarları', icon: Megaphone },
-    { id: 'footer' as TabType, label: 'Footer Ayarları', icon: MenuIcon }
+    { id: 'logos' as TabType, label: t('siteConfiguration.tabs.logos'), icon: ImageIcon },
+    { id: 'header' as TabType, label: t('siteConfiguration.tabs.header'), icon: Megaphone },
+    { id: 'footer' as TabType, label: t('siteConfiguration.tabs.footer'), icon: MenuIcon }
   ];
 
   const [formData, setFormData] = useState({
@@ -104,7 +126,7 @@ export default function SiteConfigurationForm() {
       }
     } catch (error) {
       console.error('Error loading configuration:', error);
-      setToast({ message: 'Konfigürasyon yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('siteConfiguration.messages.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -200,14 +222,14 @@ export default function SiteConfigurationForm() {
 
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Konfigürasyon kaydedilirken hata oluştu', 
+          message: response.errorMessage || t('siteConfiguration.messages.saveError'), 
           type: 'error' 
         });
         return;
       }
 
       setToast({ 
-        message: 'Konfigürasyon kaydedildi', 
+        message: t('siteConfiguration.messages.saveSuccess'), 
         type: 'success' 
       });
 
@@ -217,7 +239,7 @@ export default function SiteConfigurationForm() {
     } catch (error: any) {
       console.error('Error saving configuration:', error);
       setToast({ 
-        message: error.message || 'Beklenmeyen bir hata oluştu', 
+        message: error.message || t('siteConfiguration.messages.unexpectedError'), 
         type: 'error' 
       });
     } finally {
@@ -230,9 +252,9 @@ export default function SiteConfigurationForm() {
       <Container>
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Site Konfigürasyonları
+            {t('siteConfiguration.title')}
           </h1>
-          <p className="text-gray-600">Genel sistem ayarlarını yönetin</p>
+          <p className="text-gray-600">{t('siteConfiguration.subtitle')}</p>
         </div>
 
         {/* Tabs */}
@@ -263,12 +285,12 @@ export default function SiteConfigurationForm() {
             {/* Logo Ayarları Tab */}
             {activeTab === 'logos' && (
               <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Logo Ayarları</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('siteConfiguration.logos.title')}</h2>
               
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mevcut Logo (Üst)
+                    {t('siteConfiguration.logos.currentHeaderLogo')}
                   </label>
                   {headerLogoFiles.length > 0 && (
                     <div className="mb-4 p-4 bg-gray-50 rounded-lg">
@@ -284,16 +306,16 @@ export default function SiteConfigurationForm() {
                     onChange={handleHeaderLogoChange}
                     onImageClick={(imageUrl) => setLightbox({ isOpen: true, imageUrl })}
                     maxImages={1}
-                    label="Yeni Logo Yükle (Üst)"
+                    label={t('siteConfiguration.logos.uploadNewHeaderLogo')}
                   />
                   <p className="text-xs text-gray-500 mt-2">
-                    Logo değişikliği için yeni görsel yükleyin. Önerilen boyut: 200x60 px (PNG formatı önerilir)
+                    {t('siteConfiguration.logos.headerLogoHint')}
                   </p>
                 </div>
 
                 <div className="border-t border-gray-200 pt-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Footer Logo
+                    {t('siteConfiguration.logos.footerLogo')}
                   </label>
                   {footerLogoFiles.length > 0 && (
                     <div className="mb-4 p-4 bg-gray-50 rounded-lg">
@@ -309,10 +331,10 @@ export default function SiteConfigurationForm() {
                     onChange={handleFooterLogoChange}
                     onImageClick={(imageUrl) => setLightbox({ isOpen: true, imageUrl })}
                     maxImages={1}
-                    label="Yeni Footer Logo Yükle"
+                    label={t('siteConfiguration.logos.uploadNewFooterLogo')}
                   />
                   <p className="text-xs text-gray-500 mt-2">
-                    Footer logo değişikliği için yeni görsel yükleyin
+                    {t('siteConfiguration.logos.footerLogoHint')}
                   </p>
                 </div>
               </div>
@@ -323,7 +345,7 @@ export default function SiteConfigurationForm() {
             {activeTab === 'header' && (
               <>
                 <Card className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Üst Banner</h2>
+                  <h2 className="text-xl font-semibold mb-4">{t('siteConfiguration.header.topBanner')}</h2>
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
                       <input
@@ -334,7 +356,7 @@ export default function SiteConfigurationForm() {
                         className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <label htmlFor="topBannerEnabled" className="text-sm font-medium text-gray-700">
-                        Üst Banner'ı Aktif Et
+                        {t('siteConfiguration.header.enableTopBanner')}
                       </label>
                     </div>
 
@@ -342,68 +364,51 @@ export default function SiteConfigurationForm() {
                       <>
                         <div className="border border-gray-200 rounded-lg overflow-hidden">
                           <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                            <label className="text-sm font-medium text-gray-700">Banner Metni</label>
+                            <label className="text-sm font-medium text-gray-700">{t('siteConfiguration.header.bannerText')}</label>
                             <button
                               type="button"
                               onClick={() => toggleField('bannerText')}
                               className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                             >
                               <span className="text-base">{expandedFields.has('bannerText') ? '🌐' : '🌍'}</span>
-                              <span>Diğer Diller</span>
+                              <span>{t('siteConfiguration.header.otherLanguages')}</span>
                               <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                               <span className="text-gray-400">{expandedFields.has('bannerText') ? '▼' : '▶'}</span>
                             </button>
                           </div>
                           <div className="p-4 space-y-3">
                             <Input
-                              placeholder="🇹🇷 Türkçe - Kampanya duyurusu..."
-                              value={formData.topBannerText.tr}
-                              onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, tr: e.target.value } })}
+                              placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                              value={formData.topBannerText[orderedLanguages[0]]}
+                              onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, [orderedLanguages[0]]: e.target.value } })}
                             />
                             
                             {expandedFields.has('bannerText') && (
                               <div className="space-y-3 pt-3 border-t border-gray-200">
-                                <Input
-                                  placeholder="🇬🇧 English - Campaign announcement..."
-                                  value={formData.topBannerText.en}
-                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, en: e.target.value } })}
-                                />
-                                <Input
-                                  placeholder="🇩🇪 Deutsch - Kampagnenankündigung..."
-                                  value={formData.topBannerText.de}
-                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, de: e.target.value } })}
-                                />
-                                <Input
-                                  placeholder="🇫🇷 Français - Annonce de campagne..."
-                                  value={formData.topBannerText.fr}
-                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, fr: e.target.value } })}
-                                />
-                                <Input
-                                  placeholder="🇪🇸 Español - Anuncio de campaña..."
-                                  value={formData.topBannerText.es}
-                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, es: e.target.value } })}
-                                />
-                                <Input
-                                  placeholder="🇮🇹 Italiano - Annuncio della campagna..."
-                                  value={formData.topBannerText.it}
-                                  onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, it: e.target.value } })}
-                                />
+                                {orderedLanguages.slice(1).map((lang) => (
+                                  <Input
+                                    key={lang}
+                                    placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                                    value={formData.topBannerText[lang]}
+                                    onChange={(e) => setFormData({ ...formData, topBannerText: { ...formData.topBannerText, [lang]: e.target.value } })}
+                                  />
+                                ))}
                               </div>
                             )}
                           </div>
                         </div>
 
                         <Input
-                          label="Banner Linki (Opsiyonel)"
+                          label={t('siteConfiguration.header.bannerLink')}
                           value={formData.topBannerLink}
                           onChange={(e) => setFormData({ ...formData, topBannerLink: e.target.value })}
-                          placeholder="https://..."
+                          placeholder={t('siteConfiguration.header.bannerLinkPlaceholder')}
                         />
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Arka Plan Rengi
+                              {t('siteConfiguration.header.backgroundColor')}
                             </label>
                             <div className="flex gap-2">
                               <input
@@ -422,7 +427,7 @@ export default function SiteConfigurationForm() {
 
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Yazı Rengi
+                              {t('siteConfiguration.header.textColor')}
                             </label>
                             <div className="flex gap-2">
                               <input
@@ -443,7 +448,7 @@ export default function SiteConfigurationForm() {
                         {/* Banner Önizleme */}
                         <div className="border-t border-gray-200 pt-4">
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Önizleme
+                            {t('siteConfiguration.header.preview')}
                           </label>
                           <div 
                             style={{ 
@@ -452,7 +457,7 @@ export default function SiteConfigurationForm() {
                             }}
                             className="p-3 text-center text-sm font-medium rounded"
                           >
-                            {formData.topBannerText.tr || 'Banner metni buraya gelecek...'}
+                            {getLocalizedText(formData.topBannerText, locale) || t('siteConfiguration.header.previewPlaceholder')}
                           </div>
                         </div>
                       </>
@@ -461,14 +466,14 @@ export default function SiteConfigurationForm() {
                 </Card>
 
                 <Card className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Header İletişim</h2>
+                  <h2 className="text-xl font-semibold mb-4">{t('siteConfiguration.header.headerContact')}</h2>
                   <div className="space-y-4">
                     <div>
                       <Input
-                        label="İletişim Telefonu"
+                        label={t('siteConfiguration.header.contactPhone')}
                         value={formData.contactPhone}
                         onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
-                        placeholder="+90 (555) 123 45 67"
+                        placeholder={t('siteConfiguration.header.contactPhonePlaceholder')}
                       />
                       <div className="flex items-center gap-3 mt-3">
                         <input
@@ -479,11 +484,11 @@ export default function SiteConfigurationForm() {
                           className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
                         <label htmlFor="showContactPhone" className="text-sm font-medium text-gray-700">
-                          Header'da Telefonu Göster
+                          {t('siteConfiguration.header.showContactPhone')}
                         </label>
                       </div>
                       <p className="text-xs text-gray-500 mt-2">
-                        Bu telefon numarası header'da görünecektir
+                        {t('siteConfiguration.header.contactPhoneHint')}
                       </p>
                     </div>
                   </div>
@@ -495,31 +500,31 @@ export default function SiteConfigurationForm() {
             {activeTab === 'footer' && (
               <>
                 <Card className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Footer İletişim Bilgileri</h2>
+                  <h2 className="text-xl font-semibold mb-4">{t('siteConfiguration.footer.contactInfo')}</h2>
                   <div className="space-y-4">
                     <Input
-                      label="E-posta"
+                      label={t('siteConfiguration.footer.email')}
                       type="email"
                       value={formData.footerEmail}
                       onChange={(e) => setFormData({ ...formData, footerEmail: e.target.value })}
-                      placeholder="info@company.com"
+                      placeholder={t('siteConfiguration.footer.emailPlaceholder')}
                     />
                     
                     <Input
-                      label="Telefon"
+                      label={t('siteConfiguration.footer.phone')}
                       value={formData.footerPhone}
                       onChange={(e) => setFormData({ ...formData, footerPhone: e.target.value })}
-                      placeholder="+90 (555) 123 45 67"
+                      placeholder={t('siteConfiguration.footer.phonePlaceholder')}
                     />
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Açık Adres
+                        {t('siteConfiguration.footer.address')}
                       </label>
                       <textarea
                         value={formData.footerAddress}
                         onChange={(e) => setFormData({ ...formData, footerAddress: e.target.value })}
-                        placeholder="Şirket adresi..."
+                        placeholder={t('siteConfiguration.footer.addressPlaceholder')}
                         rows={4}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
@@ -528,14 +533,14 @@ export default function SiteConfigurationForm() {
                 </Card>
 
                 <Card className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Footer Menü Ayarları</h2>
+                  <h2 className="text-xl font-semibold mb-4">{t('siteConfiguration.footer.menuSettings')}</h2>
                   <p className="text-sm text-gray-600 mb-4">
-                    Footer'da gösterilecek public menüleri seçin
+                    {t('siteConfiguration.footer.menuSettingsDescription')}
                   </p>
                   
                   <div className="space-y-2 max-h-96 overflow-y-auto">
                     {publicMenus.length === 0 ? (
-                      <p className="text-sm text-gray-500 italic">Public menü bulunamadı</p>
+                      <p className="text-sm text-gray-500 italic">{t('siteConfiguration.footer.noPublicMenus')}</p>
                     ) : (
                       publicMenus.map((menu) => (
                         <div
@@ -569,7 +574,7 @@ export default function SiteConfigurationForm() {
 
           <div className="space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('siteConfiguration.actions.title')}</h2>
               <div className="space-y-3">
                 <Button 
                   onClick={handleSave} 
@@ -578,35 +583,35 @@ export default function SiteConfigurationForm() {
                   disabled={loading}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
+                  {loading ? t('siteConfiguration.actions.saving') : t('siteConfiguration.actions.save')}
                 </Button>
               </div>
             </Card>
 
             <Card className="p-6 bg-blue-50 border-blue-200">
-              <h3 className="text-sm font-semibold text-blue-900 mb-2">💡 {tabs.find(t => t.id === activeTab)?.label}</h3>
+              <h3 className="text-sm font-semibold text-blue-900 mb-2">{t('siteConfiguration.logos.tips.title')}</h3>
               {activeTab === 'logos' && (
                 <ul className="text-xs text-blue-800 space-y-1">
-                  <li>• Header logo: Üst menüde görünür</li>
-                  <li>• Footer logo: Sayfa altında görünür</li>
-                  <li>• PNG formatı önerilir (şeffaf arka plan)</li>
-                  <li>• Önerilen boyut: 200x60 px</li>
+                  <li>{t('siteConfiguration.logos.tips.headerLogo')}</li>
+                  <li>{t('siteConfiguration.logos.tips.footerLogo')}</li>
+                  <li>{t('siteConfiguration.logos.tips.format')}</li>
+                  <li>{t('siteConfiguration.logos.tips.size')}</li>
                 </ul>
               )}
               {activeTab === 'header' && (
                 <ul className="text-xs text-blue-800 space-y-1">
-                  <li>• Üst banner: Tüm sayfalarda en üstte görünür</li>
-                  <li>• Banner metni çok dilli destekler</li>
-                  <li>• Renkleri özelleştirebilirsiniz</li>
-                  <li>• Header telefon: Üst menüde görünür</li>
+                  <li>{t('siteConfiguration.header.tips.topBanner')}</li>
+                  <li>{t('siteConfiguration.header.tips.multiLanguage')}</li>
+                  <li>{t('siteConfiguration.header.tips.colors')}</li>
+                  <li>{t('siteConfiguration.header.tips.headerPhone')}</li>
                 </ul>
               )}
               {activeTab === 'footer' && (
                 <ul className="text-xs text-blue-800 space-y-1">
-                  <li>• Footer iletişim: Sayfa altında görünür</li>
-                  <li>• Sadece PUBLIC menüler seçilebilir</li>
-                  <li>• Seçilen menüler footer'da görünür</li>
-                  <li>• İstediğiniz kadar menü seçebilirsiniz</li>
+                  <li>{t('siteConfiguration.footer.tips.contactInfo')}</li>
+                  <li>{t('siteConfiguration.footer.tips.publicMenus')}</li>
+                  <li>{t('siteConfiguration.footer.tips.selectedMenus')}</li>
+                  <li>{t('siteConfiguration.footer.tips.unlimited')}</li>
                 </ul>
               )}
             </Card>

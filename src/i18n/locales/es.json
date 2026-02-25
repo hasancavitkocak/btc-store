@@ -1112,5 +1112,84 @@
     "contact": "Contacto",
     "noMenuFound": "No se encontró menú",
     "allRightsReserved": "Todos los derechos reservados"
+  },
+  "siteConfiguration": {
+    "title": "Configuración del Sitio",
+    "subtitle": "Administrar la configuración general del sistema",
+    "tabs": {
+      "logos": "Configuración de Logotipos",
+      "header": "Configuración de Encabezado",
+      "footer": "Configuración de Pie de Página"
+    },
+    "logos": {
+      "title": "Configuración de Logotipos",
+      "currentHeaderLogo": "Logotipo Actual (Encabezado)",
+      "uploadNewHeaderLogo": "Subir Nuevo Logotipo (Encabezado)",
+      "headerLogoHint": "Suba una nueva imagen para cambiar el logotipo. Tamaño recomendado: 200x60 px (formato PNG recomendado)",
+      "footerLogo": "Logotipo de Pie de Página",
+      "uploadNewFooterLogo": "Subir Nuevo Logotipo de Pie de Página",
+      "footerLogoHint": "Suba una nueva imagen para cambiar el logotipo de pie de página",
+      "tips": {
+        "title": "💡 Configuración de Logotipos",
+        "headerLogo": "• Logotipo de encabezado: Aparece en el menú superior",
+        "footerLogo": "• Logotipo de pie de página: Aparece en la parte inferior de la página",
+        "format": "• Formato PNG recomendado (fondo transparente)",
+        "size": "• Tamaño recomendado: 200x60 px"
+      }
+    },
+    "header": {
+      "topBanner": "Banner Superior",
+      "enableTopBanner": "Activar Banner Superior",
+      "bannerText": "Texto del Banner",
+      "otherLanguages": "Otros Idiomas",
+      "bannerLink": "Enlace del Banner (Opcional)",
+      "bannerLinkPlaceholder": "https://...",
+      "backgroundColor": "Color de Fondo",
+      "textColor": "Color del Texto",
+      "preview": "Vista Previa",
+      "previewPlaceholder": "El texto del banner aparecerá aquí...",
+      "headerContact": "Contacto de Encabezado",
+      "contactPhone": "Teléfono de Contacto",
+      "contactPhonePlaceholder": "+34 (555) 123 45 67",
+      "showContactPhone": "Mostrar Teléfono en Encabezado",
+      "contactPhoneHint": "Este número de teléfono aparecerá en el encabezado",
+      "tips": {
+        "title": "💡 Configuración de Encabezado",
+        "topBanner": "• Banner superior: Aparece en la parte superior de todas las páginas",
+        "multiLanguage": "• El texto del banner admite varios idiomas",
+        "colors": "• Puede personalizar los colores",
+        "headerPhone": "• Teléfono de encabezado: Aparece en el menú superior"
+      }
+    },
+    "footer": {
+      "contactInfo": "Información de Contacto del Pie de Página",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "info@company.com",
+      "phone": "Teléfono",
+      "phonePlaceholder": "+34 (555) 123 45 67",
+      "address": "Dirección",
+      "addressPlaceholder": "Dirección de la empresa...",
+      "menuSettings": "Configuración del Menú de Pie de Página",
+      "menuSettingsDescription": "Seleccione los menús públicos para mostrar en el pie de página",
+      "noPublicMenus": "No se encontraron menús públicos",
+      "tips": {
+        "title": "💡 Configuración de Pie de Página",
+        "contactInfo": "• Contacto de pie de página: Aparece en la parte inferior de la página",
+        "publicMenus": "• Solo se pueden seleccionar menús PÚBLICOS",
+        "selectedMenus": "• Los menús seleccionados aparecerán en el pie de página",
+        "unlimited": "• Puede seleccionar tantos menús como desee"
+      }
+    },
+    "actions": {
+      "title": "Acciones",
+      "save": "Guardar Cambios",
+      "saving": "Guardando..."
+    },
+    "messages": {
+      "loadError": "Error al cargar la configuración",
+      "saveSuccess": "Configuración guardada",
+      "saveError": "Error al guardar la configuración",
+      "unexpectedError": "Se produjo un error inesperado"
+    }
   }
 }

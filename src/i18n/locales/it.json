@@ -1156,5 +1156,84 @@
     "contact": "Contatto",
     "noMenuFound": "Nessun menu trovato",
     "allRightsReserved": "Tutti i diritti riservati"
+  },
+  "siteConfiguration": {
+    "title": "Configurazione del Sito",
+    "subtitle": "Gestisci le impostazioni generali del sistema",
+    "tabs": {
+      "logos": "Impostazioni Logo",
+      "header": "Impostazioni Intestazione",
+      "footer": "Impostazioni Piè di Pagina"
+    },
+    "logos": {
+      "title": "Impostazioni Logo",
+      "currentHeaderLogo": "Logo Attuale (Intestazione)",
+      "uploadNewHeaderLogo": "Carica Nuovo Logo (Intestazione)",
+      "headerLogoHint": "Carica una nuova immagine per cambiare il logo. Dimensione consigliata: 200x60 px (formato PNG consigliato)",
+      "footerLogo": "Logo Piè di Pagina",
+      "uploadNewFooterLogo": "Carica Nuovo Logo Piè di Pagina",
+      "footerLogoHint": "Carica una nuova immagine per cambiare il logo del piè di pagina",
+      "tips": {
+        "title": "💡 Impostazioni Logo",
+        "headerLogo": "• Logo intestazione: Appare nel menu superiore",
+        "footerLogo": "• Logo piè di pagina: Appare in fondo alla pagina",
+        "format": "• Formato PNG consigliato (sfondo trasparente)",
+        "size": "• Dimensione consigliata: 200x60 px"
+      }
+    },
+    "header": {
+      "topBanner": "Banner Superiore",
+      "enableTopBanner": "Attiva Banner Superiore",
+      "bannerText": "Testo del Banner",
+      "otherLanguages": "Altre Lingue",
+      "bannerLink": "Link del Banner (Opzionale)",
+      "bannerLinkPlaceholder": "https://...",
+      "backgroundColor": "Colore di Sfondo",
+      "textColor": "Colore del Testo",
+      "preview": "Anteprima",
+      "previewPlaceholder": "Il testo del banner apparirà qui...",
+      "headerContact": "Contatto Intestazione",
+      "contactPhone": "Telefono di Contatto",
+      "contactPhonePlaceholder": "+39 (555) 123 45 67",
+      "showContactPhone": "Mostra Telefono nell'Intestazione",
+      "contactPhoneHint": "Questo numero di telefono apparirà nell'intestazione",
+      "tips": {
+        "title": "💡 Impostazioni Intestazione",
+        "topBanner": "• Banner superiore: Appare in cima a tutte le pagine",
+        "multiLanguage": "• Il testo del banner supporta più lingue",
+        "colors": "• Puoi personalizzare i colori",
+        "headerPhone": "• Telefono intestazione: Appare nel menu superiore"
+      }
+    },
+    "footer": {
+      "contactInfo": "Informazioni di Contatto Piè di Pagina",
+      "email": "Email",
+      "emailPlaceholder": "info@company.com",
+      "phone": "Telefono",
+      "phonePlaceholder": "+39 (555) 123 45 67",
+      "address": "Indirizzo",
+      "addressPlaceholder": "Indirizzo dell'azienda...",
+      "menuSettings": "Impostazioni Menu Piè di Pagina",
+      "menuSettingsDescription": "Seleziona i menu pubblici da visualizzare nel piè di pagina",
+      "noPublicMenus": "Nessun menu pubblico trovato",
+      "tips": {
+        "title": "💡 Impostazioni Piè di Pagina",
+        "contactInfo": "• Contatto piè di pagina: Appare in fondo alla pagina",
+        "publicMenus": "• Solo i menu PUBBLICI possono essere selezionati",
+        "selectedMenus": "• I menu selezionati appariranno nel piè di pagina",
+        "unlimited": "• Puoi selezionare tutti i menu che desideri"
+      }
+    },
+    "actions": {
+      "title": "Azioni",
+      "save": "Salva Modifiche",
+      "saving": "Salvataggio..."
+    },
+    "messages": {
+      "loadError": "Errore durante il caricamento della configurazione",
+      "saveSuccess": "Configurazione salvata",
+      "saveError": "Errore durante il salvataggio della configurazione",
+      "unexpectedError": "Si è verificato un errore imprevisto"
+    }
   }
 }

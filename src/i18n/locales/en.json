@@ -1157,5 +1157,84 @@
     "contact": "Contact",
     "noMenuFound": "No menu found",
     "allRightsReserved": "All rights reserved"
+  },
+  "siteConfiguration": {
+    "title": "Site Configuration",
+    "subtitle": "Manage general system settings",
+    "tabs": {
+      "logos": "Logo Settings",
+      "header": "Header Settings",
+      "footer": "Footer Settings"
+    },
+    "logos": {
+      "title": "Logo Settings",
+      "currentHeaderLogo": "Current Logo (Header)",
+      "uploadNewHeaderLogo": "Upload New Logo (Header)",
+      "headerLogoHint": "Upload a new image to change the logo. Recommended size: 200x60 px (PNG format recommended)",
+      "footerLogo": "Footer Logo",
+      "uploadNewFooterLogo": "Upload New Footer Logo",
+      "footerLogoHint": "Upload a new image to change the footer logo",
+      "tips": {
+        "title": "💡 Logo Settings",
+        "headerLogo": "• Header logo: Appears in the top menu",
+        "footerLogo": "• Footer logo: Appears at the bottom of the page",
+        "format": "• PNG format recommended (transparent background)",
+        "size": "• Recommended size: 200x60 px"
+      }
+    },
+    "header": {
+      "topBanner": "Top Banner",
+      "enableTopBanner": "Enable Top Banner",
+      "bannerText": "Banner Text",
+      "otherLanguages": "Other Languages",
+      "bannerLink": "Banner Link (Optional)",
+      "bannerLinkPlaceholder": "https://...",
+      "backgroundColor": "Background Color",
+      "textColor": "Text Color",
+      "preview": "Preview",
+      "previewPlaceholder": "Banner text will appear here...",
+      "headerContact": "Header Contact",
+      "contactPhone": "Contact Phone",
+      "contactPhonePlaceholder": "+90 (555) 123 45 67",
+      "showContactPhone": "Show Phone in Header",
+      "contactPhoneHint": "This phone number will appear in the header",
+      "tips": {
+        "title": "💡 Header Settings",
+        "topBanner": "• Top banner: Appears at the top of all pages",
+        "multiLanguage": "• Banner text supports multiple languages",
+        "colors": "• You can customize colors",
+        "headerPhone": "• Header phone: Appears in the top menu"
+      }
+    },
+    "footer": {
+      "contactInfo": "Footer Contact Information",
+      "email": "Email",
+      "emailPlaceholder": "info@company.com",
+      "phone": "Phone",
+      "phonePlaceholder": "+90 (555) 123 45 67",
+      "address": "Address",
+      "addressPlaceholder": "Company address...",
+      "menuSettings": "Footer Menu Settings",
+      "menuSettingsDescription": "Select public menus to display in the footer",
+      "noPublicMenus": "No public menus found",
+      "tips": {
+        "title": "💡 Footer Settings",
+        "contactInfo": "• Footer contact: Appears at the bottom of the page",
+        "publicMenus": "• Only PUBLIC menus can be selected",
+        "selectedMenus": "• Selected menus will appear in the footer",
+        "unlimited": "• You can select as many menus as you want"
+      }
+    },
+    "actions": {
+      "title": "Actions",
+      "save": "Save Changes",
+      "saving": "Saving..."
+    },
+    "messages": {
+      "loadError": "Error loading configuration",
+      "saveSuccess": "Configuration saved",
+      "saveError": "Error saving configuration",
+      "unexpectedError": "An unexpected error occurred"
+    }
   }
 }

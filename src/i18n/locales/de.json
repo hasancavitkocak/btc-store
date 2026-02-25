@@ -1112,5 +1112,84 @@
     "contact": "Kontakt",
     "noMenuFound": "Kein Menü gefunden",
     "allRightsReserved": "Alle Rechte vorbehalten"
+  },
+  "siteConfiguration": {
+    "title": "Site-Konfiguration",
+    "subtitle": "Allgemeine Systemeinstellungen verwalten",
+    "tabs": {
+      "logos": "Logo-Einstellungen",
+      "header": "Kopfzeilen-Einstellungen",
+      "footer": "Fußzeilen-Einstellungen"
+    },
+    "logos": {
+      "title": "Logo-Einstellungen",
+      "currentHeaderLogo": "Aktuelles Logo (Kopfzeile)",
+      "uploadNewHeaderLogo": "Neues Logo hochladen (Kopfzeile)",
+      "headerLogoHint": "Laden Sie ein neues Bild hoch, um das Logo zu ändern. Empfohlene Größe: 200x60 px (PNG-Format empfohlen)",
+      "footerLogo": "Fußzeilen-Logo",
+      "uploadNewFooterLogo": "Neues Fußzeilen-Logo hochladen",
+      "footerLogoHint": "Laden Sie ein neues Bild hoch, um das Fußzeilen-Logo zu ändern",
+      "tips": {
+        "title": "💡 Logo-Einstellungen",
+        "headerLogo": "• Kopfzeilen-Logo: Erscheint im oberen Menü",
+        "footerLogo": "• Fußzeilen-Logo: Erscheint am Seitenende",
+        "format": "• PNG-Format empfohlen (transparenter Hintergrund)",
+        "size": "• Empfohlene Größe: 200x60 px"
+      }
+    },
+    "header": {
+      "topBanner": "Oberes Banner",
+      "enableTopBanner": "Oberes Banner aktivieren",
+      "bannerText": "Banner-Text",
+      "otherLanguages": "Andere Sprachen",
+      "bannerLink": "Banner-Link (Optional)",
+      "bannerLinkPlaceholder": "https://...",
+      "backgroundColor": "Hintergrundfarbe",
+      "textColor": "Textfarbe",
+      "preview": "Vorschau",
+      "previewPlaceholder": "Banner-Text wird hier angezeigt...",
+      "headerContact": "Kopfzeilen-Kontakt",
+      "contactPhone": "Kontakt-Telefon",
+      "contactPhonePlaceholder": "+49 (555) 123 45 67",
+      "showContactPhone": "Telefon in Kopfzeile anzeigen",
+      "contactPhoneHint": "Diese Telefonnummer wird in der Kopfzeile angezeigt",
+      "tips": {
+        "title": "💡 Kopfzeilen-Einstellungen",
+        "topBanner": "• Oberes Banner: Erscheint oben auf allen Seiten",
+        "multiLanguage": "• Banner-Text unterstützt mehrere Sprachen",
+        "colors": "• Sie können Farben anpassen",
+        "headerPhone": "• Kopfzeilen-Telefon: Erscheint im oberen Menü"
+      }
+    },
+    "footer": {
+      "contactInfo": "Fußzeilen-Kontaktinformationen",
+      "email": "E-Mail",
+      "emailPlaceholder": "info@company.com",
+      "phone": "Telefon",
+      "phonePlaceholder": "+49 (555) 123 45 67",
+      "address": "Adresse",
+      "addressPlaceholder": "Firmenadresse...",
+      "menuSettings": "Fußzeilen-Menü-Einstellungen",
+      "menuSettingsDescription": "Wählen Sie öffentliche Menüs aus, die in der Fußzeile angezeigt werden sollen",
+      "noPublicMenus": "Keine öffentlichen Menüs gefunden",
+      "tips": {
+        "title": "💡 Fußzeilen-Einstellungen",
+        "contactInfo": "• Fußzeilen-Kontakt: Erscheint am Seitenende",
+        "publicMenus": "• Nur ÖFFENTLICHE Menüs können ausgewählt werden",
+        "selectedMenus": "• Ausgewählte Menüs werden in der Fußzeile angezeigt",
+        "unlimited": "• Sie können beliebig viele Menüs auswählen"
+      }
+    },
+    "actions": {
+      "title": "Aktionen",
+      "save": "Änderungen speichern",
+      "saving": "Wird gespeichert..."
+    },
+    "messages": {
+      "loadError": "Fehler beim Laden der Konfiguration",
+      "saveSuccess": "Konfiguration gespeichert",
+      "saveError": "Fehler beim Speichern der Konfiguration",
+      "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"
+    }
   }
 }

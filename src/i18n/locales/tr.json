@@ -1157,5 +1157,84 @@
     "contact": "İletişim",
     "noMenuFound": "Menü bulunamadı",
     "allRightsReserved": "Tüm hakları saklıdır"
+  },
+  "siteConfiguration": {
+    "title": "Site Konfigürasyonları",
+    "subtitle": "Genel sistem ayarlarını yönetin",
+    "tabs": {
+      "logos": "Logo Ayarları",
+      "header": "Başlık Ayarları",
+      "footer": "Footer Ayarları"
+    },
+    "logos": {
+      "title": "Logo Ayarları",
+      "currentHeaderLogo": "Mevcut Logo (Üst)",
+      "uploadNewHeaderLogo": "Yeni Logo Yükle (Üst)",
+      "headerLogoHint": "Logo değişikliği için yeni görsel yükleyin. Önerilen boyut: 200x60 px (PNG formatı önerilir)",
+      "footerLogo": "Footer Logo",
+      "uploadNewFooterLogo": "Yeni Footer Logo Yükle",
+      "footerLogoHint": "Footer logo değişikliği için yeni görsel yükleyin",
+      "tips": {
+        "title": "💡 Logo Ayarları",
+        "headerLogo": "• Header logo: Üst menüde görünür",
+        "footerLogo": "• Footer logo: Sayfa altında görünür",
+        "format": "• PNG formatı önerilir (şeffaf arka plan)",
+        "size": "• Önerilen boyut: 200x60 px"
+      }
+    },
+    "header": {
+      "topBanner": "Üst Banner",
+      "enableTopBanner": "Üst Banner'ı Aktif Et",
+      "bannerText": "Banner Metni",
+      "otherLanguages": "Diğer Diller",
+      "bannerLink": "Banner Linki (Opsiyonel)",
+      "bannerLinkPlaceholder": "https://...",
+      "backgroundColor": "Arka Plan Rengi",
+      "textColor": "Yazı Rengi",
+      "preview": "Önizleme",
+      "previewPlaceholder": "Banner metni buraya gelecek...",
+      "headerContact": "Header İletişim",
+      "contactPhone": "İletişim Telefonu",
+      "contactPhonePlaceholder": "+90 (555) 123 45 67",
+      "showContactPhone": "Header'da Telefonu Göster",
+      "contactPhoneHint": "Bu telefon numarası header'da görünecektir",
+      "tips": {
+        "title": "💡 Başlık Ayarları",
+        "topBanner": "• Üst banner: Tüm sayfalarda en üstte görünür",
+        "multiLanguage": "• Banner metni çok dilli destekler",
+        "colors": "• Renkleri özelleştirebilirsiniz",
+        "headerPhone": "• Header telefon: Üst menüde görünür"
+      }
+    },
+    "footer": {
+      "contactInfo": "Footer İletişim Bilgileri",
+      "email": "E-posta",
+      "emailPlaceholder": "info@company.com",
+      "phone": "Telefon",
+      "phonePlaceholder": "+90 (555) 123 45 67",
+      "address": "Açık Adres",
+      "addressPlaceholder": "Şirket adresi...",
+      "menuSettings": "Footer Menü Ayarları",
+      "menuSettingsDescription": "Footer'da gösterilecek public menüleri seçin",
+      "noPublicMenus": "Public menü bulunamadı",
+      "tips": {
+        "title": "💡 Footer Ayarları",
+        "contactInfo": "• Footer iletişim: Sayfa altında görünür",
+        "publicMenus": "• Sadece PUBLIC menüler seçilebilir",
+        "selectedMenus": "• Seçilen menüler footer'da görünür",
+        "unlimited": "• İstediğiniz kadar menü seçebilirsiniz"
+      }
+    },
+    "actions": {
+      "title": "İşlemler",
+      "save": "Değişiklikleri Kaydet",
+      "saving": "Kaydediliyor..."
+    },
+    "messages": {
+      "loadError": "Konfigürasyon yüklenirken hata oluştu",
+      "saveSuccess": "Konfigürasyon kaydedildi",
+      "saveError": "Konfigürasyon kaydedilirken hata oluştu",
+      "unexpectedError": "Beklenmeyen bir hata oluştu"
+    }
   }
 }
