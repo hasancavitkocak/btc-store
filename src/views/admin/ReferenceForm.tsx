@@ -73,7 +73,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
       }
     } catch (error) {
       console.error('Error loading reference:', error);
-      setToast({ message: 'Referans yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.referenceForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -100,7 +100,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
 
   const handleSave = async () => {
     if (!formData.name.trim()) {
-      setToast({ message: 'Şirket adı zorunludur', type: 'error' });
+      setToast({ message: t('admin.referenceForm.nameRequired'), type: 'error' });
       return;
     }
 
@@ -121,14 +121,14 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
 
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Referans kaydedilirken hata oluştu', 
+          message: response.errorMessage || t('admin.referenceForm.saveError'), 
           type: 'error' 
         });
         return;
       }
 
       setToast({ 
-        message: isEditing ? 'Referans güncellendi' : 'Referans eklendi', 
+        message: isEditing ? t('admin.referenceForm.updateSuccess') : t('admin.referenceForm.createSuccess'), 
         type: 'success' 
       });
 
@@ -138,7 +138,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
     } catch (error: any) {
       console.error('Error saving reference:', error);
       setToast({ 
-        message: error.message || 'Beklenmeyen bir hata oluştu', 
+        message: error.message || t('admin.referenceForm.unexpectedError'), 
         type: 'error' 
       });
     } finally {
@@ -159,20 +159,20 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
         </Button>
         
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          {isEditing ? 'Referans Düzenle' : 'Yeni Referans Ekle'}
+          {isEditing ? t('admin.referenceForm.editReference') : t('admin.referenceForm.newReference')}
         </h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Referans Bilgileri</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.referenceForm.referenceInfo')}</h2>
             <div className="space-y-4">
               <Input
-                label="Şirket Adı"
+                label={t('admin.referenceForm.companyName')}
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                placeholder="Company Inc."
+                placeholder={t('admin.referenceForm.companyNamePlaceholder')}
                 required
               />
               
@@ -181,11 +181,11 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
                 onChange={handleImageChange}
                 onImageClick={(imageUrl) => setLightbox({ isOpen: true, imageUrl })}
                 maxImages={1}
-                label="Logo"
+                label={t('admin.referenceForm.logo')}
               />
               
               <Input
-                label="Sıra"
+                label={t('admin.referenceForm.order')}
                 type="number"
                 value={formData.order.toString()}
                 onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
@@ -196,7 +196,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
 
         <div className="space-y-6">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Durum</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.referenceForm.status')}</h2>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <input
@@ -207,7 +207,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
                   className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                  Aktif
+                  {t('admin.referenceForm.active')}
                 </label>
               </div>
               
@@ -220,17 +220,17 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
                   className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="showOnHome" className="text-sm font-medium text-gray-700">
-                  Ana Sayfada Göster
+                  {t('admin.referenceForm.showOnHome')}
                 </label>
               </div>
               <p className="text-xs text-gray-500 ml-8">
-                Ana sayfada sadece aktif ve &quot;Ana Sayfada Göster&quot; işaretli referanslar gösterilir.
+                {t('admin.referenceForm.showOnHomeDescription')}
               </p>
             </div>
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.referenceForm.actions')}</h2>
             <div className="space-y-3">
               <Button 
                 onClick={handleSave} 
@@ -239,7 +239,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
                 disabled={loading}
               >
                 <Save className="w-4 h-4 mr-2" />
-                {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                {loading ? t('admin.referenceForm.saving') : t('admin.referenceForm.save')}
               </Button>
               <Button 
                 variant="outline" 
@@ -248,7 +248,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
                 disabled={loading}
               >
                 <X className="w-4 h-4 mr-2" />
-                İptal
+                {t('admin.referenceForm.cancel')}
               </Button>
             </div>
           </Card>
@@ -266,7 +266,7 @@ export default function ReferenceForm({ referenceId }: ReferenceFormProps) {
       <ImageLightbox
         isOpen={lightbox.isOpen}
         imageUrl={lightbox.imageUrl}
-        alt="Referans Logosu"
+        alt={t('admin.referenceForm.logoAlt')}
         onClose={() => setLightbox({ isOpen: false, imageUrl: '' })}
       />
     </div>

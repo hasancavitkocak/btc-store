@@ -255,8 +255,8 @@ export default function StoriesAdminList() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages || loading}
+                    onClick={() => setPage(p => Math.min(totalPages || 1, p + 1))}
+                    disabled={page >= (totalPages || 1) || loading}
                   >
                     {t('admin.storiesPage.next')}
                     <ChevronRight className="w-4 h-4" />

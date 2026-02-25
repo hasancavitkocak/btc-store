@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
@@ -23,6 +24,7 @@ interface Reference {
 
 export default function ReferencesAdminList() {
   const router = useRouter();
+  const t = useTranslations();
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [references, setReferences] = useState<Reference[]>([]);
   const [loading, setLoading] = useState(false);
@@ -71,17 +73,17 @@ export default function ReferencesAdminList() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('admin.referencesPage.dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Referans listesi yüklenirken hata oluştu', 
+          message: response.errorMessage || t('admin.referencesPage.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading references:', error);
-      setToast({ message: 'Referans listesi yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.referencesPage.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -92,17 +94,17 @@ export default function ReferencesAdminList() {
       const response = await referenceService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Referans silindi', type: 'success' });
+        setToast({ message: t('admin.referencesPage.deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadReferences();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('admin.referencesPage.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting reference:', error);
-      setToast({ message: 'Referans silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.referencesPage.deleteError'), type: 'error' });
     }
   };
 
@@ -137,29 +139,29 @@ export default function ReferencesAdminList() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Referanslar
+            {t('admin.referencesPage.title')}
           </h1>
-          <p className="text-gray-600">Toplam {totalElements} referans</p>
+          <p className="text-gray-600">{t('admin.referencesPage.totalReferences', { count: totalElements })}</p>
         </div>
         <Button
           onClick={() => router.push('/admin/references/new')}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
         >
           <Plus className="w-5 h-5" />
-          Yeni Referans
+          {t('admin.referencesPage.newReference')}
         </Button>
       </div>
 
       {loading ? (
         <Card className="p-12 text-center">
-          <p className="text-gray-500">Yükleniyor...</p>
+          <p className="text-gray-500">{t('admin.referencesPage.loading')}</p>
         </Card>
       ) : references.length === 0 ? (
         <Card className="p-12 text-center">
-          <p className="text-gray-500 mb-4">Henüz referans eklenmemiş</p>
+          <p className="text-gray-500 mb-4">{t('admin.referencesPage.noReferences')}</p>
           <Button onClick={() => router.push('/admin/references/new')} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-4 h-4 mr-2" />
-            İlk Referansı Ekle
+            {t('admin.referencesPage.addFirstReference')}
           </Button>
         </Card>
       ) : (
@@ -188,12 +190,12 @@ export default function ReferencesAdminList() {
                 <Card key={ref.code} className="p-6 hover:shadow-lg transition-shadow relative">
                   {ref.showOnHome && (
                     <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                      Ana Sayfa
+                      {t('admin.referencesPage.homePage')}
                     </div>
                   )}
                   {!ref.active && (
                     <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-                      Pasif
+                      {t('admin.referencesPage.inactive')}
                     </div>
                   )}
                   <div 
@@ -220,7 +222,7 @@ export default function ReferencesAdminList() {
                     />
                   </div>
                   <p className="text-center text-sm text-gray-600 mb-3 truncate">{ref.name}</p>
-                  <div className="text-center text-xs text-gray-400 mb-3">Sıra: {ref.order}</div>
+                  <div className="text-center text-xs text-gray-400 mb-3">{t('admin.referencesPage.order')}: {ref.order}</div>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
@@ -248,10 +250,10 @@ export default function ReferencesAdminList() {
             })}
           </div>
 
-          {totalPages > 1 && (
+          {totalElements > 0 && (
             <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
               <div className="text-sm text-gray-600">
-                Toplam <span className="font-medium">{totalElements}</span> kayıt
+                {t('admin.referencesPage.totalRecords', { count: totalElements })}
               </div>
               
               <div className="flex items-center gap-2">
@@ -262,20 +264,20 @@ export default function ReferencesAdminList() {
                   disabled={page === 1 || loading}
                 >
                   <ChevronLeft className="w-4 h-4" />
-                  Önceki
+                  {t('admin.referencesPage.previous')}
                 </Button>
                 
                 <span className="text-sm text-gray-600 px-4">
-                  Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages}</span>
+                  {t('admin.referencesPage.page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                 </span>
                 
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page >= totalPages || loading}
+                  onClick={() => setPage(p => Math.min(totalPages || 1, p + 1))}
+                  disabled={page >= (totalPages || 1) || loading}
                 >
-                  Sonraki
+                  {t('admin.referencesPage.next')}
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
@@ -296,10 +298,10 @@ export default function ReferencesAdminList() {
         isOpen={deleteDialog.isOpen}
         onClose={() => setDeleteDialog({ isOpen: false, code: '', name: '' })}
         onConfirm={() => handleDelete(deleteDialog.code)}
-        title="Referans Sil"
-        message={`"${deleteDialog.name}" referansını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-        confirmText="Sil"
-        cancelText="İptal"
+        title={t('admin.referencesPage.deleteDialogTitle')}
+        message={t('admin.referencesPage.deleteDialogMessage', { name: deleteDialog.name })}
+        confirmText={t('admin.referencesPage.delete')}
+        cancelText={t('admin.referencesPage.cancel')}
         type="danger"
       />
 
