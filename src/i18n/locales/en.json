@@ -523,7 +523,7 @@
       "logoAlt": "Partner Logo"
     },
     "productsPage": {
-      "title": "Products",
+      "title": "Product Management",
       "totalProducts": "Total {count} products",
       "newProduct": "New Product",
       "loading": "Loading...",

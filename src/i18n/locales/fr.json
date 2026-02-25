@@ -523,7 +523,7 @@
       "logoAlt": "Logo du Partenaire"
     },
     "productsPage": {
-      "title": "Produits",
+      "title": "Gestion des Produits",
       "totalProducts": "Total {count} produits",
       "newProduct": "Nouveau Produit",
       "loading": "Chargement...",

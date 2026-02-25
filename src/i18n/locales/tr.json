@@ -523,7 +523,7 @@
       "logoAlt": "Partner Logosu"
     },
     "productsPage": {
-      "title": "Ürünler",
+      "title": "Ürün Yönetimi",
       "totalProducts": "Toplam {count} ürün",
       "newProduct": "Yeni Ürün",
       "loading": "Yükleniyor...",

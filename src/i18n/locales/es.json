@@ -523,7 +523,7 @@
       "logoAlt": "Logo del Socio"
     },
     "productsPage": {
-      "title": "Productos",
+      "title": "Gestión de Productos",
       "totalProducts": "Total {count} productos",
       "newProduct": "Nuevo Producto",
       "loading": "Cargando...",
