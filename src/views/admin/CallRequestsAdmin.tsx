@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Eye, Phone, Mail, User, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { searchService, SearchFormData } from '@/services/search.service';
 import { 
@@ -15,8 +16,14 @@ import {
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 
+type SupportedLocale = 'tr' | 'en' | 'de' | 'fr' | 'es' | 'it';
+
 export default function CallRequestsAdmin() {
   const router = useRouter();
+  const t = useTranslations('admin.callRequestsAdmin');
+  const tStatus = useTranslations('admin.callRequestStatus');
+  const tPriority = useTranslations('admin.callRequestPriority');
+  const locale = useLocale() as SupportedLocale;
   const [callRequests, setCallRequests] = useState<CallRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -82,7 +89,7 @@ export default function CallRequestsAdmin() {
   const getStatusBadge = (status: CallRequestStatus) => {
     return (
       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[status]}`}>
-        {STATUS_LABELS[status]}
+        {tStatus(status)}
       </span>
     );
   };
@@ -105,35 +112,35 @@ export default function CallRequestsAdmin() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          Call Request Yönetimi
+          {t('title')}
         </h1>
-        <p className="text-gray-600">Toplam {totalElements} call request</p>
+        <p className="text-gray-600">{t('totalRequests', { count: totalElements })}</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
         <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus('ALL'); setPage(1); }}>
-          <div className="text-sm text-gray-600 mb-1">Toplam</div>
+          <div className="text-sm text-gray-600 mb-1">{t('total')}</div>
           <div className="text-2xl font-bold text-gray-900">{totalElements}</div>
         </Card>
         <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.PENDING); setPage(1); }}>
-          <div className="text-sm text-gray-600 mb-1">Beklemede</div>
+          <div className="text-sm text-gray-600 mb-1">{t('pending')}</div>
           <div className="text-2xl font-bold text-yellow-600">{getStatusCount(CallRequestStatus.PENDING)}</div>
         </Card>
         <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.ASSIGNED); setPage(1); }}>
-          <div className="text-sm text-gray-600 mb-1">Atandı</div>
+          <div className="text-sm text-gray-600 mb-1">{t('assigned')}</div>
           <div className="text-2xl font-bold text-blue-600">{getStatusCount(CallRequestStatus.ASSIGNED)}</div>
         </Card>
         <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.IN_PROGRESS); setPage(1); }}>
-          <div className="text-sm text-gray-600 mb-1">İşlemde</div>
+          <div className="text-sm text-gray-600 mb-1">{t('inProgress')}</div>
           <div className="text-2xl font-bold text-purple-600">{getStatusCount(CallRequestStatus.IN_PROGRESS)}</div>
         </Card>
         <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.CUSTOMER_INFORMED); setPage(1); }}>
-          <div className="text-sm text-gray-600 mb-1">Bilgilendirildi</div>
+          <div className="text-sm text-gray-600 mb-1">{t('customerInformed')}</div>
           <div className="text-2xl font-bold text-indigo-600">{getStatusCount(CallRequestStatus.CUSTOMER_INFORMED)}</div>
         </Card>
         <Card className="p-4 cursor-pointer hover:shadow-lg transition-shadow" onClick={() => { setFilterStatus(CallRequestStatus.COMPLETED); setPage(1); }}>
-          <div className="text-sm text-gray-600 mb-1">Tamamlandı</div>
+          <div className="text-sm text-gray-600 mb-1">{t('completed')}</div>
           <div className="text-2xl font-bold text-green-600">{getStatusCount(CallRequestStatus.COMPLETED)}</div>
         </Card>
       </div>
@@ -145,19 +152,19 @@ export default function CallRequestsAdmin() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Müşteri Bilgileri
+                  {t('customerInfo')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Durum
+                  {t('status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Atanan
+                  {t('assignedTo')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Oluşturulma
+                  {t('createdDate')}
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  İşlemler
+                  {t('actions')}
                 </th>
               </tr>
             </thead>
@@ -165,13 +172,13 @@ export default function CallRequestsAdmin() {
               {loading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                    Yükleniyor...
+                    {t('loading')}
                   </td>
                 </tr>
               ) : callRequests.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                    Henüz call request bulunmuyor
+                    {t('noRequests')}
                   </td>
                 </tr>
               ) : (
@@ -202,7 +209,7 @@ export default function CallRequestsAdmin() {
                       <div className="flex flex-col gap-2">
                         {getStatusBadge(request.status)}
                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${PRIORITY_COLORS[request.priority]}`}>
-                          {PRIORITY_LABELS[request.priority]}
+                          {tPriority(request.priority)}
                         </span>
                       </div>
                     </td>
@@ -214,7 +221,7 @@ export default function CallRequestsAdmin() {
                             <div className="font-medium text-gray-900">
                               {request.assignedUsers.length === 1 
                                 ? request.assignedUsers[0].username
-                                : `${request.assignedUsers.length} Kullanıcı`}
+                                : `${request.assignedUsers.length} ${t('users')}`}
                             </div>
                             {request.assignedUsers.length > 1 && (
                               <div className="text-xs text-gray-600">
@@ -231,14 +238,14 @@ export default function CallRequestsAdmin() {
                         {/* Assigned Groups */}
                         {request.assignedGroups && request.assignedGroups.length > 0 && (
                           <div className="text-xs text-gray-600">
-                            Grup: {request.assignedGroups.map(g => g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
+                            {t('group')}: {request.assignedGroups.map(g => g.description?.[locale] || g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
                           </div>
                         )}
                         
                         {/* Not assigned */}
                         {!request.assignedUsers?.length && !request.assignedUserName && 
                          !request.assignedGroups?.length && (
-                          <span className="text-gray-400 italic">Atanmamış</span>
+                          <span className="text-gray-400 italic">{t('notAssigned')}</span>
                         )}
                       </div>
                     </td>
@@ -260,7 +267,7 @@ export default function CallRequestsAdmin() {
                         className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                       >
                         <Eye className="w-4 h-4 mr-1" />
-                        Detay
+                        {t('detail')}
                       </Button>
                     </td>
                   </tr>
@@ -274,7 +281,7 @@ export default function CallRequestsAdmin() {
         {totalElements > 0 && (
           <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
             <div className="text-sm text-gray-600">
-              Toplam <span className="font-medium">{totalElements}</span> kayıt
+              {t('totalRecords', { count: totalElements })}
             </div>
             
             <div className="flex items-center gap-2">
@@ -285,11 +292,11 @@ export default function CallRequestsAdmin() {
                 disabled={page === 1 || loading}
               >
                 <ChevronLeft className="w-4 h-4" />
-                Önceki
+                {t('previous')}
               </Button>
               
               <span className="text-sm text-gray-600 px-4">
-                Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                {t('page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
               </span>
               
               <Button
@@ -298,7 +305,7 @@ export default function CallRequestsAdmin() {
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages || loading}
               >
-                Sonraki
+                {t('next')}
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>

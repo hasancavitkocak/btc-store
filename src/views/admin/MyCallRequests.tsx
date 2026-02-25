@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Eye, Phone, Mail, User, Calendar, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { callRequestService } from '@/services/admin.service';
 import { 
@@ -12,9 +13,10 @@ import {
   PRIORITY_LABELS,
   PRIORITY_COLORS
 } from '@/types/callRequest';
-import { ApiResponse } from '@/lib/api';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
+
+type SupportedLocale = 'tr' | 'en' | 'de' | 'fr' | 'es' | 'it';
 
 interface PageInfo {
   content: CallRequest[];
@@ -26,6 +28,10 @@ interface PageInfo {
 
 export default function MyCallRequests() {
   const router = useRouter();
+  const t = useTranslations('admin.myCallRequests');
+  const tStatus = useTranslations('admin.callRequestStatus');
+  const tPriority = useTranslations('admin.callRequestPriority');
+  const locale = useLocale() as SupportedLocale;
   const [pageInfo, setPageInfo] = useState<PageInfo>({
     content: [],
     totalElements: 0,
@@ -91,13 +97,13 @@ export default function MyCallRequests() {
   const getStatusBadge = (status: CallRequestStatus) => {
     return (
       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[status]}`}>
-        {STATUS_LABELS[status]}
+        {tStatus(status)}
       </span>
     );
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('tr-TR', {
+    return new Date(dateString).toLocaleString(locale === 'tr' ? 'tr-TR' : locale === 'en' ? 'en-US' : locale === 'de' ? 'de-DE' : locale === 'fr' ? 'fr-FR' : locale === 'es' ? 'es-ES' : 'it-IT', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -106,20 +112,13 @@ export default function MyCallRequests() {
     });
   };
 
-  const getPriorityColor = (createdDate: string) => {
-    const hoursSinceCreated = (Date.now() - new Date(createdDate).getTime()) / (1000 * 60 * 60);
-    if (hoursSinceCreated > 24) return 'text-red-600';
-    if (hoursSinceCreated > 12) return 'text-orange-600';
-    return 'text-green-600';
-  };
-
   return (
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          Benim İşlerim
+          {t('title')}
         </h1>
-        <p className="text-gray-600">Size atanmış call request'leri görüntüleyin ve yönetin</p>
+        <p className="text-gray-600">{t('subtitle')}</p>
       </div>
 
       {/* Stats */}
@@ -127,7 +126,7 @@ export default function MyCallRequests() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Toplam İşlerim</div>
+              <div className="text-sm text-gray-600 mb-1">{t('myTotalTasks')}</div>
               <div className="text-3xl font-bold text-gray-900">{pageInfo.totalElements}</div>
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
@@ -139,7 +138,7 @@ export default function MyCallRequests() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Bugün Eklenen</div>
+              <div className="text-sm text-gray-600 mb-1">{t('addedToday')}</div>
               <div className="text-3xl font-bold text-purple-600">
                 {pageInfo.content.filter(r => {
                   if (!r.createdDate) return false;
@@ -158,7 +157,7 @@ export default function MyCallRequests() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Acil (24 saat+)</div>
+              <div className="text-sm text-gray-600 mb-1">{t('urgent24Hours')}</div>
               <div className="text-3xl font-bold text-red-600">
                 {pageInfo.content.filter(r => {
                   if (!r.createdDate) return false;
@@ -178,12 +177,12 @@ export default function MyCallRequests() {
       <div className="space-y-4">
         {loading ? (
           <Card className="p-12 text-center">
-            <p className="text-gray-500">Yükleniyor...</p>
+            <p className="text-gray-500">{t('loading')}</p>
           </Card>
         ) : pageInfo.content.length === 0 ? (
           <Card className="p-12 text-center">
-            <p className="text-gray-500 mb-2">Size atanmış call request bulunmuyor</p>
-            <p className="text-sm text-gray-400">Yeni işler atandığında burada görünecektir</p>
+            <p className="text-gray-500 mb-2">{t('noAssignedRequests')}</p>
+            <p className="text-sm text-gray-400">{t('noAssignedRequestsDesc')}</p>
           </Card>
         ) : (
           pageInfo.content.map((request) => (
@@ -196,7 +195,7 @@ export default function MyCallRequests() {
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
                         {getStatusBadge(request.status)}
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${PRIORITY_COLORS[request.priority]}`}>
-                          {PRIORITY_LABELS[request.priority]}
+                          {tPriority(request.priority)}
                         </span>
                       </div>
                     </div>
@@ -241,7 +240,7 @@ export default function MyCallRequests() {
                     {/* Assigned Users */}
                     {request.assignedUsers && request.assignedUsers.length > 0 && (
                       <div className="text-sm">
-                        <span className="text-gray-500">Atanan: </span>
+                        <span className="text-gray-500">{t('assignedTo')}: </span>
                         <span className="font-medium text-gray-700">
                           {request.assignedUsers.map(u => u.username).join(', ')}
                         </span>
@@ -251,9 +250,9 @@ export default function MyCallRequests() {
                     {/* Assigned Groups */}
                     {request.assignedGroups && request.assignedGroups.length > 0 && (
                       <div className="text-sm">
-                        <span className="text-gray-500">Grup: </span>
+                        <span className="text-gray-500">{t('group')}: </span>
                         <span className="font-medium text-gray-700">
-                          {request.assignedGroups.map(g => g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
+                          {request.assignedGroups.map(g => g.description?.[locale] || g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
                         </span>
                       </div>
                     )}
@@ -265,7 +264,7 @@ export default function MyCallRequests() {
                       className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
                     >
                       <Eye className="w-4 h-4" />
-                      Detay & İşlem Yap
+                      {t('detailAndAction')}
                     </Button>
                     
                     <div className="flex gap-2">
@@ -273,13 +272,13 @@ export default function MyCallRequests() {
                         href={`mailto:${request.customerEmail}`}
                         className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium text-center transition-colors"
                       >
-                        Mail Gönder
+                        {t('sendEmail')}
                       </a>
                       <a
                         href={`tel:${request.customerPhone}`}
                         className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium text-center transition-colors"
                       >
-                        Ara
+                        {t('call')}
                       </a>
                     </div>
                   </div>
@@ -294,7 +293,7 @@ export default function MyCallRequests() {
       {pageInfo.totalElements > 0 && (
         <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
           <div className="text-sm text-gray-600">
-            Toplam <span className="font-medium">{pageInfo.totalElements}</span> kayıt
+            {t('totalRecords', { count: pageInfo.totalElements })}
           </div>
           
           <div className="flex items-center gap-2">
@@ -305,11 +304,11 @@ export default function MyCallRequests() {
               disabled={currentPage === 0 || loading}
             >
               <ChevronLeft className="w-4 h-4" />
-              Önceki
+              {t('previous')}
             </Button>
             
             <span className="text-sm text-gray-600 px-4">
-              Sayfa <span className="font-medium">{currentPage + 1}</span> / <span className="font-medium">{pageInfo.totalPages || 1}</span>
+              {t('page')} <span className="font-medium">{currentPage + 1}</span> / <span className="font-medium">{pageInfo.totalPages || 1}</span>
             </span>
             
             <Button
@@ -318,7 +317,7 @@ export default function MyCallRequests() {
               onClick={() => setCurrentPage(prev => Math.min(pageInfo.totalPages - 1, prev + 1))}
               disabled={currentPage >= pageInfo.totalPages - 1 || loading}
             >
-              Sonraki
+              {t('next')}
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>

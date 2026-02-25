@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { 
   ArrowLeft, User, Mail, Phone, Calendar, MapPin, 
   CheckCircle, UserPlus, Users, MessageSquare, Clock,
@@ -19,10 +20,11 @@ import {
   PRIORITY_COLORS,
   ACTION_TYPE_LABELS 
 } from '@/types/callRequest';
-import { ApiResponse } from '@/lib/api';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 import Modal from '@/components/Modal';
+
+type SupportedLocale = 'tr' | 'en' | 'de' | 'fr' | 'es' | 'it';
 
 interface Props {
   requestId: number;
@@ -38,6 +40,11 @@ interface UserOption {
 
 export default function CallRequestDetail({ requestId }: Props) {
   const router = useRouter();
+  const t = useTranslations('admin.callRequestDetail');
+  const tStatus = useTranslations('admin.callRequestStatus');
+  const tPriority = useTranslations('admin.callRequestPriority');
+  const tActionType = useTranslations('admin.callRequestActionType');
+  const locale = useLocale() as SupportedLocale;
   const [request, setRequest] = useState<CallRequest | null>(null);
   const [history, setHistory] = useState<CallRequestHistory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -162,7 +169,7 @@ export default function CallRequestDetail({ requestId }: Props) {
 
   const handleAssign = async () => {
     if (selectedGroups.length === 0 && selectedUsers.length === 0) {
-      alert('En az bir grup veya kullanıcı seçmelisiniz');
+      alert(t('selectAtLeastOne'));
       return;
     }
 
@@ -231,7 +238,7 @@ export default function CallRequestDetail({ requestId }: Props) {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('tr-TR', {
+    return new Date(dateString).toLocaleString(locale === 'tr' ? 'tr-TR' : locale === 'en' ? 'en-US' : locale === 'de' ? 'de-DE' : locale === 'fr' ? 'fr-FR' : locale === 'es' ? 'es-ES' : 'it-IT', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -243,7 +250,7 @@ export default function CallRequestDetail({ requestId }: Props) {
   const getStatusBadge = (status: CallRequestStatus) => {
     return (
       <span className={`px-4 py-2 rounded-full text-sm font-semibold ${STATUS_COLORS[status]}`}>
-        {STATUS_LABELS[status]}
+        {tStatus(status)}
       </span>
     );
   };
@@ -251,7 +258,7 @@ export default function CallRequestDetail({ requestId }: Props) {
   const getPriorityBadge = (priority: CallRequestPriority) => {
     return (
       <span className={`px-4 py-2 rounded-full text-sm font-semibold ${PRIORITY_COLORS[priority]}`}>
-        {PRIORITY_LABELS[priority]}
+        {tPriority(priority)}
       </span>
     );
   };
@@ -260,7 +267,7 @@ export default function CallRequestDetail({ requestId }: Props) {
     return (
       <div className="p-8">
         <Card className="p-12 text-center">
-          <p className="text-gray-500">Yükleniyor...</p>
+          <p className="text-gray-500">{t('loading')}</p>
         </Card>
       </div>
     );
@@ -270,7 +277,7 @@ export default function CallRequestDetail({ requestId }: Props) {
     return (
       <div className="p-8">
         <Card className="p-12 text-center">
-          <p className="text-gray-500">Call request bulunamadı</p>
+          <p className="text-gray-500">{t('notFound')}</p>
         </Card>
       </div>
     );
@@ -286,13 +293,13 @@ export default function CallRequestDetail({ requestId }: Props) {
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Geri Dön
+          {t('backButton')}
         </Button>
         
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Call Request #{request.id}
+              {t('requestNumber')} #{request.id}
             </h1>
           </div>
           <div className="flex items-center gap-3">
@@ -307,14 +314,14 @@ export default function CallRequestDetail({ requestId }: Props) {
         <div className="lg:col-span-2 space-y-6">
           {/* Customer Info */}
           <Card className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Müşteri Bilgileri</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('customerInfo')}</h2>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <User className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500">İsim</div>
+                  <div className="text-sm text-gray-500">{t('name')}</div>
                   <div className="font-medium text-gray-900">{request.customerName}</div>
                 </div>
               </div>
@@ -324,7 +331,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                   <Mail className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500">E-posta</div>
+                  <div className="text-sm text-gray-500">{t('email')}</div>
                   <a href={`mailto:${request.customerEmail}`} className="font-medium text-blue-600 hover:text-blue-800">
                     {request.customerEmail}
                   </a>
@@ -336,7 +343,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                   <Phone className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500">Telefon</div>
+                  <div className="text-sm text-gray-500">{t('phone')}</div>
                   <a href={`tel:${request.customerPhone}`} className="font-medium text-blue-600 hover:text-blue-800">
                     {request.customerPhone}
                   </a>
@@ -349,7 +356,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                     <MapPin className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">IP Adresi</div>
+                    <div className="text-sm text-gray-500">{t('ipAddress')}</div>
                     <div className="font-medium text-gray-900">{request.ipAddress}</div>
                   </div>
                 </div>
@@ -366,10 +373,10 @@ export default function CallRequestDetail({ requestId }: Props) {
                       <Shield className="w-5 h-5 text-green-600" />
                       <div className="text-left">
                         <div className="text-sm text-green-700 font-semibold">
-                          Gizlilik Sözleşmesi Onayı Verilmiş
+                          {t('legalDocumentAccepted')}
                         </div>
                         <div className="text-xs text-green-600 mt-0.5">
-                          {showLegalDocumentDetails ? 'Detayları gizle' : 'Detayları görmek için tıklayın'}
+                          {showLegalDocumentDetails ? t('hideDetails') : t('showDetails')}
                         </div>
                       </div>
                     </div>
@@ -391,7 +398,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                         {/* Document Type */}
                         {request.acceptedLegalDocument.documentType && (
                           <div className="flex items-center gap-2">
-                            <span className="text-gray-500 font-medium min-w-[100px]">Tip:</span>
+                            <span className="text-gray-500 font-medium min-w-[100px]">{t('documentType')}:</span>
                             <span className="text-gray-700 bg-green-50 px-2 py-1 rounded">
                               {request.acceptedLegalDocument.documentType}
                             </span>
@@ -399,17 +406,17 @@ export default function CallRequestDetail({ requestId }: Props) {
                         )}
                         
                         {/* Title */}
-                        {request.acceptedLegalDocument.title?.tr && (
+                        {request.acceptedLegalDocument.title?.[locale] && (
                           <div className="flex items-center gap-2">
-                            <span className="text-gray-500 font-medium min-w-[100px]">Başlık:</span>
-                            <span className="text-gray-700">{request.acceptedLegalDocument.title.tr}</span>
+                            <span className="text-gray-500 font-medium min-w-[100px]">{t('title')}:</span>
+                            <span className="text-gray-700">{request.acceptedLegalDocument.title[locale]}</span>
                           </div>
                         )}
                         
                         {/* Version */}
                         {request.acceptedLegalDocument.version && (
                           <div className="flex items-center gap-2">
-                            <span className="text-gray-500 font-medium min-w-[100px]">Versiyon:</span>
+                            <span className="text-gray-500 font-medium min-w-[100px]">{t('version')}:</span>
                             <span className="text-green-700 font-semibold">{request.acceptedLegalDocument.version}</span>
                           </div>
                         )}
@@ -417,9 +424,9 @@ export default function CallRequestDetail({ requestId }: Props) {
                         {/* Effective Date */}
                         {request.acceptedLegalDocument.effectiveDate && (
                           <div className="flex items-center gap-2">
-                            <span className="text-gray-500 font-medium min-w-[100px]">Yürürlük Tarihi:</span>
+                            <span className="text-gray-500 font-medium min-w-[100px]">{t('effectiveDate')}:</span>
                             <span className="text-gray-700">
-                              {new Date(request.acceptedLegalDocument.effectiveDate).toLocaleDateString('tr-TR')}
+                              {new Date(request.acceptedLegalDocument.effectiveDate).toLocaleDateString(locale === 'tr' ? 'tr-TR' : locale === 'en' ? 'en-US' : locale === 'de' ? 'de-DE' : locale === 'fr' ? 'fr-FR' : locale === 'es' ? 'es-ES' : 'it-IT')}
                             </span>
                           </div>
                         )}
@@ -427,7 +434,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                         {/* Code */}
                         {request.acceptedLegalDocument.code && (
                           <div className="flex items-center gap-2">
-                            <span className="text-gray-500 font-medium min-w-[100px]">Kod:</span>
+                            <span className="text-gray-500 font-medium min-w-[100px]">{t('code')}:</span>
                             <span className="text-gray-600 font-mono text-[10px]">
                               {request.acceptedLegalDocument.code}
                             </span>
@@ -435,11 +442,11 @@ export default function CallRequestDetail({ requestId }: Props) {
                         )}
                         
                         {/* Short Text Preview */}
-                        {request.acceptedLegalDocument.shortText?.tr && (
+                        {request.acceptedLegalDocument.shortText?.[locale] && (
                           <div className="pt-2 border-t border-gray-200">
-                            <span className="text-gray-500 font-medium">Onaylanan Metin:</span>
+                            <span className="text-gray-500 font-medium">{t('acceptedText')}:</span>
                             <p className="text-gray-700 italic mt-1 bg-gray-50 p-2 rounded">
-                              "{request.acceptedLegalDocument.shortText.tr}"
+                              "{request.acceptedLegalDocument.shortText[locale]}"
                             </p>
                           </div>
                         )}
@@ -454,22 +461,22 @@ export default function CallRequestDetail({ requestId }: Props) {
           {/* Product Info */}
           {request.product && (
             <Card className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">İlgili Ürün</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('relatedProduct')}</h2>
               <div className="flex gap-4">
                 {request.product.images && request.product.images.length > 0 && (
                   <img
                     src={request.product.images[0].absolutePath}
-                    alt={request.product.name?.tr || request.product.name?.en || 'Ürün'}
+                    alt={request.product.name?.[locale] || request.product.name?.tr || request.product.name?.en || t('untitledProduct')}
                     className="w-24 h-24 object-cover rounded-lg"
                   />
                 )}
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 text-lg mb-2">
-                    {request.product.name?.tr || request.product.name?.en || 'İsimsiz Ürün'}
+                    {request.product.name?.[locale] || request.product.name?.tr || request.product.name?.en || t('untitledProduct')}
                   </h3>
-                  {request.product.shortDescription?.tr && (
+                  {request.product.shortDescription?.[locale] && (
                     <p className="text-sm text-gray-600 mb-2">
-                      {request.product.shortDescription.tr}
+                      {request.product.shortDescription[locale]}
                     </p>
                   )}
                   {request.product.categories && request.product.categories.length > 0 && (
@@ -479,7 +486,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                           key={cat.id}
                           className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
                         >
-                          {cat.name?.tr || cat.name?.en || cat.code}
+                          {cat.name?.[locale] || cat.name?.tr || cat.name?.en || cat.code}
                         </span>
                       ))}
                     </div>
@@ -492,7 +499,7 @@ export default function CallRequestDetail({ requestId }: Props) {
           {/* Message */}
           {request.message && (
             <Card className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Mesaj</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('message')}</h2>
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-gray-700 whitespace-pre-wrap">{request.message}</p>
               </div>
@@ -501,7 +508,7 @@ export default function CallRequestDetail({ requestId }: Props) {
 
           {/* History Timeline */}
           <Card className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Tarihçe</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('history')}</h2>
             <div className="space-y-4">
               {history.map((item, index) => (
                 <div key={item.id} className="flex gap-4">
@@ -520,7 +527,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <div className="font-semibold text-gray-900">
-                          {ACTION_TYPE_LABELS[item.actionType]}
+                          {tActionType(item.actionType)}
                         </div>
                         <div className="text-sm text-gray-500">
                           {item.performedByUsername || 'System'} • {formatDate(item.createdDate)}
@@ -529,11 +536,11 @@ export default function CallRequestDetail({ requestId }: Props) {
                       {item.oldStatus && item.newStatus && (
                         <div className="flex items-center gap-2 text-sm">
                           <span className={`px-2 py-1 rounded ${STATUS_COLORS[item.oldStatus]}`}>
-                            {STATUS_LABELS[item.oldStatus]}
+                            {tStatus(item.oldStatus)}
                           </span>
                           <span>→</span>
                           <span className={`px-2 py-1 rounded ${STATUS_COLORS[item.newStatus]}`}>
-                            {STATUS_LABELS[item.newStatus]}
+                            {tStatus(item.newStatus)}
                           </span>
                         </div>
                       )}
@@ -545,7 +552,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                     
                     {item.comment && (
                       <div className="bg-gray-50 p-3 rounded-lg mt-2">
-                        <div className="text-sm text-gray-500 mb-1">Yorum:</div>
+                        <div className="text-sm text-gray-500 mb-1">{t('comment')}:</div>
                         <p className="text-gray-700">{item.comment}</p>
                       </div>
                     )}
@@ -560,35 +567,35 @@ export default function CallRequestDetail({ requestId }: Props) {
         <div className="space-y-6">
           {/* Quick Info */}
           <Card className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Hızlı Bilgi</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{t('quickInfo')}</h3>
             <div className="space-y-3">
               <div>
-                <div className="text-sm text-gray-500">Durum</div>
+                <div className="text-sm text-gray-500">{t('status')}</div>
                 <div className="mt-1">{getStatusBadge(request.status)}</div>
               </div>
               
               <div>
-                <div className="text-sm text-gray-500">Öncelik</div>
+                <div className="text-sm text-gray-500">{t('priority')}</div>
                 <div className="mt-1">{getPriorityBadge(request.priority)}</div>
               </div>
               
               <div>
-                <div className="text-sm text-gray-500">Oluşturulma</div>
+                <div className="text-sm text-gray-500">{t('createdDate')}</div>
                 <div className="text-sm font-medium text-gray-900">{formatDate(request.createdDate!)}</div>
               </div>
               
               {request.assignedGroups && request.assignedGroups.length > 0 && (
                 <div>
-                  <div className="text-sm text-gray-500">Atanan Gruplar</div>
+                  <div className="text-sm text-gray-500">{t('assignedGroups')}</div>
                   <div className="text-sm font-medium text-gray-900">
-                    {request.assignedGroups.map(g => g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
+                    {request.assignedGroups.map(g => g.description?.[locale] || g.description?.tr || g.description?.en || g.code || 'N/A').join(', ')}
                   </div>
                 </div>
               )}
               
               {request.assignedUsers && request.assignedUsers.length > 0 && (
                 <div>
-                  <div className="text-sm text-gray-500">Atanan Kullanıcılar</div>
+                  <div className="text-sm text-gray-500">{t('assignedUsers')}</div>
                   <div className="text-sm font-medium text-gray-900">
                     {request.assignedUsers.map(u => u.username).join(', ')}
                   </div>
@@ -597,7 +604,7 @@ export default function CallRequestDetail({ requestId }: Props) {
               
               {request.completedAt && (
                 <div>
-                  <div className="text-sm text-gray-500">Tamamlanma</div>
+                  <div className="text-sm text-gray-500">{t('completedDate')}</div>
                   <div className="text-sm font-medium text-gray-900">{formatDate(request.completedAt)}</div>
                 </div>
               )}
@@ -606,13 +613,13 @@ export default function CallRequestDetail({ requestId }: Props) {
 
           {/* Actions */}
           <Card className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">İşlemler</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{t('actions')}</h3>
             
             {request.status === CallRequestStatus.CLOSED ? (
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-center gap-2 text-red-700">
                   <XCircle className="w-5 h-5" />
-                  <span className="font-medium">Bu çağrı kapatılmıştır. İşlem yapılamaz.</span>
+                  <span className="font-medium">{t('requestClosed')}</span>
                 </div>
               </div>
             ) : (
@@ -622,7 +629,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                   className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
                 >
                   <Users className="w-4 h-4" />
-                  Atama Yap
+                  {t('assignButton')}
                 </Button>
                 
                 <Button
@@ -630,7 +637,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                   className="w-full bg-green-600 hover:bg-green-700 flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-4 h-4" />
-                  Durum Güncelle
+                  {t('updateStatusButton')}
                 </Button>
 
                 <Button
@@ -638,7 +645,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                   className="w-full bg-orange-600 hover:bg-orange-700 flex items-center justify-center gap-2"
                 >
                   <AlertCircle className="w-4 h-4" />
-                  Öncelik Güncelle
+                  {t('updatePriorityButton')}
                 </Button>
 
                 <Button
@@ -646,7 +653,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                   className="w-full bg-gray-600 hover:bg-gray-700 flex items-center justify-center gap-2"
                 >
                   <XCircle className="w-4 h-4" />
-                  Çağrıyı Kapat
+                  {t('closeRequestButton')}
                 </Button>
 
                 <div className="pt-3 border-t border-gray-200">
@@ -654,13 +661,13 @@ export default function CallRequestDetail({ requestId }: Props) {
                     href={`mailto:${request.customerEmail}`}
                     className="block w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium text-center transition-colors mb-2"
                   >
-                    Mail Gönder
+                    {t('sendEmail')}
                   </a>
                   <a
                     href={`tel:${request.customerPhone}`}
                     className="block w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium text-center transition-colors"
                   >
-                    Telefon Et
+                    {t('makeCall')}
                   </a>
                 </div>
               </div>
@@ -673,36 +680,36 @@ export default function CallRequestDetail({ requestId }: Props) {
       <Modal
         isOpen={showStatusModal}
         onClose={() => setShowStatusModal(false)}
-        title="Durum Güncelle"
+        title={t('updateStatusTitle')}
         size="md"
       >
         <div className="p-6 space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Yeni Durum
+              {t('newStatus')}
             </label>
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as CallRequestStatus)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             >
-              <option value="">Durum Seçin</option>
-              {Object.entries(STATUS_LABELS).map(([key, label]) => (
-                <option key={key} value={key}>{label}</option>
+              <option value="">{t('selectStatus')}</option>
+              {Object.values(CallRequestStatus).map((status) => (
+                <option key={status} value={status}>{tStatus(status)}</option>
               ))}
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Yorum (Opsiyonel)
+              {t('commentOptional')}
             </label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
-              placeholder="Durum değişikliği hakkında not ekleyin..."
+              placeholder={t('commentPlaceholder')}
             />
           </div>
 
@@ -712,14 +719,14 @@ export default function CallRequestDetail({ requestId }: Props) {
               variant="outline"
               className="flex-1"
             >
-              İptal
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleUpdateStatus}
               disabled={!selectedStatus}
               className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              Güncelle
+              {t('update')}
             </Button>
           </div>
         </div>
@@ -729,35 +736,35 @@ export default function CallRequestDetail({ requestId }: Props) {
       <Modal
         isOpen={showPriorityModal}
         onClose={() => setShowPriorityModal(false)}
-        title="Öncelik Güncelle"
+        title={t('updatePriorityTitle')}
         size="md"
       >
         <div className="p-6 space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Yeni Öncelik
+              {t('newPriority')}
             </label>
             <select
               value={selectedPriority}
               onChange={(e) => setSelectedPriority(e.target.value as CallRequestPriority)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
             >
-              <option value="">Öncelik Seçin</option>
-              {Object.entries(PRIORITY_LABELS).map(([key, label]) => (
-                <option key={key} value={key}>{label}</option>
+              <option value="">{t('selectPriority')}</option>
+              {Object.values(CallRequestPriority).map((priority) => (
+                <option key={priority} value={priority}>{tPriority(priority)}</option>
               ))}
             </select>
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-800">
-              <strong>Öncelik Seviyeleri:</strong>
+              <strong>{t('priorityLevels')}</strong>
             </p>
             <ul className="text-sm text-blue-700 mt-2 space-y-1">
-              <li>• <strong>Düşük:</strong> Standart takip</li>
-              <li>• <strong>Orta:</strong> Normal öncelik (varsayılan)</li>
-              <li>• <strong>Yüksek:</strong> Hızlı yanıt gerekli</li>
-              <li>• <strong>Acil:</strong> Anında müdahale gerekli</li>
+              <li>• {t('priorityLow')}</li>
+              <li>• {t('priorityMedium')}</li>
+              <li>• {t('priorityHigh')}</li>
+              <li>• {t('priorityUrgent')}</li>
             </ul>
           </div>
 
@@ -767,14 +774,14 @@ export default function CallRequestDetail({ requestId }: Props) {
               variant="outline"
               className="flex-1"
             >
-              İptal
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleUpdatePriority}
               disabled={!selectedPriority}
               className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              Güncelle
+              {t('update')}
             </Button>
           </div>
         </div>
@@ -790,18 +797,18 @@ export default function CallRequestDetail({ requestId }: Props) {
           setUserSearchQuery('');
           setUserSearchResults([]);
         }}
-        title="Atama Yap"
+        title={t('assignTitle')}
         size="lg"
       >
         <div className="p-6 space-y-6">
           {/* Group Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Gruplar (Çoklu Seçim)
+              {t('groupsMultiSelect')}
             </label>
             <div className="border border-gray-300 rounded-lg p-4 max-h-60 overflow-y-auto bg-gray-50">
               {userGroups.length === 0 ? (
-                <p className="text-sm text-gray-500 text-center py-4">Grup bulunamadı</p>
+                <p className="text-sm text-gray-500 text-center py-4">{t('noGroupsFound')}</p>
               ) : (
                 <div className="space-y-2">
                   {userGroups.map((group) => (
@@ -812,7 +819,9 @@ export default function CallRequestDetail({ requestId }: Props) {
                         onChange={() => toggleGroup(group.code)}
                         className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 focus:ring-2"
                       />
-                      <span className="text-sm font-medium text-gray-700">{group.name || group.code}</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        {group.description?.[locale] || group.description?.tr || group.description?.en || group.name || group.code}
+                      </span>
                     </label>
                   ))}
                 </div>
@@ -822,14 +831,14 @@ export default function CallRequestDetail({ requestId }: Props) {
               <div className="mt-3 flex items-center gap-2">
                 <div className="flex-1 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
                   <span className="text-sm font-medium text-blue-700">
-                    {selectedGroups.length} grup seçildi
+                    {t('groupsSelected', { count: selectedGroups.length })}
                   </span>
                 </div>
                 <button
                   onClick={() => setSelectedGroups([])}
                   className="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
-                  Temizle
+                  {t('clear')}
                 </button>
               </div>
             )}
@@ -841,21 +850,21 @@ export default function CallRequestDetail({ requestId }: Props) {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500 font-medium">VE/VEYA</span>
+              <span className="px-4 bg-white text-gray-500 font-medium">{t('andOr')}</span>
             </div>
           </div>
 
           {/* User Search & Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Kullanıcılar (Arama ile Ekle)
+              {t('usersSearchAdd')}
             </label>
             <div className="relative">
               <input
                 type="text"
                 value={userSearchQuery}
                 onChange={(e) => setUserSearchQuery(e.target.value)}
-                placeholder="Kullanıcı ara (isim, email, kullanıcı adı)..."
+                placeholder={t('searchUserPlaceholder')}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
               {searchingUsers && (
@@ -884,7 +893,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                         )}
                       </div>
                       {selectedUsers.some(u => u.id === user.id) && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Seçildi</span>
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">{t('selected')}</span>
                       )}
                     </div>
                   </button>
@@ -893,23 +902,23 @@ export default function CallRequestDetail({ requestId }: Props) {
             )}
 
             {userSearchQuery.length > 0 && userSearchQuery.length < 2 && (
-              <p className="mt-2 text-sm text-gray-500">En az 2 karakter girin...</p>
+              <p className="mt-2 text-sm text-gray-500">{t('minTwoChars')}</p>
             )}
 
             {userSearchQuery.length >= 2 && !searchingUsers && userSearchResults.length === 0 && (
-              <p className="mt-2 text-sm text-gray-500">Kullanıcı bulunamadı</p>
+              <p className="mt-2 text-sm text-gray-500">{t('noUsersFound')}</p>
             )}
 
             {/* Selected Users */}
             {selectedUsers.length > 0 && (
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-sm font-medium text-gray-700">Seçili Kullanıcılar ({selectedUsers.length}):</div>
+                  <div className="text-sm font-medium text-gray-700">{t('selectedUsers', { count: selectedUsers.length })}</div>
                   <button
                     onClick={() => setSelectedUsers([])}
                     className="text-xs text-red-600 hover:text-red-700 font-medium"
                   >
-                    Tümünü Kaldır
+                    {t('removeAll')}
                   </button>
                 </div>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -922,7 +931,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                       <button
                         onClick={() => removeUser(user.id)}
                         className="ml-3 p-1.5 hover:bg-blue-100 rounded-lg transition-colors flex-shrink-0"
-                        title="Kaldır"
+                        title={t('remove')}
                       >
                         <X className="w-4 h-4 text-gray-600" />
                       </button>
@@ -946,14 +955,14 @@ export default function CallRequestDetail({ requestId }: Props) {
               variant="outline"
               className="flex-1"
             >
-              İptal
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleAssign}
               disabled={selectedGroups.length === 0 && selectedUsers.length === 0}
               className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              Ata ({selectedGroups.length + selectedUsers.length})
+              {t('assign', { count: selectedGroups.length + selectedUsers.length })}
             </Button>
           </div>
         </div>
@@ -963,26 +972,26 @@ export default function CallRequestDetail({ requestId }: Props) {
       <Modal
         isOpen={showCloseModal}
         onClose={() => setShowCloseModal(false)}
-        title="Çağrıyı Kapat"
+        title={t('closeRequestTitle')}
         size="md"
       >
         <div className="p-6 space-y-5">
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
             <p className="text-sm text-amber-800">
-              Bu çağrıyı kapatmak istediğinizden emin misiniz? Kapatılan çağrılar sonlandırılmış olarak işaretlenir.
+              {t('closeConfirmation')}
             </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Kapanış Notu (Opsiyonel)
+              {t('closeNote')}
             </label>
             <textarea
               value={closeComment}
               onChange={(e) => setCloseComment(e.target.value)}
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm resize-none"
-              placeholder="Çağrının kapatılma sebebini açıklayın..."
+              placeholder={t('closeNotePlaceholder')}
             />
           </div>
 
@@ -992,13 +1001,13 @@ export default function CallRequestDetail({ requestId }: Props) {
               variant="outline"
               className="flex-1"
             >
-              İptal
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleCloseRequest}
               className="flex-1 bg-gray-600 hover:bg-gray-700"
             >
-              Kapat
+              {t('close')}
             </Button>
           </div>
         </div>
