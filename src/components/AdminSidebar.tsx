@@ -242,14 +242,87 @@ export default function AdminSidebar() {
                   .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
               : [];
             
-            // Ana item veya alt itemlerden biri aktif mi?
+            // Ana item veya alt itemlerden biri aktif mi? (recursive check)
+            const checkIfActive = (items: MenuLinkItemData[]): boolean => {
+              return items.some(item => {
+                const url = getMenuUrl(item);
+                const isItemActive = pathname === url || pathname?.startsWith(url + '/');
+                if (isItemActive) return true;
+                if (item.subMenuLinkItems && item.subMenuLinkItems.length > 0) {
+                  return checkIfActive(item.subMenuLinkItems);
+                }
+                return false;
+              });
+            };
+            
             const isActive = pathname === menuUrl || 
                             (menuUrl !== '/admin' && pathname?.startsWith(menuUrl + '/'));
-            const hasActiveSubItem = subMenus.some((subItem) => {
-              const subUrl = getMenuUrl(subItem);
-              return pathname === subUrl || pathname?.startsWith(subUrl + '/');
-            });
+            const hasActiveSubItem = checkIfActive(subMenus);
             const isSubMenuOpen = openSubMenus.includes(menu.code);
+
+            // Recursive render function for nested menus
+            const renderSubMenu = (items: MenuLinkItemData[], level: number = 1) => {
+              return items.map((subItem) => {
+                const subUrl = getMenuUrl(subItem);
+                const isSubActive = pathname === subUrl || pathname?.startsWith(subUrl + '/');
+                const SubIcon = getIcon(subItem.icon);
+                const hasNestedItems = subItem.subMenuLinkItems && subItem.subMenuLinkItems.length > 0;
+                
+                const nestedItems = hasNestedItems
+                  ? subItem.subMenuLinkItems!
+                      .filter(nested => nested.active && hasMenuAccess(nested))
+                      .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
+                  : [];
+                
+                const isNestedOpen = openSubMenus.includes(subItem.code);
+                const hasActiveNested = hasNestedItems && checkIfActive(nestedItems);
+
+                return (
+                  <div key={subItem.code}>
+                    {hasNestedItems && nestedItems.length > 0 ? (
+                      <>
+                        <button
+                          onClick={() => toggleSubMenu(subItem.code)}
+                          className={`w-full flex items-center justify-between gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+                            isSubActive || hasActiveNested
+                              ? 'bg-blue-800 text-white'
+                              : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <SubIcon className="w-3 h-3" />
+                            <span>{getMenuName(subItem.name)}</span>
+                          </div>
+                          {isNestedOpen ? (
+                            <ChevronDown className="w-3 h-3" />
+                          ) : (
+                            <ChevronRight className="w-3 h-3" />
+                          )}
+                        </button>
+                        
+                        {isNestedOpen && (
+                          <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-700 pl-2">
+                            {renderSubMenu(nestedItems, level + 1)}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <Link
+                        href={subUrl}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+                          isSubActive
+                            ? 'bg-blue-800 text-white'
+                            : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                        }`}
+                      >
+                        <SubIcon className="w-3 h-3" />
+                        <span>{getMenuName(subItem.name)}</span>
+                      </Link>
+                    )}
+                  </div>
+                );
+              });
+            };
 
             return (
               <div key={menu.code}>
@@ -276,26 +349,7 @@ export default function AdminSidebar() {
                     
                     {isSubMenuOpen && (
                       <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-700 pl-2">
-                        {subMenus.map((subItem) => {
-                          const subUrl = getMenuUrl(subItem);
-                          const isSubActive = pathname === subUrl || pathname?.startsWith(subUrl + '/');
-                          const SubIcon = getIcon(subItem.icon);
-                          
-                          return (
-                            <Link
-                              key={subItem.code}
-                              href={subUrl}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
-                                isSubActive
-                                  ? 'bg-blue-800 text-white'
-                                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                              }`}
-                            >
-                              <SubIcon className="w-3 h-3" />
-                              <span>{getMenuName(subItem.name)}</span>
-                            </Link>
-                          );
-                        })}
+                        {renderSubMenu(subMenus)}
                       </div>
                     )}
                   </>
