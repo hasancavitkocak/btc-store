@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Edit2, Trash2, Eye, Mail, CheckCircle, XCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { emailTemplateService } from '@/services/admin.service';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
@@ -24,6 +25,7 @@ interface EmailTemplate {
 
 export default function EmailTemplatesAdmin() {
   const router = useRouter();
+  const t = useTranslations('admin.emailTemplates');
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -58,12 +60,12 @@ export default function EmailTemplatesAdmin() {
         setTemplates(mappedData as EmailTemplate[]);
       } else {
         setTemplates([]);
-        setToast({ message: 'Template listesi yüklenemedi', type: 'error' });
+        setToast({ message: t('messages.loadError'), type: 'error' });
       }
     } catch (error) {
       console.error('Email templates yüklenirken hata:', error);
       setTemplates([]);
-      setToast({ message: 'Email templates yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('messages.loadErrorGeneric'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -74,14 +76,14 @@ export default function EmailTemplatesAdmin() {
       const response = await emailTemplateService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Template başarıyla silindi', type: 'success' });
+        setToast({ message: t('messages.deleteSuccess'), type: 'success' });
         loadTemplates();
       } else {
-        setToast({ message: response.errorMessage || 'Template silinemedi', type: 'error' });
+        setToast({ message: response.errorMessage || t('messages.deleteError'), type: 'error' });
       }
     } catch (error) {
       console.error('Template silinirken hata:', error);
-      setToast({ message: 'Template silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('messages.deleteErrorGeneric'), type: 'error' });
     }
   };
 
@@ -105,16 +107,16 @@ export default function EmailTemplatesAdmin() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Email Template Yönetimi
+            {t('title')}
           </h1>
-          <p className="text-gray-600">Mail şablonlarını oluşturun ve düzenleyin</p>
+          <p className="text-gray-600">{t('subtitle')}</p>
         </div>
         <Button
           onClick={() => router.push('/admin/email-templates/new')}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
         >
           <Plus className="w-5 h-5" />
-          Yeni Template
+          {t('newTemplate')}
         </Button>
       </div>
 
@@ -123,7 +125,7 @@ export default function EmailTemplatesAdmin() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Toplam Template</div>
+              <div className="text-sm text-gray-600 mb-1">{t('stats.total')}</div>
               <div className="text-3xl font-bold text-gray-900">{templates.length}</div>
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
@@ -135,7 +137,7 @@ export default function EmailTemplatesAdmin() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Aktif</div>
+              <div className="text-sm text-gray-600 mb-1">{t('stats.active')}</div>
               <div className="text-3xl font-bold text-green-600">
                 {templates.filter(t => t.isActive).length}
               </div>
@@ -149,7 +151,7 @@ export default function EmailTemplatesAdmin() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-gray-600 mb-1">Pasif</div>
+              <div className="text-sm text-gray-600 mb-1">{t('stats.inactive')}</div>
               <div className="text-3xl font-bold text-red-600">
                 {templates.filter(t => !t.isActive).length}
               </div>
@@ -168,22 +170,22 @@ export default function EmailTemplatesAdmin() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Template Adı
+                  {t('table.templateName')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Kod
+                  {t('table.code')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Konu
+                  {t('table.subject')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Durum
+                  {t('table.status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Son Güncelleme
+                  {t('table.lastUpdate')}
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  İşlemler
+                  {t('table.actions')}
                 </th>
               </tr>
             </thead>
@@ -191,13 +193,13 @@ export default function EmailTemplatesAdmin() {
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                    Yükleniyor...
+                    {t('loading')}
                   </td>
                 </tr>
               ) : templates.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                    Henüz email template bulunmuyor
+                    {t('noTemplates')}
                   </td>
                 </tr>
               ) : (
@@ -220,11 +222,11 @@ export default function EmailTemplatesAdmin() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       {template.isActive ? (
                         <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                          Aktif
+                          {t('status.active')}
                         </span>
                       ) : (
                         <span className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-                          Pasif
+                          {t('status.inactive')}
                         </span>
                       )}
                     </td>
@@ -276,13 +278,13 @@ export default function EmailTemplatesAdmin() {
         <Modal
           isOpen={showPreviewModal}
           onClose={() => setShowPreviewModal(false)}
-          title={`Önizleme: ${selectedTemplate.templateName}`}
+          title={`${t('preview.title')}: ${selectedTemplate.templateName}`}
           size="lg"
         >
           <div className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Konu
+                {t('preview.subject')}
               </label>
               <div className="px-4 py-2 bg-gray-50 rounded-lg text-gray-900">
                 {selectedTemplate.subject}
@@ -291,7 +293,7 @@ export default function EmailTemplatesAdmin() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                İçerik Önizleme
+                {t('preview.content')}
               </label>
               <div 
                 className="border border-gray-200 rounded-lg p-4 bg-white max-h-96 overflow-y-auto"
@@ -301,8 +303,7 @@ export default function EmailTemplatesAdmin() {
 
             <div className="bg-blue-50 p-4 rounded-lg">
               <p className="text-sm text-blue-800">
-                <strong>Not:</strong> Template içindeki değişkenler (örn: {`{{customerName}}`}) 
-                mail gönderilirken gerçek değerlerle değiştirilecektir.
+                <strong>{t('preview.note')}</strong> {t('preview.noteText')}
               </p>
             </div>
 
@@ -310,7 +311,7 @@ export default function EmailTemplatesAdmin() {
               onClick={() => setShowPreviewModal(false)}
               className="w-full bg-gray-600 hover:bg-gray-700"
             >
-              Kapat
+              {t('preview.close')}
             </Button>
           </div>
         </Modal>
@@ -333,10 +334,10 @@ export default function EmailTemplatesAdmin() {
           handleDelete(deleteDialog.code);
           setDeleteDialog({ isOpen: false, code: '', name: '' });
         }}
-        title="Template Sil"
-        message={`"${deleteDialog.name}" template'ini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-        confirmText="Sil"
-        cancelText="İptal"
+        title={t('delete.title')}
+        message={t('delete.message', { name: deleteDialog.name })}
+        confirmText={t('delete.confirm')}
+        cancelText={t('delete.cancel')}
         type="danger"
       />
     </div>

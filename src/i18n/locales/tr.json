@@ -185,6 +185,51 @@
     "title": "Kişisel Verilerin Korunması",
     "text": "KVKK metni"
   },
+  "emailTemplates": {
+    "title": "Email Template Yönetimi",
+    "subtitle": "Mail şablonlarını oluşturun ve düzenleyin",
+    "newTemplate": "Yeni Template",
+    "stats": {
+      "total": "Toplam Template",
+      "active": "Aktif",
+      "inactive": "Pasif"
+    },
+    "table": {
+      "templateName": "Template Adı",
+      "code": "Kod",
+      "subject": "Konu",
+      "status": "Durum",
+      "lastUpdate": "Son Güncelleme",
+      "actions": "İşlemler"
+    },
+    "status": {
+      "active": "Aktif",
+      "inactive": "Pasif"
+    },
+    "loading": "Yükleniyor...",
+    "noTemplates": "Henüz email template bulunmuyor",
+    "preview": {
+      "title": "Önizleme",
+      "subject": "Konu",
+      "content": "İçerik Önizleme",
+      "note": "Not:",
+      "noteText": "Template içindeki değişkenler (örn: {{customerName}}) mail gönderilirken gerçek değerlerle değiştirilecektir.",
+      "close": "Kapat"
+    },
+    "delete": {
+      "title": "Template Sil",
+      "message": "\"{{name}}\" template'ini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "confirm": "Sil",
+      "cancel": "İptal"
+    },
+    "messages": {
+      "loadError": "Template listesi yüklenemedi",
+      "loadErrorGeneric": "Email templates yüklenirken hata oluştu",
+      "deleteSuccess": "Template başarıyla silindi",
+      "deleteError": "Template silinemedi",
+      "deleteErrorGeneric": "Template silinirken hata oluştu"
+    }
+  },
   "admin": {
     "title": "Yönetim Paneli",
     "dashboard": "Kontrol Paneli",
@@ -1003,6 +1048,103 @@
       "TERMS_OF_USE": "Kullanım Koşulları",
       "COOKIE_POLICY": "Çerez Politikası",
       "CONSENT_TEXT": "Onay Metni"
+    },
+    "emailTemplates": {
+      "title": "Email Şablon Yönetimi",
+      "subtitle": "Mail şablonlarını oluşturun ve düzenleyin",
+      "newTemplate": "Yeni Şablon",
+      "stats": {
+        "total": "Toplam Şablon",
+        "active": "Aktif",
+        "inactive": "Pasif"
+      },
+      "table": {
+        "templateName": "Şablon Adı",
+        "code": "Kod",
+        "subject": "Konu",
+        "status": "Durum",
+        "lastUpdate": "Son Güncelleme",
+        "actions": "İşlemler"
+      },
+      "status": {
+        "active": "Aktif",
+        "inactive": "Pasif"
+      },
+      "loading": "Yükleniyor...",
+      "noTemplates": "Henüz email şablonu bulunmuyor",
+      "preview": {
+        "title": "Önizleme",
+        "subject": "Konu",
+        "content": "İçerik Önizleme",
+        "note": "Not:",
+        "noteText": "Şablon içindeki değişkenler (örn: {{customerName}}) mail gönderilirken gerçek değerlerle değiştirilecektir.",
+        "close": "Kapat"
+      },
+      "delete": {
+        "title": "Şablon Sil",
+        "message": "\"{name}\" şablonunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "confirm": "Sil",
+        "cancel": "İptal"
+      },
+      "messages": {
+        "loadError": "Şablon listesi yüklenemedi",
+        "loadErrorGeneric": "Email şablonları yüklenirken hata oluştu",
+        "deleteSuccess": "Şablon başarıyla silindi",
+        "deleteError": "Şablon silinemedi",
+        "deleteErrorGeneric": "Şablon silinirken hata oluştu"
+      }
+    },
+    "emailTemplateForm": {
+      "back": "Geri Dön",
+      "editTitle": "Email Şablon Düzenle",
+      "newTitle": "Yeni Email Şablonu",
+      "subtitle": "Mail şablonunu oluşturun veya düzenleyin",
+      "basicInfo": "Temel Bilgiler",
+      "templateCode": "Şablon Kodu",
+      "templateCodePlaceholder": "call_request_notification",
+      "templateCodeNote": "Benzersiz bir kod girin (örn: call_request_notification)",
+      "templateName": "Şablon Adı",
+      "templateNamePlaceholder": "Call Request Bildirimi",
+      "relatedModel": "İlgili Model",
+      "selectModel": "Model Seçin",
+      "relatedModelNote": "Bu şablon hangi model için kullanılacak?",
+      "description": "Açıklama",
+      "descriptionPlaceholder": "Şablon hakkında kısa açıklama...",
+      "active": "Aktif",
+      "mailContent": "Mail İçeriği",
+      "subject": "Mail Konusu",
+      "subjectPlaceholder": "Yeni Call Request: {{subject}}",
+      "subjectNote": "Değişken kullanabilirsiniz: {{fieldName}}",
+      "body": "Mail İçeriği (HTML)",
+      "bodyPlaceholder": "HTML kodunu buraya yazın...",
+      "bodyNote": "HTML formatında yazın. Değişkenler için {{fieldName}} kullanın. Sağdaki panelden değişken ekleyebilirsiniz.",
+      "hidePreview": "Preview Gizle",
+      "livePreview": "Live Preview",
+      "availableVariables": "Kullanılabilir Değişkenler",
+      "selectModelFirst": "Önce bir model seçin",
+      "loadingFields": "Field'lar yükleniyor...",
+      "variablesNote": "Aşağıdaki değişkenleri şablon içinde kullanabilirsiniz:",
+      "variableNote": "Not:",
+      "variableNoteText": "Değişkenler mail gönderilirken otomatik olarak gerçek değerlerle değiştirilir.",
+      "actions": "İşlemler",
+      "preview": "Önizleme",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor...",
+      "tips": "💡 İpuçları",
+      "tip1": "• HTML etiketleri kullanabilirsiniz",
+      "tip2": "• Inline CSS ile stil verebilirsiniz",
+      "tip3": "• Responsive tasarım için table kullanın",
+      "tip4": "• Değişkenleri {{ }} içinde yazın",
+      "previewTitle": "Şablon Önizleme",
+      "previewSubject": "Konu",
+      "previewContent": "İçerik (Örnek Verilerle)",
+      "previewNote": "Mavi renkli değerler örnek verilerdir. Gerçek mail gönderiminde bu değerler gerçek verilerle değiştirilecektir.",
+      "close": "Kapat",
+      "saveSuccess": "Email şablonu başarıyla kaydedildi!",
+      "saveError": "Kaydetme sırasında bir hata oluştu",
+      "exampleText": "Örnek Metin",
+      "exampleValue": "Örnek Değer",
+      "yes": "Evet"
     }
   },
   "partners": {

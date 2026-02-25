@@ -185,6 +185,51 @@
     "title": "Personal Data Protection",
     "text": "GDPR text"
   },
+  "emailTemplates": {
+    "title": "Email Template Management",
+    "subtitle": "Create and edit email templates",
+    "newTemplate": "New Template",
+    "stats": {
+      "total": "Total Templates",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "templateName": "Template Name",
+      "code": "Code",
+      "subject": "Subject",
+      "status": "Status",
+      "lastUpdate": "Last Update",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "loading": "Loading...",
+    "noTemplates": "No email templates found yet",
+    "preview": {
+      "title": "Preview",
+      "subject": "Subject",
+      "content": "Content Preview",
+      "note": "Note:",
+      "noteText": "Variables in the template (e.g., {{customerName}}) will be replaced with actual values when sending emails.",
+      "close": "Close"
+    },
+    "delete": {
+      "title": "Delete Template",
+      "message": "Are you sure you want to delete the \"{{name}}\" template? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "loadError": "Failed to load template list",
+      "loadErrorGeneric": "An error occurred while loading email templates",
+      "deleteSuccess": "Template deleted successfully",
+      "deleteError": "Failed to delete template",
+      "deleteErrorGeneric": "An error occurred while deleting template"
+    }
+  },
   "admin": {
     "title": "Admin Panel",
     "dashboard": "Dashboard",
@@ -1003,6 +1048,103 @@
       "TERMS_OF_USE": "Terms of Use",
       "COOKIE_POLICY": "Cookie Policy",
       "CONSENT_TEXT": "Consent Text"
+    },
+    "emailTemplates": {
+      "title": "Email Template Management",
+      "subtitle": "Create and edit email templates",
+      "newTemplate": "New Template",
+      "stats": {
+        "total": "Total Templates",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "table": {
+        "templateName": "Template Name",
+        "code": "Code",
+        "subject": "Subject",
+        "status": "Status",
+        "lastUpdate": "Last Update",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "loading": "Loading...",
+      "noTemplates": "No email templates found yet",
+      "preview": {
+        "title": "Preview",
+        "subject": "Subject",
+        "content": "Content Preview",
+        "note": "Note:",
+        "noteText": "Variables in the template (e.g., {{customerName}}) will be replaced with actual values when sending emails.",
+        "close": "Close"
+      },
+      "delete": {
+        "title": "Delete Template",
+        "message": "Are you sure you want to delete the \"{name}\" template? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "loadError": "Failed to load template list",
+        "loadErrorGeneric": "An error occurred while loading email templates",
+        "deleteSuccess": "Template deleted successfully",
+        "deleteError": "Failed to delete template",
+        "deleteErrorGeneric": "An error occurred while deleting template"
+      }
+    },
+    "emailTemplateForm": {
+      "back": "Back",
+      "editTitle": "Edit Email Template",
+      "newTitle": "New Email Template",
+      "subtitle": "Create or edit email template",
+      "basicInfo": "Basic Information",
+      "templateCode": "Template Code",
+      "templateCodePlaceholder": "call_request_notification",
+      "templateCodeNote": "Enter a unique code (e.g., call_request_notification)",
+      "templateName": "Template Name",
+      "templateNamePlaceholder": "Call Request Notification",
+      "relatedModel": "Related Model",
+      "selectModel": "Select Model",
+      "relatedModelNote": "Which model will this template be used for?",
+      "description": "Description",
+      "descriptionPlaceholder": "Brief description about the template...",
+      "active": "Active",
+      "mailContent": "Email Content",
+      "subject": "Email Subject",
+      "subjectPlaceholder": "New Call Request: {{subject}}",
+      "subjectNote": "You can use variables: {{fieldName}}",
+      "body": "Email Body (HTML)",
+      "bodyPlaceholder": "Write HTML code here...",
+      "bodyNote": "Write in HTML format. Use {{fieldName}} for variables. You can add variables from the right panel.",
+      "hidePreview": "Hide Preview",
+      "livePreview": "Live Preview",
+      "availableVariables": "Available Variables",
+      "selectModelFirst": "Select a model first",
+      "loadingFields": "Loading fields...",
+      "variablesNote": "You can use the following variables in the template:",
+      "variableNote": "Note:",
+      "variableNoteText": "Variables will be automatically replaced with actual values when sending emails.",
+      "actions": "Actions",
+      "preview": "Preview",
+      "save": "Save",
+      "saving": "Saving...",
+      "tips": "💡 Tips",
+      "tip1": "• You can use HTML tags",
+      "tip2": "• You can style with inline CSS",
+      "tip3": "• Use tables for responsive design",
+      "tip4": "• Write variables inside {{ }}",
+      "previewTitle": "Template Preview",
+      "previewSubject": "Subject",
+      "previewContent": "Content (With Sample Data)",
+      "previewNote": "Blue colored values are sample data. In actual email sending, these values will be replaced with real data.",
+      "close": "Close",
+      "saveSuccess": "Email template saved successfully!",
+      "saveError": "An error occurred while saving",
+      "exampleText": "Sample Text",
+      "exampleValue": "Sample Value",
+      "yes": "Yes"
     }
   },
   "partners": {

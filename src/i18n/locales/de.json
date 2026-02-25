@@ -1003,6 +1003,103 @@
       "TERMS_OF_USE": "Nutzungsbedingungen",
       "COOKIE_POLICY": "Cookie-Richtlinie",
       "CONSENT_TEXT": "Einwilligungstext"
+    },
+    "emailTemplates": {
+      "title": "E-Mail-Vorlagenverwaltung",
+      "subtitle": "E-Mail-Vorlagen erstellen und bearbeiten",
+      "newTemplate": "Neue Vorlage",
+      "stats": {
+        "total": "Vorlagen Gesamt",
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      },
+      "table": {
+        "templateName": "Vorlagenname",
+        "code": "Code",
+        "subject": "Betreff",
+        "status": "Status",
+        "lastUpdate": "Letzte Aktualisierung",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      },
+      "loading": "Wird geladen...",
+      "noTemplates": "Noch keine E-Mail-Vorlagen gefunden",
+      "preview": {
+        "title": "Vorschau",
+        "subject": "Betreff",
+        "content": "Inhaltsvorschau",
+        "note": "Hinweis:",
+        "noteText": "Variablen in der Vorlage (z.B. {{customerName}}) werden beim Senden von E-Mails durch tatsächliche Werte ersetzt.",
+        "close": "Schließen"
+      },
+      "delete": {
+        "title": "Vorlage löschen",
+        "message": "Möchten Sie die Vorlage \"{name}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "confirm": "Löschen",
+        "cancel": "Abbrechen"
+      },
+      "messages": {
+        "loadError": "Fehler beim Laden der Vorlagenliste",
+        "loadErrorGeneric": "Beim Laden der E-Mail-Vorlagen ist ein Fehler aufgetreten",
+        "deleteSuccess": "Vorlage erfolgreich gelöscht",
+        "deleteError": "Fehler beim Löschen der Vorlage",
+        "deleteErrorGeneric": "Beim Löschen der Vorlage ist ein Fehler aufgetreten"
+      }
+    },
+    "emailTemplateForm": {
+      "back": "Zurück",
+      "editTitle": "E-Mail-Vorlage bearbeiten",
+      "newTitle": "Neue E-Mail-Vorlage",
+      "subtitle": "E-Mail-Vorlage erstellen oder bearbeiten",
+      "basicInfo": "Grundinformationen",
+      "templateCode": "Vorlagencode",
+      "templateCodePlaceholder": "call_request_notification",
+      "templateCodeNote": "Geben Sie einen eindeutigen Code ein (z.B. call_request_notification)",
+      "templateName": "Vorlagenname",
+      "templateNamePlaceholder": "Anrufanfrage-Benachrichtigung",
+      "relatedModel": "Zugehöriges Modell",
+      "selectModel": "Modell auswählen",
+      "relatedModelNote": "Für welches Modell wird diese Vorlage verwendet?",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Kurze Beschreibung der Vorlage...",
+      "active": "Aktiv",
+      "mailContent": "E-Mail-Inhalt",
+      "subject": "E-Mail-Betreff",
+      "subjectPlaceholder": "Neue Anrufanfrage: {{subject}}",
+      "subjectNote": "Sie können Variablen verwenden: {{fieldName}}",
+      "body": "E-Mail-Text (HTML)",
+      "bodyPlaceholder": "HTML-Code hier schreiben...",
+      "bodyNote": "Im HTML-Format schreiben. Verwenden Sie {{fieldName}} für Variablen. Sie können Variablen aus dem rechten Panel hinzufügen.",
+      "hidePreview": "Vorschau ausblenden",
+      "livePreview": "Live-Vorschau",
+      "availableVariables": "Verfügbare Variablen",
+      "selectModelFirst": "Wählen Sie zuerst ein Modell",
+      "loadingFields": "Felder werden geladen...",
+      "variablesNote": "Sie können die folgenden Variablen in der Vorlage verwenden:",
+      "variableNote": "Hinweis:",
+      "variableNoteText": "Variablen werden beim Senden von E-Mails automatisch durch tatsächliche Werte ersetzt.",
+      "actions": "Aktionen",
+      "preview": "Vorschau",
+      "save": "Speichern",
+      "saving": "Wird gespeichert...",
+      "tips": "💡 Tipps",
+      "tip1": "• Sie können HTML-Tags verwenden",
+      "tip2": "• Sie können mit Inline-CSS stylen",
+      "tip3": "• Verwenden Sie Tabellen für responsives Design",
+      "tip4": "• Schreiben Sie Variablen in {{ }}",
+      "previewTitle": "Vorlagenvorschau",
+      "previewSubject": "Betreff",
+      "previewContent": "Inhalt (Mit Beispieldaten)",
+      "previewNote": "Blau gefärbte Werte sind Beispieldaten. Beim tatsächlichen E-Mail-Versand werden diese Werte durch echte Daten ersetzt.",
+      "close": "Schließen",
+      "saveSuccess": "E-Mail-Vorlage erfolgreich gespeichert!",
+      "saveError": "Beim Speichern ist ein Fehler aufgetreten",
+      "exampleText": "Beispieltext",
+      "exampleValue": "Beispielwert",
+      "yes": "Ja"
     }
   },
   "partners": {

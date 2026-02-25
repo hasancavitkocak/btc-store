@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Eye, Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { emailTemplateService } from '@/services/admin.service';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
@@ -39,6 +40,7 @@ interface FieldInfo {
 
 export default function EmailTemplateForm({ templateCode }: Props) {
   const router = useRouter();
+  const t = useTranslations('admin.emailTemplateForm');
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [showLivePreview, setShowLivePreview] = useState(false);
@@ -171,16 +173,16 @@ export default function EmailTemplateForm({ templateCode }: Props) {
       const response = await emailTemplateService.save(submitData);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Email template başarıyla kaydedildi!', type: 'success' });
+        setToast({ message: t('saveSuccess'), type: 'success' });
         setTimeout(() => {
           router.push('/admin/email-templates');
         }, 1500);
       } else {
-        setToast({ message: response.errorMessage || 'Kaydetme sırasında bir hata oluştu', type: 'error' });
+        setToast({ message: response.errorMessage || t('saveError'), type: 'error' });
       }
     } catch (error) {
       console.error('Template kaydedilirken hata:', error);
-      setToast({ message: 'Kaydetme sırasında bir hata oluştu', type: 'error' });
+      setToast({ message: t('saveError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -209,7 +211,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
   const getExampleValue = (fieldType: string): string => {
     switch (fieldType) {
       case 'String':
-        return 'Örnek Metin';
+        return t('exampleText');
       case 'Integer':
       case 'Long':
       case 'Double':
@@ -217,9 +219,9 @@ export default function EmailTemplateForm({ templateCode }: Props) {
       case 'Date':
         return '18.02.2024 10:30';
       case 'Boolean':
-        return 'Evet';
+        return t('yes');
       default:
-        return 'Örnek Değer';
+        return t('exampleValue');
     }
   };
 
@@ -232,14 +234,14 @@ export default function EmailTemplateForm({ templateCode }: Props) {
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Geri Dön
+          {t('back')}
         </Button>
         
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          {isEditMode ? 'Email Template Düzenle' : 'Yeni Email Template'}
+          {isEditMode ? t('editTitle') : t('newTitle')}
         </h1>
         <p className="text-gray-600">
-          Mail şablonunu oluşturun veya düzenleyin
+          {t('subtitle')}
         </p>
       </div>
 
@@ -248,40 +250,40 @@ export default function EmailTemplateForm({ templateCode }: Props) {
           {/* Left Column - Form */}
           <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Temel Bilgiler</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('basicInfo')}</h2>
               
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Template Kodu *
+                    {t('templateCode')} *
                   </label>
                   <Input
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                    placeholder="call_request_notification"
+                    placeholder={t('templateCodePlaceholder')}
                     disabled={isEditMode}
                     required
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Benzersiz bir kod girin (örn: call_request_notification)
+                    {t('templateCodeNote')}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Template Adı *
+                    {t('templateName')} *
                   </label>
                   <Input
                     value={formData.templateName}
                     onChange={(e) => setFormData({ ...formData, templateName: e.target.value })}
-                    placeholder="Call Request Bildirimi"
+                    placeholder={t('templateNamePlaceholder')}
                     required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    İlgili Model *
+                    {t('relatedModel')} *
                   </label>
                   <select
                     value={formData.relatedItem || ''}
@@ -292,7 +294,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   >
-                    <option value="">Model Seçin</option>
+                    <option value="">{t('selectModel')}</option>
                     {Array.isArray(models) && models.map((model) => (
                       <option key={model.className} value={model.className}>
                         {model.displayName}
@@ -300,18 +302,18 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                     ))}
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
-                    Bu template hangi model için kullanılacak?
+                    {t('relatedModelNote')}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Açıklama
+                    {t('description')}
                   </label>
                   <Textarea
                     value={formData.description || ''}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Template hakkında kısa açıklama..."
+                    placeholder={t('descriptionPlaceholder')}
                     rows={2}
                   />
                 </div>
@@ -324,35 +326,35 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                       onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">Aktif</span>
+                    <span className="text-sm font-medium text-gray-700">{t('active')}</span>
                   </label>
                 </div>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Mail İçeriği</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('mailContent')}</h2>
               
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mail Konusu *
+                    {t('subject')} *
                   </label>
                   <Input
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    placeholder="Yeni Call Request: {{subject}}"
+                    placeholder={t('subjectPlaceholder')}
                     required
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Değişken kullanabilirsiniz: {`{{fieldName}}`}
+                    {t('subjectNote')}
                   </p>
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      Mail İçeriği (HTML) *
+                      {t('body')} *
                     </label>
                     <button
                       type="button"
@@ -360,7 +362,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                       className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                     >
                       <Eye className="w-4 h-4" />
-                      {showLivePreview ? 'Preview Gizle' : 'Live Preview'}
+                      {showLivePreview ? t('hidePreview') : t('livePreview')}
                     </button>
                   </div>
                   
@@ -369,7 +371,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                       <textarea
                         value={formData.body}
                         onChange={(e) => setFormData({ ...formData, body: e.target.value })}
-                        placeholder="HTML kodunu buraya yazın..."
+                        placeholder={t('bodyPlaceholder')}
                         rows={showLivePreview ? 25 : 15}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm resize-none"
                         required
@@ -389,7 +391,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                     )}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    HTML formatında yazın. Değişkenler için {`{{fieldName}}`} kullanın. Sağdaki panelden değişken ekleyebilirsiniz.
+                    {t('bodyNote')}
                   </p>
                 </div>
               </div>
@@ -400,7 +402,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
           <div className="space-y-6">
             <Card className="p-6">
               <h3 className="font-semibold text-gray-900 mb-4">
-                Kullanılabilir Değişkenler
+                {t('availableVariables')}
                 {formData.relatedItem && Array.isArray(models) && (
                   <span className="text-sm font-normal text-gray-500 ml-2">
                     ({models.find(m => m.className === formData.relatedItem)?.displayName || formData.relatedItem})
@@ -410,16 +412,16 @@ export default function EmailTemplateForm({ templateCode }: Props) {
               
               {!formData.relatedItem ? (
                 <p className="text-sm text-gray-600">
-                  Önce bir model seçin
+                  {t('selectModelFirst')}
                 </p>
               ) : fields.length === 0 ? (
                 <p className="text-sm text-gray-600">
-                  Field'lar yükleniyor...
+                  {t('loadingFields')}
                 </p>
               ) : (
                 <>
                   <p className="text-sm text-gray-600 mb-4">
-                    Aşağıdaki değişkenleri template içinde kullanabilirsiniz:
+                    {t('variablesNote')}
                   </p>
                   
                   <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -443,7 +445,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
 
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                     <p className="text-xs text-blue-800">
-                      <strong>Not:</strong> Değişkenler mail gönderilirken otomatik olarak gerçek değerlerle değiştirilir.
+                      <strong>{t('variableNote')}</strong> {t('variableNoteText')}
                     </p>
                   </div>
                 </>
@@ -451,7 +453,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
             </Card>
 
             <Card className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">İşlemler</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">{t('actions')}</h3>
               <div className="space-y-3">
                 <Button
                   type="button"
@@ -461,7 +463,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                   disabled={!formData.relatedItem || fields.length === 0}
                 >
                   <Eye className="w-4 h-4" />
-                  Önizleme
+                  {t('preview')}
                 </Button>
                 
                 <Button
@@ -470,18 +472,18 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                   className="w-full bg-green-600 hover:bg-green-700 flex items-center justify-center gap-2"
                 >
                   <Save className="w-4 h-4" />
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  {loading ? t('saving') : t('save')}
                 </Button>
               </div>
             </Card>
 
             <Card className="p-6 bg-yellow-50 border-yellow-200">
-              <h3 className="font-semibold text-yellow-900 mb-2">💡 İpuçları</h3>
+              <h3 className="font-semibold text-yellow-900 mb-2">{t('tips')}</h3>
               <ul className="text-sm text-yellow-800 space-y-2">
-                <li>• HTML etiketleri kullanabilirsiniz</li>
-                <li>• Inline CSS ile stil verebilirsiniz</li>
-                <li>• Responsive tasarım için table kullanın</li>
-                <li>• Değişkenleri {`{{ }}`} içinde yazın</li>
+                <li>{t('tip1')}</li>
+                <li>{t('tip2')}</li>
+                <li>{t('tip3')}</li>
+                <li>{t('tip4')}</li>
               </ul>
             </Card>
           </div>
@@ -492,13 +494,13 @@ export default function EmailTemplateForm({ templateCode }: Props) {
       <Modal
         isOpen={showPreview}
         onClose={() => setShowPreview(false)}
-        title="Template Önizleme"
+        title={t('previewTitle')}
         size="lg"
       >
         <div className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Konu
+              {t('previewSubject')}
             </label>
             <div className="px-4 py-2 bg-gray-50 rounded-lg text-gray-900">
               {formData.subject}
@@ -507,7 +509,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              İçerik (Örnek Verilerle)
+              {t('previewContent')}
             </label>
             <div 
               className="border border-gray-200 rounded-lg p-4 bg-white max-h-96 overflow-y-auto"
@@ -517,8 +519,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
 
           <div className="bg-blue-50 p-4 rounded-lg">
             <p className="text-sm text-blue-800">
-              Mavi renkli değerler örnek verilerdir. Gerçek mail gönderiminde bu değerler 
-              gerçek verilerle değiştirilecektir.
+              {t('previewNote')}
             </p>
           </div>
 
@@ -526,7 +527,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
             onClick={() => setShowPreview(false)}
             className="w-full bg-gray-600 hover:bg-gray-700"
           >
-            Kapat
+            {t('close')}
           </Button>
         </div>
       </Modal>

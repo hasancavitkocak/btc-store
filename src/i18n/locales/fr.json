@@ -1003,6 +1003,103 @@
       "TERMS_OF_USE": "Conditions d'Utilisation",
       "COOKIE_POLICY": "Politique de Cookies",
       "CONSENT_TEXT": "Texte de Consentement"
+    },
+    "emailTemplates": {
+      "title": "Gestion des Modèles d'Email",
+      "subtitle": "Créer et modifier des modèles d'email",
+      "newTemplate": "Nouveau Modèle",
+      "stats": {
+        "total": "Modèles Totaux",
+        "active": "Actifs",
+        "inactive": "Inactifs"
+      },
+      "table": {
+        "templateName": "Nom du Modèle",
+        "code": "Code",
+        "subject": "Sujet",
+        "status": "Statut",
+        "lastUpdate": "Dernière Mise à Jour",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif"
+      },
+      "loading": "Chargement...",
+      "noTemplates": "Aucun modèle d'email trouvé pour le moment",
+      "preview": {
+        "title": "Aperçu",
+        "subject": "Sujet",
+        "content": "Aperçu du Contenu",
+        "note": "Note:",
+        "noteText": "Les variables dans le modèle (ex: {{customerName}}) seront remplacées par des valeurs réelles lors de l'envoi d'emails.",
+        "close": "Fermer"
+      },
+      "delete": {
+        "title": "Supprimer le Modèle",
+        "message": "Êtes-vous sûr de vouloir supprimer le modèle \"{name}\" ? Cette action ne peut pas être annulée.",
+        "confirm": "Supprimer",
+        "cancel": "Annuler"
+      },
+      "messages": {
+        "loadError": "Échec du chargement de la liste des modèles",
+        "loadErrorGeneric": "Une erreur s'est produite lors du chargement des modèles d'email",
+        "deleteSuccess": "Modèle supprimé avec succès",
+        "deleteError": "Échec de la suppression du modèle",
+        "deleteErrorGeneric": "Une erreur s'est produite lors de la suppression du modèle"
+      }
+    },
+    "emailTemplateForm": {
+      "back": "Retour",
+      "editTitle": "Modifier le Modèle d'Email",
+      "newTitle": "Nouveau Modèle d'Email",
+      "subtitle": "Créer ou modifier le modèle d'email",
+      "basicInfo": "Informations de Base",
+      "templateCode": "Code du Modèle",
+      "templateCodePlaceholder": "call_request_notification",
+      "templateCodeNote": "Entrez un code unique (ex: call_request_notification)",
+      "templateName": "Nom du Modèle",
+      "templateNamePlaceholder": "Notification de Demande d'Appel",
+      "relatedModel": "Modèle Associé",
+      "selectModel": "Sélectionner un Modèle",
+      "relatedModelNote": "Pour quel modèle ce modèle sera-t-il utilisé?",
+      "description": "Description",
+      "descriptionPlaceholder": "Brève description du modèle...",
+      "active": "Actif",
+      "mailContent": "Contenu de l'Email",
+      "subject": "Sujet de l'Email",
+      "subjectPlaceholder": "Nouvelle Demande d'Appel: {{subject}}",
+      "subjectNote": "Vous pouvez utiliser des variables: {{fieldName}}",
+      "body": "Corps de l'Email (HTML)",
+      "bodyPlaceholder": "Écrivez le code HTML ici...",
+      "bodyNote": "Écrivez au format HTML. Utilisez {{fieldName}} pour les variables. Vous pouvez ajouter des variables depuis le panneau de droite.",
+      "hidePreview": "Masquer l'Aperçu",
+      "livePreview": "Aperçu en Direct",
+      "availableVariables": "Variables Disponibles",
+      "selectModelFirst": "Sélectionnez d'abord un modèle",
+      "loadingFields": "Chargement des champs...",
+      "variablesNote": "Vous pouvez utiliser les variables suivantes dans le modèle:",
+      "variableNote": "Note:",
+      "variableNoteText": "Les variables seront automatiquement remplacées par des valeurs réelles lors de l'envoi d'emails.",
+      "actions": "Actions",
+      "preview": "Aperçu",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "tips": "💡 Conseils",
+      "tip1": "• Vous pouvez utiliser des balises HTML",
+      "tip2": "• Vous pouvez styliser avec du CSS inline",
+      "tip3": "• Utilisez des tableaux pour un design responsive",
+      "tip4": "• Écrivez les variables dans {{ }}",
+      "previewTitle": "Aperçu du Modèle",
+      "previewSubject": "Sujet",
+      "previewContent": "Contenu (Avec Données d'Exemple)",
+      "previewNote": "Les valeurs en bleu sont des données d'exemple. Lors de l'envoi réel d'emails, ces valeurs seront remplacées par des données réelles.",
+      "close": "Fermer",
+      "saveSuccess": "Modèle d'email enregistré avec succès!",
+      "saveError": "Une erreur s'est produite lors de l'enregistrement",
+      "exampleText": "Texte d'Exemple",
+      "exampleValue": "Valeur d'Exemple",
+      "yes": "Oui"
     }
   },
   "partners": {

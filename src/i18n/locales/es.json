@@ -1003,6 +1003,103 @@
       "TERMS_OF_USE": "Términos de Uso",
       "COOKIE_POLICY": "Política de Cookies",
       "CONSENT_TEXT": "Texto de Consentimiento"
+    },
+    "emailTemplates": {
+      "title": "Gestión de Plantillas de Email",
+      "subtitle": "Crear y editar plantillas de email",
+      "newTemplate": "Nueva Plantilla",
+      "stats": {
+        "total": "Plantillas Totales",
+        "active": "Activas",
+        "inactive": "Inactivas"
+      },
+      "table": {
+        "templateName": "Nombre de Plantilla",
+        "code": "Código",
+        "subject": "Asunto",
+        "status": "Estado",
+        "lastUpdate": "Última Actualización",
+        "actions": "Acciones"
+      },
+      "status": {
+        "active": "Activa",
+        "inactive": "Inactiva"
+      },
+      "loading": "Cargando...",
+      "noTemplates": "No se encontraron plantillas de email aún",
+      "preview": {
+        "title": "Vista Previa",
+        "subject": "Asunto",
+        "content": "Vista Previa del Contenido",
+        "note": "Nota:",
+        "noteText": "Las variables en la plantilla (ej: {{customerName}}) serán reemplazadas con valores reales al enviar emails.",
+        "close": "Cerrar"
+      },
+      "delete": {
+        "title": "Eliminar Plantilla",
+        "message": "¿Está seguro de que desea eliminar la plantilla \"{name}\"? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      },
+      "messages": {
+        "loadError": "Error al cargar la lista de plantillas",
+        "loadErrorGeneric": "Ocurrió un error al cargar las plantillas de email",
+        "deleteSuccess": "Plantilla eliminada con éxito",
+        "deleteError": "Error al eliminar la plantilla",
+        "deleteErrorGeneric": "Ocurrió un error al eliminar la plantilla"
+      }
+    },
+    "emailTemplateForm": {
+      "back": "Atrás",
+      "editTitle": "Editar Plantilla de Email",
+      "newTitle": "Nueva Plantilla de Email",
+      "subtitle": "Crear o editar plantilla de email",
+      "basicInfo": "Información Básica",
+      "templateCode": "Código de Plantilla",
+      "templateCodePlaceholder": "call_request_notification",
+      "templateCodeNote": "Ingrese un código único (ej: call_request_notification)",
+      "templateName": "Nombre de Plantilla",
+      "templateNamePlaceholder": "Notificación de Solicitud de Llamada",
+      "relatedModel": "Modelo Relacionado",
+      "selectModel": "Seleccionar Modelo",
+      "relatedModelNote": "¿Para qué modelo se utilizará esta plantilla?",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Breve descripción de la plantilla...",
+      "active": "Activa",
+      "mailContent": "Contenido del Email",
+      "subject": "Asunto del Email",
+      "subjectPlaceholder": "Nueva Solicitud de Llamada: {{subject}}",
+      "subjectNote": "Puede usar variables: {{fieldName}}",
+      "body": "Cuerpo del Email (HTML)",
+      "bodyPlaceholder": "Escriba el código HTML aquí...",
+      "bodyNote": "Escriba en formato HTML. Use {{fieldName}} para variables. Puede agregar variables desde el panel derecho.",
+      "hidePreview": "Ocultar Vista Previa",
+      "livePreview": "Vista Previa en Vivo",
+      "availableVariables": "Variables Disponibles",
+      "selectModelFirst": "Seleccione primero un modelo",
+      "loadingFields": "Cargando campos...",
+      "variablesNote": "Puede usar las siguientes variables en la plantilla:",
+      "variableNote": "Nota:",
+      "variableNoteText": "Las variables se reemplazarán automáticamente con valores reales al enviar emails.",
+      "actions": "Acciones",
+      "preview": "Vista Previa",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "tips": "💡 Consejos",
+      "tip1": "• Puede usar etiquetas HTML",
+      "tip2": "• Puede dar estilo con CSS inline",
+      "tip3": "• Use tablas para diseño responsive",
+      "tip4": "• Escriba variables dentro de {{ }}",
+      "previewTitle": "Vista Previa de Plantilla",
+      "previewSubject": "Asunto",
+      "previewContent": "Contenido (Con Datos de Ejemplo)",
+      "previewNote": "Los valores en azul son datos de ejemplo. En el envío real de emails, estos valores se reemplazarán con datos reales.",
+      "close": "Cerrar",
+      "saveSuccess": "¡Plantilla de email guardada con éxito!",
+      "saveError": "Ocurrió un error al guardar",
+      "exampleText": "Texto de Ejemplo",
+      "exampleValue": "Valor de Ejemplo",
+      "yes": "Sí"
     }
   },
   "partners": {

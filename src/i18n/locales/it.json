@@ -185,6 +185,51 @@
     "title": "Protezione dei Dati Personali",
     "text": "Testo sulla privacy"
   },
+  "emailTemplates": {
+    "title": "Gestione Modelli Email",
+    "subtitle": "Crea e modifica modelli email",
+    "newTemplate": "Nuovo Modello",
+    "stats": {
+      "total": "Modelli Totali",
+      "active": "Attivi",
+      "inactive": "Inattivi"
+    },
+    "table": {
+      "templateName": "Nome Modello",
+      "code": "Codice",
+      "subject": "Oggetto",
+      "status": "Stato",
+      "lastUpdate": "Ultimo Aggiornamento",
+      "actions": "Azioni"
+    },
+    "status": {
+      "active": "Attivo",
+      "inactive": "Inattivo"
+    },
+    "loading": "Caricamento...",
+    "noTemplates": "Nessun modello email trovato ancora",
+    "preview": {
+      "title": "Anteprima",
+      "subject": "Oggetto",
+      "content": "Anteprima Contenuto",
+      "note": "Nota:",
+      "noteText": "Le variabili nel modello (es: {{customerName}}) verranno sostituite con valori reali durante l'invio delle email.",
+      "close": "Chiudi"
+    },
+    "delete": {
+      "title": "Elimina Modello",
+      "message": "Sei sicuro di voler eliminare il modello \"{{name}}\"? Questa azione non può essere annullata.",
+      "confirm": "Elimina",
+      "cancel": "Annulla"
+    },
+    "messages": {
+      "loadError": "Impossibile caricare l'elenco dei modelli",
+      "loadErrorGeneric": "Si è verificato un errore durante il caricamento dei modelli email",
+      "deleteSuccess": "Modello eliminato con successo",
+      "deleteError": "Impossibile eliminare il modello",
+      "deleteErrorGeneric": "Si è verificato un errore durante l'eliminazione del modello"
+    }
+  },
   "admin": {
     "title": "Pannello di Amministrazione",
     "dashboard": "Dashboard",
@@ -1002,6 +1047,103 @@
       "TERMS_OF_USE": "Termini di Utilizzo",
       "COOKIE_POLICY": "Politica sui Cookie",
       "CONSENT_TEXT": "Testo di Consenso"
+    },
+    "emailTemplates": {
+      "title": "Gestione Modelli Email",
+      "subtitle": "Crea e modifica modelli email",
+      "newTemplate": "Nuovo Modello",
+      "stats": {
+        "total": "Modelli Totali",
+        "active": "Attivi",
+        "inactive": "Inattivi"
+      },
+      "table": {
+        "templateName": "Nome Modello",
+        "code": "Codice",
+        "subject": "Oggetto",
+        "status": "Stato",
+        "lastUpdate": "Ultimo Aggiornamento",
+        "actions": "Azioni"
+      },
+      "status": {
+        "active": "Attivo",
+        "inactive": "Inattivo"
+      },
+      "loading": "Caricamento...",
+      "noTemplates": "Nessun modello email trovato ancora",
+      "preview": {
+        "title": "Anteprima",
+        "subject": "Oggetto",
+        "content": "Anteprima Contenuto",
+        "note": "Nota:",
+        "noteText": "Le variabili nel modello (es: {{customerName}}) verranno sostituite con valori reali durante l'invio delle email.",
+        "close": "Chiudi"
+      },
+      "delete": {
+        "title": "Elimina Modello",
+        "message": "Sei sicuro di voler eliminare il modello \"{name}\"? Questa azione non può essere annullata.",
+        "confirm": "Elimina",
+        "cancel": "Annulla"
+      },
+      "messages": {
+        "loadError": "Impossibile caricare l'elenco dei modelli",
+        "loadErrorGeneric": "Si è verificato un errore durante il caricamento dei modelli email",
+        "deleteSuccess": "Modello eliminato con successo",
+        "deleteError": "Impossibile eliminare il modello",
+        "deleteErrorGeneric": "Si è verificato un errore durante l'eliminazione del modello"
+      }
+    },
+    "emailTemplateForm": {
+      "back": "Indietro",
+      "editTitle": "Modifica Modello Email",
+      "newTitle": "Nuovo Modello Email",
+      "subtitle": "Crea o modifica modello email",
+      "basicInfo": "Informazioni di Base",
+      "templateCode": "Codice Modello",
+      "templateCodePlaceholder": "call_request_notification",
+      "templateCodeNote": "Inserisci un codice univoco (es: call_request_notification)",
+      "templateName": "Nome Modello",
+      "templateNamePlaceholder": "Notifica Richiesta Chiamata",
+      "relatedModel": "Modello Correlato",
+      "selectModel": "Seleziona Modello",
+      "relatedModelNote": "Per quale modello verrà utilizzato questo modello?",
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Breve descrizione del modello...",
+      "active": "Attivo",
+      "mailContent": "Contenuto Email",
+      "subject": "Oggetto Email",
+      "subjectPlaceholder": "Nuova Richiesta Chiamata: {{subject}}",
+      "subjectNote": "Puoi usare variabili: {{fieldName}}",
+      "body": "Corpo Email (HTML)",
+      "bodyPlaceholder": "Scrivi il codice HTML qui...",
+      "bodyNote": "Scrivi in formato HTML. Usa {{fieldName}} per le variabili. Puoi aggiungere variabili dal pannello destro.",
+      "hidePreview": "Nascondi Anteprima",
+      "livePreview": "Anteprima Live",
+      "availableVariables": "Variabili Disponibili",
+      "selectModelFirst": "Seleziona prima un modello",
+      "loadingFields": "Caricamento campi...",
+      "variablesNote": "Puoi usare le seguenti variabili nel modello:",
+      "variableNote": "Nota:",
+      "variableNoteText": "Le variabili verranno automaticamente sostituite con valori reali durante l'invio delle email.",
+      "actions": "Azioni",
+      "preview": "Anteprima",
+      "save": "Salva",
+      "saving": "Salvataggio...",
+      "tips": "💡 Suggerimenti",
+      "tip1": "• Puoi usare tag HTML",
+      "tip2": "• Puoi dare stile con CSS inline",
+      "tip3": "• Usa tabelle per design responsive",
+      "tip4": "• Scrivi variabili dentro {{ }}",
+      "previewTitle": "Anteprima Modello",
+      "previewSubject": "Oggetto",
+      "previewContent": "Contenuto (Con Dati di Esempio)",
+      "previewNote": "I valori in blu sono dati di esempio. Nell'invio reale di email, questi valori verranno sostituiti con dati reali.",
+      "close": "Chiudi",
+      "saveSuccess": "Modello email salvato con successo!",
+      "saveError": "Si è verificato un errore durante il salvataggio",
+      "exampleText": "Testo di Esempio",
+      "exampleValue": "Valore di Esempio",
+      "yes": "Sì"
     }
   },
   "partners": {
