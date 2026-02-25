@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, X, ArrowLeft, Upload, Trash2, FileText, Globe } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+import { Save, X, ArrowLeft, Upload, Trash2, FileText } from 'lucide-react';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Toast from '../../components/Toast';
 import SearchableAutocomplete from '../../components/SearchableAutocomplete';
 import { apiClient } from '@/lib/api';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface DocumentFormProps {
   documentId?: string;
@@ -20,8 +22,20 @@ interface Product {
   active: boolean;
 }
 
+// Dil bilgileri
+const languageInfo: Record<SupportedLocale, { code: string; name: string }> = {
+  tr: { code: 'TR', name: 'Türkçe' },
+  en: { code: 'EN', name: 'English' },
+  de: { code: 'DE', name: 'Deutsch' },
+  fr: { code: 'FR', name: 'Français' },
+  es: { code: 'ES', name: 'Español' },
+  it: { code: 'IT', name: 'Italiano' }
+};
+
 export default function DocumentForm({ documentId }: DocumentFormProps) {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -39,6 +53,14 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
   });
 
   const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
+
+  // Kullanıcının dilini en üste, diğerlerini sıraya koy
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
 
   const toggleField = (fieldName: string) => {
     const newExpanded = new Set(expandedFields);
@@ -73,11 +95,11 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
         });
       } else {
         console.error('Failed to load document:', response);
-        setToast({ message: 'Doküman bulunamadı!', type: 'error' });
+        setToast({ message: t('admin.documentsForm.notFound'), type: 'error' });
       }
     } catch (error) {
       console.error('Error loading document:', error);
-      setToast({ message: 'Doküman yüklenirken hata oluştu!', type: 'error' });
+      setToast({ message: t('admin.documentsForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -91,12 +113,12 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
 
   const handleSave = async () => {
     if (!formData.title.tr && !formData.title.en) {
-      setToast({ message: 'Lütfen en az bir dilde başlık girin!', type: 'error' });
+      setToast({ message: t('admin.documentsForm.titleRequired'), type: 'error' });
       return;
     }
 
     if (!isEditing && mediaFiles.length === 0) {
-      setToast({ message: 'Lütfen en az bir dosya yükleyin!', type: 'error' });
+      setToast({ message: t('admin.documentsForm.filesRequired'), type: 'error' });
       return;
     }
 
@@ -129,7 +151,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
 
       if (response.status === 'SUCCESS') {
         setToast({ 
-          message: isEditing ? 'Doküman güncellendi!' : 'Doküman eklendi!', 
+          message: isEditing ? t('admin.documentsForm.updateSuccess') : t('admin.documentsForm.createSuccess'), 
           type: 'success' 
         });
         setTimeout(() => {
@@ -137,13 +159,13 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
         }, 1000);
       } else {
         setToast({ 
-          message: response.errorMessage || 'Kayıt sırasında hata oluştu!', 
+          message: response.errorMessage || t('admin.documentsForm.saveError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error saving document:', error);
-      setToast({ message: 'Kayıt sırasında hata oluştu!', type: 'error' });
+      setToast({ message: t('admin.documentsForm.saveError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -169,7 +191,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
   if (loading) {
     return (
       <div className="p-8 flex justify-center items-center">
-        <div className="text-gray-600">Yükleniyor...</div>
+        <div className="text-gray-600">{t('admin.documentsForm.loading')}</div>
       </div>
     );
   }
@@ -183,11 +205,11 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Geri
+          {t('admin.documentsForm.back')}
         </Button>
         
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          {isEditing ? 'Doküman Düzenle' : 'Yeni Doküman'}
+          {isEditing ? t('admin.documentsForm.editDocument') : t('admin.documentsForm.newDocument')}
         </h1>
       </div>
 
@@ -195,56 +217,39 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
         {/* Sol taraf - Ana içerik */}
         <div className="lg:col-span-2 space-y-6">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Doküman Bilgileri</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.documentsForm.documentInfo')}</h2>
             
             <div className="space-y-4">
               {/* Title with collapsible languages */}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">Başlık</label>
+                  <label className="text-sm font-medium text-gray-700">{t('admin.documentsForm.title')}</label>
                   <button
                     type="button"
                     onClick={() => toggleField('title')}
                     className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
                   >
-                    <span>{expandedFields.has('title') ? '🌐' : '🌍'} Diğer Diller</span>
+                    <span>{expandedFields.has('title') ? '🌐' : '🌍'} {t('admin.documentsForm.otherLanguages')}</span>
                     <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                     <span className="text-gray-400">{expandedFields.has('title') ? '▼' : '▶'}</span>
                   </button>
                 </div>
                 <div className="p-4 space-y-3">
                   <Input
-                    placeholder="🇹🇷 Türkçe"
-                    value={formData.title.tr}
-                    onChange={(e) => setFormData({ ...formData, title: { ...formData.title, tr: e.target.value } })}
+                    placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                    value={formData.title[orderedLanguages[0]]}
+                    onChange={(e) => setFormData({ ...formData, title: { ...formData.title, [orderedLanguages[0]]: e.target.value } })}
                   />
                   {expandedFields.has('title') && (
                     <div className="space-y-3 pt-3 border-t border-gray-200">
-                      <Input
-                        placeholder="🇬🇧 English"
-                        value={formData.title.en}
-                        onChange={(e) => setFormData({ ...formData, title: { ...formData.title, en: e.target.value } })}
-                      />
-                      <Input
-                        placeholder="🇩🇪 Deutsch"
-                        value={formData.title.de}
-                        onChange={(e) => setFormData({ ...formData, title: { ...formData.title, de: e.target.value } })}
-                      />
-                      <Input
-                        placeholder="🇫🇷 Français"
-                        value={formData.title.fr}
-                        onChange={(e) => setFormData({ ...formData, title: { ...formData.title, fr: e.target.value } })}
-                      />
-                      <Input
-                        placeholder="🇪🇸 Español"
-                        value={formData.title.es}
-                        onChange={(e) => setFormData({ ...formData, title: { ...formData.title, es: e.target.value } })}
-                      />
-                      <Input
-                        placeholder="🇮🇹 Italiano"
-                        value={formData.title.it}
-                        onChange={(e) => setFormData({ ...formData, title: { ...formData.title, it: e.target.value } })}
-                      />
+                      {orderedLanguages.slice(1).map((lang) => (
+                        <Input
+                          key={lang}
+                          placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                          value={formData.title[lang]}
+                          onChange={(e) => setFormData({ ...formData, title: { ...formData.title, [lang]: e.target.value } })}
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
@@ -253,62 +258,37 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
               {/* Description with collapsible languages */}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">Açıklama</label>
+                  <label className="text-sm font-medium text-gray-700">{t('admin.documentsForm.description')}</label>
                   <button
                     type="button"
                     onClick={() => toggleField('description')}
                     className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
                   >
-                    <span>{expandedFields.has('description') ? '🌐' : '🌍'} Diğer Diller</span>
+                    <span>{expandedFields.has('description') ? '🌐' : '🌍'} {t('admin.documentsForm.otherLanguages')}</span>
                     <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                     <span className="text-gray-400">{expandedFields.has('description') ? '▼' : '▶'}</span>
                   </button>
                 </div>
                 <div className="p-4 space-y-3">
                   <textarea
-                    placeholder="🇹🇷 Türkçe"
-                    value={formData.description.tr}
-                    onChange={(e) => setFormData({ ...formData, description: { ...formData.description, tr: e.target.value } })}
+                    placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                    value={formData.description[orderedLanguages[0]]}
+                    onChange={(e) => setFormData({ ...formData, description: { ...formData.description, [orderedLanguages[0]]: e.target.value } })}
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   {expandedFields.has('description') && (
                     <div className="space-y-3 pt-3 border-t border-gray-200">
-                      <textarea
-                        placeholder="🇬🇧 English"
-                        value={formData.description.en}
-                        onChange={(e) => setFormData({ ...formData, description: { ...formData.description, en: e.target.value } })}
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      <textarea
-                        placeholder="🇩🇪 Deutsch"
-                        value={formData.description.de}
-                        onChange={(e) => setFormData({ ...formData, description: { ...formData.description, de: e.target.value } })}
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      <textarea
-                        placeholder="🇫🇷 Français"
-                        value={formData.description.fr}
-                        onChange={(e) => setFormData({ ...formData, description: { ...formData.description, fr: e.target.value } })}
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      <textarea
-                        placeholder="🇪🇸 Español"
-                        value={formData.description.es}
-                        onChange={(e) => setFormData({ ...formData, description: { ...formData.description, es: e.target.value } })}
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      <textarea
-                        placeholder="🇮🇹 Italiano"
-                        value={formData.description.it}
-                        onChange={(e) => setFormData({ ...formData, description: { ...formData.description, it: e.target.value } })}
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
+                      {orderedLanguages.slice(1).map((lang) => (
+                        <textarea
+                          key={lang}
+                          placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                          value={formData.description[lang]}
+                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, [lang]: e.target.value } })}
+                          rows={3}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
@@ -317,13 +297,13 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Dosyalar</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.documentsForm.files')}</h2>
           
           {/* Existing Media Files */}
           {formData.medias.length > 0 && (
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mevcut Dosyalar
+                {t('admin.documentsForm.existingFiles')}
               </label>
               <div className="space-y-2">
                 {formData.medias.map((media) => (
@@ -361,7 +341,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
           {/* New Files Upload - Drag & Drop */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {isEditing ? 'Yeni Dosyalar Ekle' : 'Dosyalar'}
+              {isEditing ? t('admin.documentsForm.addNewFiles') : t('admin.documentsForm.files')}
             </label>
             
             <div
@@ -386,7 +366,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
               <label htmlFor="file-upload" className="cursor-pointer">
                 <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                 <p className="text-sm text-gray-600 mb-2">
-                  Dosyaları sürükleyip bırakın veya
+                  {t('admin.documentsForm.dragDropFiles')}
                 </p>
                 <Button
                   type="button"
@@ -397,10 +377,10 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
                     document.getElementById('file-upload')?.click();
                   }}
                 >
-                  Dosya Seç
+                  {t('admin.documentsForm.selectFile')}
                 </Button>
                 <p className="text-xs text-gray-500 mt-2">
-                  PDF, PPTX, DOCX, XLSX veya resim dosyaları
+                  {t('admin.documentsForm.fileTypes')}
                 </p>
               </label>
             </div>
@@ -410,7 +390,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
           {mediaFiles.length > 0 && (
             <div className="mt-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Yüklenecek Dosyalar ({mediaFiles.length})
+                {t('admin.documentsForm.filesToUpload', { count: mediaFiles.length })}
               </label>
               <div className="space-y-2">
                 {mediaFiles.map((file, index) => (
@@ -443,18 +423,18 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
         {/* Sağ taraf - Ürünler ve Ayarlar */}
         <div className="space-y-6">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">İlgili Ürünler</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.documentsForm.relatedProducts')}</h2>
             
             <SearchableAutocomplete<Product>
               itemType="product"
               searchField="name"
-              locale="tr"
+              locale={locale}
               selectedItems={formData.products}
               onItemsChange={(products) => setFormData({ ...formData, products })}
               getItemKey={(product) => product.code}
-              getItemLabel={(product) => product.name.tr || product.name.en}
-              placeholder="Ürün ara..."
-              label="Ürün Ekle"
+              getItemLabel={(product) => getLocalizedText(product.name, locale)}
+              placeholder={t('admin.documentsForm.searchProduct')}
+              label={t('admin.documentsForm.addProduct')}
               multiple={true}
               additionalFilters={[
                 { name: 'active', value: true, searchCondition: 'EQUALS' }
@@ -463,7 +443,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Durum</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.documentsForm.status')}</h2>
             <div className="flex items-center gap-3">
               <input
                 type="checkbox"
@@ -473,7 +453,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                Aktif
+                {t('admin.documentsForm.active')}
               </label>
             </div>
           </Card>
@@ -487,7 +467,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
                 disabled={loading}
               >
                 <Save className="w-4 h-4 mr-2" />
-                {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                {loading ? t('admin.documentsForm.saving') : t('admin.documentsForm.save')}
               </Button>
               <Button 
                 variant="outline" 
@@ -496,7 +476,7 @@ export default function DocumentForm({ documentId }: DocumentFormProps) {
                 disabled={loading}
               >
                 <X className="w-4 h-4 mr-2" />
-                İptal
+                {t('admin.documentsForm.cancel')}
               </Button>
             </div>
           </Card>

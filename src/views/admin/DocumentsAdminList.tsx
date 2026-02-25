@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Edit2, Trash2, Plus, FileText, Filter } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import Card from '../../components/Card';
@@ -11,6 +12,7 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import SearchableAutocomplete from '../../components/SearchableAutocomplete';
 import { searchService, SearchFilter } from '../../services/search.service';
 import { apiClient } from '@/lib/api';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface Document {
   id: number;
@@ -30,6 +32,8 @@ interface Product {
 
 export default function DocumentsAdminList() {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const { hasPermission } = useAuthStore();
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -98,7 +102,7 @@ export default function DocumentsAdminList() {
       }
     } catch (error) {
       console.error('Error loading documents:', error);
-      setToast({ message: 'Dokümanlar yüklenirken hata oluştu!', type: 'error' });
+      setToast({ message: t('admin.documentsPage.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -109,17 +113,17 @@ export default function DocumentsAdminList() {
       const response = await apiClient.delete(`/v1/documents/${code}`);
 
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Doküman başarıyla silindi!', type: 'success' });
+        setToast({ message: t('admin.documentsPage.deleteSuccess'), type: 'success' });
         loadDocuments();
       } else {
         setToast({ 
-          message: response.errorMessage || 'Silme işlemi başarısız!', 
+          message: response.errorMessage || t('admin.documentsPage.deleteFailed'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error deleting document:', error);
-      setToast({ message: 'Silme işlemi sırasında hata oluştu!', type: 'error' });
+      setToast({ message: t('admin.documentsPage.deleteError'), type: 'error' });
     } finally {
       setDeleteDialog({ isOpen: false, code: null, title: '' });
     }
@@ -132,7 +136,7 @@ export default function DocumentsAdminList() {
   if (loading) {
     return (
       <div className="p-8 flex justify-center items-center">
-        <div className="text-gray-600">Yükleniyor...</div>
+        <div className="text-gray-600">{t('admin.documentsPage.loading')}</div>
       </div>
     );
   }
@@ -142,16 +146,16 @@ export default function DocumentsAdminList() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Dokümanlar
+            {t('admin.documentsPage.title')}
           </h1>
-          <p className="text-gray-600">Satış dokümanlarını ve sunumları yönetin</p>
+          <p className="text-gray-600">{t('admin.documentsPage.subtitle')}</p>
         </div>
         <Button
           onClick={() => router.push('/admin/documents/new')}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
         >
           <Plus className="w-5 h-5" />
-          Yeni Doküman
+          {t('admin.documentsPage.newDocument')}
         </Button>
       </div>
 
@@ -159,19 +163,19 @@ export default function DocumentsAdminList() {
       <Card className="p-6 mb-8">
         <div className="flex items-center gap-4 mb-4">
           <Filter className="w-5 h-5 text-gray-600" />
-          <h3 className="font-semibold text-gray-900">Filtrele</h3>
+          <h3 className="font-semibold text-gray-900">{t('admin.documentsPage.filter')}</h3>
         </div>
         
         <SearchableAutocomplete<Product>
           itemType="product"
           searchField="name"
-          locale="tr"
+          locale={locale}
           selectedItems={selectedProducts}
           onItemsChange={setSelectedProducts}
           getItemKey={(product) => product.code}
-          getItemLabel={(product) => product.name.tr || product.name.en}
-          placeholder="Ürün ara..."
-          label="Ürüne Göre Filtrele"
+          getItemLabel={(product) => getLocalizedText(product.name, locale)}
+          placeholder={t('admin.documentsPage.searchProduct')}
+          label={t('admin.documentsPage.filterByProduct')}
           multiple={true}
           additionalFilters={[
             { name: 'active', value: true, searchCondition: 'EQUALS' }
@@ -182,8 +186,8 @@ export default function DocumentsAdminList() {
       {/* Doküman Listesi */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          {selectedProducts.length > 0 ? 'Seçili Filtredeki Dokümanlar' : 'Tüm Dokümanlar'}
-          <span className="text-sm font-normal text-gray-500 ml-3">({totalElements} doküman)</span>
+          {selectedProducts.length > 0 ? t('admin.documentsPage.filteredDocuments') : t('admin.documentsPage.allDocuments')}
+          <span className="text-sm font-normal text-gray-500 ml-3">({t('admin.documentsPage.totalDocuments', { count: totalElements })})</span>
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -196,32 +200,32 @@ export default function DocumentsAdminList() {
               
               {/* Başlık */}
               <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                {doc.title.tr || doc.title.en || 'Başlıksız'}
+                {getLocalizedText(doc.title, locale) || t('admin.documentsPage.untitled')}
               </h3>
               
               {/* Açıklama */}
               <p className="text-sm text-gray-600 mb-3 line-clamp-2 flex-grow">
-                {doc.description.tr || doc.description.en || ''}
+                {getLocalizedText(doc.description, locale) || ''}
               </p>
               
               {/* Dosya Sayısı */}
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                  {doc.medias?.length || 0} Dosya
+                  {t('admin.documentsPage.files', { count: doc.medias?.length || 0 })}
                 </span>
               </div>
 
               {/* İlgili Ürünler */}
               {doc.products && doc.products.length > 0 && (
                 <div className="mb-4">
-                  <p className="text-xs text-gray-500 mb-1">İlgili Ürünler:</p>
+                  <p className="text-xs text-gray-500 mb-1">{t('admin.documentsPage.relatedProducts')}</p>
                   <div className="flex flex-wrap gap-1">
                     {doc.products.map((product, idx) => (
                       <span 
                         key={idx}
                         className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded"
                       >
-                        {product.name.tr || product.name.en}
+                        {getLocalizedText(product.name, locale)}
                       </span>
                     ))}
                   </div>
@@ -235,7 +239,7 @@ export default function DocumentsAdminList() {
                   variant="outline"
                   onClick={() => router.push(`/admin/documents/${doc.code}`)}
                   className="flex-1 flex items-center justify-center border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                  title="Düzenle"
+                  title={t('admin.documentsPage.edit')}
                 >
                   <Edit2 className="w-4 h-4" />
                 </Button>
@@ -245,10 +249,10 @@ export default function DocumentsAdminList() {
                   onClick={() => setDeleteDialog({ 
                     isOpen: true, 
                     code: doc.code,
-                    title: doc.title.tr || doc.title.en || 'Başlıksız'
+                    title: getLocalizedText(doc.title, locale) || t('admin.documentsPage.untitled')
                   })}
                   className="flex-1 flex items-center justify-center border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
-                  title="Sil"
+                  title={t('admin.documentsPage.delete')}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -261,7 +265,7 @@ export default function DocumentsAdminList() {
         {totalPages > 0 && (
           <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
             <div className="text-sm text-gray-600">
-              Toplam {totalElements} doküman
+              {t('admin.documentsPage.totalRecords', { count: totalElements })}
             </div>
             
             <div className="flex items-center gap-2">
@@ -271,11 +275,11 @@ export default function DocumentsAdminList() {
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1 || loading}
               >
-                Önceki
+                {t('admin.documentsPage.previous')}
               </Button>
               
               <span className="text-sm text-gray-600 px-4">
-                Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                {t('admin.documentsPage.page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
               </span>
               
               <Button
@@ -284,7 +288,7 @@ export default function DocumentsAdminList() {
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages || loading}
               >
-                Sonraki
+                {t('admin.documentsPage.next')}
               </Button>
             </div>
           </div>
@@ -295,12 +299,12 @@ export default function DocumentsAdminList() {
         <Card className="p-12 text-center">
           <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500 mb-4">
-            {selectedProducts.length > 0 ? 'Bu filtreye uygun doküman bulunamadı' : 'Henüz doküman eklenmemiş'}
+            {selectedProducts.length > 0 ? t('admin.documentsPage.noFilteredDocuments') : t('admin.documentsPage.noDocuments')}
           </p>
           {canManage && selectedProducts.length === 0 && (
             <Button onClick={() => router.push('/admin/documents/new')} className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
-              İlk Dokümanı Ekle
+              {t('admin.documentsPage.addFirstDocument')}
             </Button>
           )}
         </Card>
@@ -316,8 +320,8 @@ export default function DocumentsAdminList() {
 
       <ConfirmDialog
         isOpen={deleteDialog.isOpen}
-        title="Dokümanı Sil"
-        message={`"${deleteDialog.title}" başlıklı dokümanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
+        title={t('admin.documentsPage.deleteDialogTitle')}
+        message={t('admin.documentsPage.deleteDialogMessage', { title: deleteDialog.title })}
         onConfirm={() => deleteDialog.code && handleDelete(deleteDialog.code)}
         onClose={() => setDeleteDialog({ isOpen: false, code: null, title: '' })}
       />
