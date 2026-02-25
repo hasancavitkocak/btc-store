@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Edit, Trash2, Plus, ChevronLeft, ChevronRight, FileText, CheckCircle } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
@@ -11,6 +12,7 @@ import Toast from '../../components/Toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { searchService, SearchFormData } from '../../services/search.service';
 import { legalDocumentService } from '../../services/legalDocument.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 type LegalDocumentType = 'KVKK' | 'GDPR' | 'PRIVACY_POLICY' | 'TERMS_OF_USE' | 'COOKIE_POLICY' | 'CONSENT_TEXT';
 
@@ -26,17 +28,11 @@ interface LegalDocument {
   active: boolean;
 }
 
-const documentTypeLabels: Record<LegalDocumentType, string> = {
-  KVKK: 'KVKK Aydınlatma Metni',
-  GDPR: 'GDPR Privacy Policy',
-  PRIVACY_POLICY: 'Gizlilik Politikası',
-  TERMS_OF_USE: 'Kullanım Koşulları',
-  COOKIE_POLICY: 'Çerez Politikası',
-  CONSENT_TEXT: 'Onay Metni'
-};
-
 export default function LegalDocuments() {
   const router = useRouter();
+  const locale = useLocale() as SupportedLocale;
+  const t = useTranslations('admin.legalDocuments');
+  const tTypes = useTranslations('admin.legalDocumentTypes');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [documents, setDocuments] = useState<LegalDocument[]>([]);
   const [loading, setLoading] = useState(false);
@@ -80,17 +76,17 @@ export default function LegalDocuments() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Doküman listesi yüklenirken hata oluştu', 
+          message: response.errorMessage || t('loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading documents:', error);
-      setToast({ message: 'Doküman listesi yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -104,18 +100,18 @@ export default function LegalDocuments() {
       
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Silme işlemi başarısız', 
+          message: response.errorMessage || t('deleteError'), 
           type: 'error' 
         });
         return;
       }
       
-      setToast({ message: 'Doküman silindi', type: 'success' });
+      setToast({ message: t('deleteSuccess'), type: 'success' });
       setDeleteDialog({ isOpen: false, code: '', title: '' });
       loadDocuments();
     } catch (error) {
       console.error('Error deleting document:', error);
-      setToast({ message: 'Silme işlemi başarısız', type: 'error' });
+      setToast({ message: t('deleteError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -127,10 +123,10 @@ export default function LegalDocuments() {
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              KVKK / GDPR Yönetimi
+              {t('pageTitle')}
             </h1>
             <p className="text-gray-600">
-              {totalElements > 0 ? `${totalElements} doküman bulundu` : 'Yasal metinleri ve onay dokümanlarını yönetin'}
+              {totalElements > 0 ? t('totalDocuments', { count: totalElements }) : t('subtitle')}
             </p>
           </div>
           <Button 
@@ -138,26 +134,26 @@ export default function LegalDocuments() {
             className="bg-blue-600 hover:bg-blue-700"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Yeni Doküman
+            {t('newDocument')}
           </Button>
         </div>
 
         {loading && documents.length === 0 ? (
           <Card className="p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Yükleniyor...</p>
+            <p className="mt-4 text-gray-600">{t('loading')}</p>
           </Card>
         ) : documents.length === 0 ? (
           <Card className="p-12 text-center">
             <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Henüz doküman yok</h3>
-            <p className="text-gray-500 mb-4">İlk yasal dokümanınızı oluşturun</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('noDocuments')}</h3>
+            <p className="text-gray-500 mb-4">{t('noDocumentsDesc')}</p>
             <Button 
               onClick={() => router.push('/admin/legal-documents/new')}
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Doküman Ekle
+              {t('addDocument')}
             </Button>
           </Card>
         ) : (
@@ -168,22 +164,22 @@ export default function LegalDocuments() {
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Doküman Tipi
+                        {t('documentType')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Başlık
+                        {t('documentTitle')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Versiyon
+                        {t('version')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Yürürlük Tarihi
+                        {t('effectiveDate')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Durum
+                        {t('status')}
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        İşlemler
+                        {t('actions')}
                       </th>
                     </tr>
                   </thead>
@@ -192,16 +188,16 @@ export default function LegalDocuments() {
                       <tr key={doc.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm font-medium text-blue-600">
-                            {documentTypeLabels[doc.documentType]}
+                            {tTypes(doc.documentType)}
                           </span>
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {doc.title?.tr || doc.code}
+                            {getLocalizedText(doc.title, locale)}
                           </div>
-                          {doc.shortText?.tr && (
+                          {doc.shortText && getLocalizedText(doc.shortText, locale) && (
                             <div className="text-sm text-gray-500 line-clamp-1 max-w-md">
-                              {doc.shortText.tr}
+                              {getLocalizedText(doc.shortText, locale)}
                             </div>
                           )}
                         </td>
@@ -210,7 +206,7 @@ export default function LegalDocuments() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm text-gray-900">
-                            {new Date(doc.effectiveDate).toLocaleDateString('tr-TR')}
+                            {new Date(doc.effectiveDate).toLocaleDateString(locale)}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -218,17 +214,17 @@ export default function LegalDocuments() {
                             {doc.isCurrentVersion && (
                               <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded flex items-center gap-1">
                                 <CheckCircle className="w-3 h-3" />
-                                Güncel
+                                {t('current')}
                               </span>
                             )}
                             {!doc.active && (
                               <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded">
-                                Pasif
+                                {t('inactive')}
                               </span>
                             )}
                             {doc.active && !doc.isCurrentVersion && (
                               <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">
-                                Aktif
+                                {t('active')}
                               </span>
                             )}
                           </div>
@@ -238,14 +234,18 @@ export default function LegalDocuments() {
                             <button
                               onClick={() => router.push(`/admin/legal-documents/${doc.code}`)}
                               className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                              title="Düzenle"
+                              title={t('edit')}
                             >
                               <Edit className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => setDeleteDialog({ isOpen: true, code: doc.code, title: doc.title?.tr || doc.code })}
+                              onClick={() => setDeleteDialog({ 
+                                isOpen: true, 
+                                code: doc.code, 
+                                title: getLocalizedText(doc.title, locale)
+                              })}
                               className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Sil"
+                              title={t('delete')}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -259,7 +259,7 @@ export default function LegalDocuments() {
 
               <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                 <div className="text-sm text-gray-600">
-                  Toplam <span className="font-medium">{totalElements}</span> kayıt
+                  {t('totalRecords', { count: totalElements })}
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -270,11 +270,11 @@ export default function LegalDocuments() {
                     disabled={page === 1 || loading}
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    Önceki
+                    {t('previous')}
                   </Button>
                   
                   <span className="text-sm text-gray-600 px-4">
-                    Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                    {t('page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                   </span>
                   
                   <Button
@@ -283,7 +283,7 @@ export default function LegalDocuments() {
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages || loading}
                   >
-                    Sonraki
+                    {t('next')}
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
@@ -302,10 +302,10 @@ export default function LegalDocuments() {
 
         <ConfirmDialog
           isOpen={deleteDialog.isOpen}
-          title="Dokümanı Sil"
-          message={`"${deleteDialog.title}" dokümanını silmek istediğinizden emin misiniz?`}
-          confirmText="Sil"
-          cancelText="İptal"
+          title={t('deleteDialogTitle')}
+          message={t('deleteDialogMessage', { title: deleteDialog.title })}
+          confirmText={t('delete')}
+          cancelText={t('cancel')}
           onConfirm={handleDelete}
           onClose={() => setDeleteDialog({ isOpen: false, code: '', title: '' })}
           type="danger"
