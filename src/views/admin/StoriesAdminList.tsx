@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '../../components/Container';
@@ -12,6 +13,7 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import ImageLightbox from '../../components/ImageLightbox';
 import { searchService, SearchFormData } from '../../services/search.service';
 import { storyService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface SuccessStory {
   code: string;
@@ -27,6 +29,8 @@ interface SuccessStory {
 }
 
 export default function StoriesAdminList() {
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [stories, setStories] = useState<SuccessStory[]>([]);
@@ -76,17 +80,17 @@ export default function StoriesAdminList() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('admin.storiesPage.dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Başarı hikayeleri yüklenirken hata oluştu', 
+          message: response.errorMessage || t('admin.storiesPage.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading success stories:', error);
-      setToast({ message: 'Başarı hikayeleri yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.storiesPage.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -97,17 +101,17 @@ export default function StoriesAdminList() {
       const response = await storyService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Başarı hikayesi silindi', type: 'success' });
+        setToast({ message: t('admin.storiesPage.deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadStories();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('admin.storiesPage.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting success story:', error);
-      setToast({ message: 'Başarı hikayesi silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.storiesPage.deleteError'), type: 'error' });
     }
   };
 
@@ -117,19 +121,19 @@ export default function StoriesAdminList() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Başarı Hikayeleri
+              {t('admin.stories')}
             </h1>
-            <p className="text-gray-600">Toplam {totalElements} hikaye</p>
+            <p className="text-gray-600">{t('admin.storiesPage.totalStories', { count: totalElements })}</p>
           </div>
           <Button onClick={() => router.push('/admin/stories/new')} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-5 h-5 mr-2" />
-            Yeni Hikaye
+            {t('admin.storiesPage.newStory')}
           </Button>
         </div>
 
         {loading ? (
           <Card className="p-12 text-center">
-            <p className="text-gray-500">Yükleniyor...</p>
+            <p className="text-gray-500">{t('admin.storiesPage.loading')}</p>
           </Card>
         ) : (
           <>
@@ -154,13 +158,13 @@ export default function StoriesAdminList() {
                         </span>
                         {story.sector && (
                           <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                            {story.sector.name.tr || story.sector.name.en}
+                            {getLocalizedText(story.sector.name, locale)}
                           </span>
                         )}
                       </div>
                       
                       <h3 className="font-semibold text-lg mb-2">
-                        {story.title.tr || story.title.en}
+                        {getLocalizedText(story.title, locale)}
                       </h3>
                       
                       {story.results && story.results.length > 0 && (
@@ -180,14 +184,14 @@ export default function StoriesAdminList() {
                       
                       <div className="flex items-center gap-2 mt-2">
                         <span className={`text-xs px-2 py-1 rounded ${story.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {story.active ? 'Aktif' : 'Pasif'}
+                          {story.active ? t('admin.active') : t('admin.inactive')}
                         </span>
                         {story.videoUrl && (
                           <span className="text-xs px-2 py-1 rounded bg-purple-100 text-purple-700">
-                            🎥 Video
+                            🎥 {t('admin.storiesPage.video')}
                           </span>
                         )}
-                        <span className="text-xs text-gray-500">Sıra: {story.order}</span>
+                        <span className="text-xs text-gray-500">{t('admin.order')}: {story.order}</span>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -219,10 +223,10 @@ export default function StoriesAdminList() {
 
             {stories.length === 0 && (
               <Card className="p-12 text-center">
-                <p className="text-gray-500 mb-4">Henüz başarı hikayesi eklenmemiş</p>
+                <p className="text-gray-500 mb-4">{t('admin.storiesPage.noStories')}</p>
                 <Button onClick={() => router.push('/admin/stories/new')} className="bg-blue-600 hover:bg-blue-700">
                   <Plus className="w-4 h-4 mr-2" />
-                  İlk Hikayeyi Ekle
+                  {t('admin.storiesPage.addFirstStory')}
                 </Button>
               </Card>
             )}
@@ -230,7 +234,7 @@ export default function StoriesAdminList() {
             {totalElements > 0 && (
               <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
                 <div className="text-sm text-gray-600">
-                  Toplam <span className="font-medium">{totalElements}</span> kayıt
+                  {t('admin.storiesPage.totalRecords', { count: totalElements })}
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -241,11 +245,11 @@ export default function StoriesAdminList() {
                     disabled={page === 1 || loading}
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    Önceki
+                    {t('admin.storiesPage.previous')}
                   </Button>
                   
                   <span className="text-sm text-gray-600 px-4">
-                    Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                    {t('admin.storiesPage.page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                   </span>
                   
                   <Button
@@ -254,7 +258,7 @@ export default function StoriesAdminList() {
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages || loading}
                   >
-                    Sonraki
+                    {t('admin.storiesPage.next')}
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
@@ -275,10 +279,10 @@ export default function StoriesAdminList() {
           isOpen={deleteDialog.isOpen}
           onClose={() => setDeleteDialog({ isOpen: false, code: '', company: '' })}
           onConfirm={() => handleDelete(deleteDialog.code)}
-          title="Başarı Hikayesi Sil"
-          message={`"${deleteDialog.company}" şirketinin başarı hikayesini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-          confirmText="Sil"
-          cancelText="İptal"
+          title={t('admin.storiesPage.deleteDialogTitle')}
+          message={t('admin.storiesPage.deleteDialogMessage', { company: deleteDialog.company })}
+          confirmText={t('common.delete')}
+          cancelText={t('common.cancel')}
           type="danger"
         />
 
