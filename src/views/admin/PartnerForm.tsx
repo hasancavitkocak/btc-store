@@ -73,7 +73,7 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
       }
     } catch (error) {
       console.error('Error loading partner:', error);
-      setToast({ message: 'Partner yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.partnerForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -100,7 +100,7 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
 
   const handleSave = async () => {
     if (!formData.name.trim()) {
-      setToast({ message: 'Şirket adı zorunludur', type: 'error' });
+      setToast({ message: t('admin.partnerForm.nameRequired'), type: 'error' });
       return;
     }
 
@@ -121,14 +121,14 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
 
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Partner kaydedilirken hata oluştu', 
+          message: response.errorMessage || t('admin.partnerForm.saveError'), 
           type: 'error' 
         });
         return;
       }
 
       setToast({ 
-        message: isEditing ? 'Partner güncellendi' : 'Partner eklendi', 
+        message: isEditing ? t('admin.partnerForm.updateSuccess') : t('admin.partnerForm.createSuccess'), 
         type: 'success' 
       });
 
@@ -138,7 +138,7 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
     } catch (error: any) {
       console.error('Error saving partner:', error);
       setToast({ 
-        message: error.message || 'Beklenmeyen bir hata oluştu', 
+        message: error.message || t('admin.partnerForm.unexpectedError'), 
         type: 'error' 
       });
     } finally {
@@ -159,20 +159,20 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
         </Button>
         
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          {isEditing ? 'Partner Düzenle' : 'Yeni Partner Ekle'}
+          {isEditing ? t('admin.partnerForm.editPartner') : t('admin.partnerForm.newPartner')}
         </h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Partner Bilgileri</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.partnerForm.partnerInfo')}</h2>
             <div className="space-y-4">
               <Input
-                label="Şirket Adı"
+                label={t('admin.partnerForm.companyName')}
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                placeholder="Company Inc."
+                placeholder={t('admin.partnerForm.companyNamePlaceholder')}
                 required
               />
               
@@ -181,11 +181,11 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
                 onChange={handleImageChange}
                 onImageClick={(imageUrl) => setLightbox({ isOpen: true, imageUrl })}
                 maxImages={1}
-                label="Logo"
+                label={t('admin.partnerForm.logo')}
               />
               
               <Input
-                label="Sıra"
+                label={t('admin.partnerForm.order')}
                 type="number"
                 value={formData.order.toString()}
                 onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
@@ -196,7 +196,7 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
 
         <div className="space-y-6">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Durum</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.partnerForm.status')}</h2>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <input
@@ -207,7 +207,7 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
                   className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                  Aktif
+                  {t('admin.partnerForm.active')}
                 </label>
               </div>
               
@@ -220,17 +220,17 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
                   className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="showOnHome" className="text-sm font-medium text-gray-700">
-                  Ana Sayfada Göster
+                  {t('admin.partnerForm.showOnHome')}
                 </label>
               </div>
               <p className="text-xs text-gray-500 ml-8">
-                Ana sayfada sadece aktif ve &quot;Ana Sayfada Göster&quot; işaretli partnerler gösterilir.
+                {t('admin.partnerForm.showOnHomeDescription')}
               </p>
             </div>
           </Card>
 
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('admin.partnerForm.actions')}</h2>
             <div className="space-y-3">
               <Button 
                 onClick={handleSave} 
@@ -239,7 +239,7 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
                 disabled={loading}
               >
                 <Save className="w-4 h-4 mr-2" />
-                {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                {loading ? t('admin.partnerForm.saving') : t('admin.partnerForm.save')}
               </Button>
               <Button 
                 variant="outline" 
@@ -248,7 +248,7 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
                 disabled={loading}
               >
                 <X className="w-4 h-4 mr-2" />
-                İptal
+                {t('admin.partnerForm.cancel')}
               </Button>
             </div>
           </Card>
@@ -266,7 +266,7 @@ export default function PartnerForm({ partnerId }: PartnerFormProps) {
       <ImageLightbox
         isOpen={lightbox.isOpen}
         imageUrl={lightbox.imageUrl}
-        alt="Partner Logosu"
+        alt={t('admin.partnerForm.logoAlt')}
         onClose={() => setLightbox({ isOpen: false, imageUrl: '' })}
       />
     </div>

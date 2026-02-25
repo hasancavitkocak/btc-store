@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
@@ -23,6 +24,7 @@ interface Partner {
 
 export default function PartnersAdminList() {
   const router = useRouter();
+  const t = useTranslations();
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(false);
@@ -71,17 +73,17 @@ export default function PartnersAdminList() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('admin.partnersPage.dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Partner listesi yüklenirken hata oluştu', 
+          message: response.errorMessage || t('admin.partnersPage.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading partners:', error);
-      setToast({ message: 'Partner listesi yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.partnersPage.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -92,17 +94,17 @@ export default function PartnersAdminList() {
       const response = await partnerService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Partner silindi', type: 'success' });
+        setToast({ message: t('admin.partnersPage.deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadPartners();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('admin.partnersPage.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting partner:', error);
-      setToast({ message: 'Partner silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.partnersPage.deleteError'), type: 'error' });
     }
   };
 
@@ -137,29 +139,29 @@ export default function PartnersAdminList() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Partnerler
+            {t('admin.partnersPage.title')}
           </h1>
-          <p className="text-gray-600">Toplam {totalElements} partner</p>
+          <p className="text-gray-600">{t('admin.partnersPage.totalPartners', { count: totalElements })}</p>
         </div>
         <Button
           onClick={() => router.push('/admin/partners/new')}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
         >
           <Plus className="w-5 h-5" />
-          Yeni Partner
+          {t('admin.partnersPage.newPartner')}
         </Button>
       </div>
 
       {loading ? (
         <Card className="p-12 text-center">
-          <p className="text-gray-500">Yükleniyor...</p>
+          <p className="text-gray-500">{t('admin.partnersPage.loading')}</p>
         </Card>
       ) : partners.length === 0 ? (
         <Card className="p-12 text-center">
-          <p className="text-gray-500 mb-4">Henüz partner eklenmemiş</p>
+          <p className="text-gray-500 mb-4">{t('admin.partnersPage.noPartners')}</p>
           <Button onClick={() => router.push('/admin/partners/new')} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-4 h-4 mr-2" />
-            İlk Partner'ı Ekle
+            {t('admin.partnersPage.addFirstPartner')}
           </Button>
         </Card>
       ) : (
@@ -186,12 +188,12 @@ export default function PartnersAdminList() {
                 <Card key={partner.code} className="p-6 hover:shadow-lg transition-shadow relative">
                   {partner.showOnHome && (
                     <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                      Ana Sayfa
+                      {t('admin.partnersPage.homePage')}
                     </div>
                   )}
                   {!partner.active && (
                     <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-                      Pasif
+                      {t('admin.partnersPage.inactive')}
                     </div>
                   )}
                   <div 
@@ -218,7 +220,7 @@ export default function PartnersAdminList() {
                     />
                   </div>
                   <p className="text-center text-sm text-gray-600 mb-3 truncate">{partner.name}</p>
-                  <div className="text-center text-xs text-gray-400 mb-3">Sıra: {partner.order}</div>
+                  <div className="text-center text-xs text-gray-400 mb-3">{t('admin.partnersPage.order')}: {partner.order}</div>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
@@ -246,10 +248,10 @@ export default function PartnersAdminList() {
             })}
           </div>
 
-          {totalPages > 1 && (
+          {totalElements > 0 && (
             <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
               <div className="text-sm text-gray-600">
-                Toplam <span className="font-medium">{totalElements}</span> kayıt
+                {t('admin.partnersPage.totalRecords', { count: totalElements })}
               </div>
               
               <div className="flex items-center gap-2">
@@ -260,20 +262,20 @@ export default function PartnersAdminList() {
                   disabled={page === 1 || loading}
                 >
                   <ChevronLeft className="w-4 h-4" />
-                  Önceki
+                  {t('admin.partnersPage.previous')}
                 </Button>
                 
                 <span className="text-sm text-gray-600 px-4">
-                  Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages}</span>
+                  {t('admin.partnersPage.page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                 </span>
                 
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page >= totalPages || loading}
+                  onClick={() => setPage(p => Math.min(totalPages || 1, p + 1))}
+                  disabled={page >= (totalPages || 1) || loading}
                 >
-                  Sonraki
+                  {t('admin.partnersPage.next')}
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
@@ -294,10 +296,10 @@ export default function PartnersAdminList() {
         isOpen={deleteDialog.isOpen}
         onClose={() => setDeleteDialog({ isOpen: false, code: '', name: '' })}
         onConfirm={() => handleDelete(deleteDialog.code)}
-        title="Partner Sil"
-        message={`"${deleteDialog.name}" partner'ını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-        confirmText="Sil"
-        cancelText="İptal"
+        title={t('admin.partnersPage.deleteDialogTitle')}
+        message={t('admin.partnersPage.deleteDialogMessage', { name: deleteDialog.name })}
+        confirmText={t('admin.partnersPage.delete')}
+        cancelText={t('admin.partnersPage.cancel')}
         type="danger"
       />
 
