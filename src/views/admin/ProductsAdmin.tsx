@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -12,6 +13,7 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import ImageLightbox from '../../components/ImageLightbox';
 import { searchService, SearchFormData } from '../../services/search.service';
 import { productService } from '../../services/product.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface Product {
   code: string;
@@ -25,6 +27,8 @@ interface Product {
 
 export default function ProductsAdmin() {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
@@ -73,17 +77,17 @@ export default function ProductsAdmin() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('admin.productsPage.dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Ürünler yüklenirken hata oluştu', 
+          message: response.errorMessage || t('admin.productsPage.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading products:', error);
-      setToast({ message: 'Ürünler yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.productsPage.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -94,17 +98,17 @@ export default function ProductsAdmin() {
       const response = await productService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Ürün silindi', type: 'success' });
+        setToast({ message: t('admin.productsPage.deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadProducts();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('admin.productsPage.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      setToast({ message: 'Ürün silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.productsPage.deleteError'), type: 'error' });
     }
   };
 
@@ -113,26 +117,26 @@ export default function ProductsAdmin() {
       <Container>
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Ürünler</h1>
-            <p className="text-gray-600">Toplam {totalElements} ürün</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('admin.productsPage.title')}</h1>
+            <p className="text-gray-600">{t('admin.productsPage.totalProducts', { count: totalElements })}</p>
           </div>
           <Button onClick={() => router.push('/admin/products/new')} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-5 h-5 mr-2" />
-            Yeni Ürün
+            {t('admin.productsPage.newProduct')}
           </Button>
         </div>
 
         <Card>
           {loading ? (
             <div className="p-12 text-center">
-              <p className="text-gray-500">Yükleniyor...</p>
+              <p className="text-gray-500">{t('admin.productsPage.loading')}</p>
             </div>
           ) : products.length === 0 ? (
             <div className="p-12 text-center">
-              <p className="text-gray-500 mb-4">Henüz ürün eklenmemiş</p>
+              <p className="text-gray-500 mb-4">{t('admin.productsPage.noProducts')}</p>
               <Button onClick={() => router.push('/admin/products/new')} className="bg-blue-600 hover:bg-blue-700">
                 <Plus className="w-4 h-4 mr-2" />
-                İlk Ürünü Ekle
+                {t('admin.productsPage.addFirstProduct')}
               </Button>
             </div>
           ) : (
@@ -141,12 +145,12 @@ export default function ProductsAdmin() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Görsel</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ürün Adı</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategoriler</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sorumlular</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.productsPage.image')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.productsPage.productName')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.productsPage.categories')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.productsPage.responsibles')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.productsPage.status')}</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.productsPage.actions')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -155,25 +159,25 @@ export default function ProductsAdmin() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <img
                             src={product.mainImage?.absolutePath || '/no-image.svg'}
-                            alt={product.name.tr || product.name.en}
+                            alt={getLocalizedText(product.name, locale)}
                             className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
                             onClick={() => product.mainImage?.absolutePath && setLightbox({
                               isOpen: true,
                               imageUrl: product.mainImage.absolutePath,
-                              alt: product.name.tr || product.name.en
+                              alt: getLocalizedText(product.name, locale)
                             })}
                           />
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">{product.name.tr || product.name.en}</div>
-                          <div className="text-sm text-gray-500 line-clamp-1">{product.shortDescription.tr || product.shortDescription.en}</div>
+                          <div className="text-sm font-medium text-gray-900">{getLocalizedText(product.name, locale)}</div>
+                          <div className="text-sm text-gray-500 line-clamp-1">{getLocalizedText(product.shortDescription, locale)}</div>
                         </td>
                         <td className="px-6 py-4">
                           {product.categories && product.categories.length > 0 ? (
                             <div className="flex flex-wrap gap-1">
                               {product.categories.slice(0, 2).map((cat, idx) => (
                                 <span key={idx} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                  {cat.name.tr || cat.name.en}
+                                  {getLocalizedText(cat.name, locale)}
                                 </span>
                               ))}
                               {product.categories.length > 2 && (
@@ -222,7 +226,7 @@ export default function ProductsAdmin() {
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             product.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                           }`}>
-                            {product.active ? 'Aktif' : 'Pasif'}
+                            {product.active ? t('admin.productsPage.active') : t('admin.productsPage.inactive')}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -241,7 +245,7 @@ export default function ProductsAdmin() {
                               onClick={() => setDeleteDialog({ 
                                 isOpen: true, 
                                 code: product.code, 
-                                name: product.name.tr || product.name.en
+                                name: getLocalizedText(product.name, locale)
                               })}
                               className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
                             >
@@ -257,7 +261,7 @@ export default function ProductsAdmin() {
 
               <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                 <div className="text-sm text-gray-600">
-                  Toplam <span className="font-medium">{totalElements}</span> kayıt
+                  {t('admin.productsPage.totalRecords', { count: totalElements })}
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -268,11 +272,11 @@ export default function ProductsAdmin() {
                     disabled={page === 1 || loading}
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    Önceki
+                    {t('admin.productsPage.previous')}
                   </Button>
                   
                   <span className="text-sm text-gray-600 px-4">
-                    Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                    {t('admin.productsPage.page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                   </span>
                   
                   <Button
@@ -281,7 +285,7 @@ export default function ProductsAdmin() {
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages || loading}
                   >
-                    Sonraki
+                    {t('admin.productsPage.next')}
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
@@ -302,10 +306,10 @@ export default function ProductsAdmin() {
           isOpen={deleteDialog.isOpen}
           onClose={() => setDeleteDialog({ isOpen: false, code: '', name: '' })}
           onConfirm={() => handleDelete(deleteDialog.code)}
-          title="Ürün Sil"
-          message={`"${deleteDialog.name}" ürününü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-          confirmText="Sil"
-          cancelText="İptal"
+          title={t('admin.productsPage.deleteDialogTitle')}
+          message={t('admin.productsPage.deleteDialogMessage', { name: deleteDialog.name })}
+          confirmText={t('admin.productsPage.delete')}
+          cancelText={t('admin.productsPage.cancel')}
           type="danger"
         />
 

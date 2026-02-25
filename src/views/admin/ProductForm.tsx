@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Save, X, ArrowLeft, Star, Plus } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -14,6 +15,7 @@ import RichTextEditor from '../../components/RichTextEditor';
 import ImageLightbox from '../../components/ImageLightbox';
 import { productService } from '../../services/product.service';
 import { categoryService, userService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface ProductFormProps {
   productId?: string;
@@ -33,8 +35,20 @@ interface User {
   active: boolean;
 }
 
+// Dil bilgileri
+const languageInfo: Record<SupportedLocale, { code: string; name: string; flag: string }> = {
+  tr: { code: 'TR', name: 'Türkçe', flag: '🇹🇷' },
+  en: { code: 'EN', name: 'English', flag: '🇬🇧' },
+  de: { code: 'DE', name: 'Deutsch', flag: '🇩🇪' },
+  fr: { code: 'FR', name: 'Français', flag: '🇫🇷' },
+  es: { code: 'ES', name: 'Español', flag: '🇪🇸' },
+  it: { code: 'IT', name: 'Italiano', flag: '🇮🇹' }
+};
+
 export default function ProductForm({ productId }: ProductFormProps) {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
   const [imageFiles, setImageFiles] = useState<string[]>([]);
@@ -49,8 +63,16 @@ export default function ProductForm({ productId }: ProductFormProps) {
   });
   
   const isEditing = !!productId;
-  const [activeDescTab, setActiveDescTab] = useState<'tr' | 'en' | 'de' | 'fr' | 'es' | 'it'>('tr');
+  const [activeDescTab, setActiveDescTab] = useState<SupportedLocale>(locale);
   const [featureInput, setFeatureInput] = useState('');
+
+  // Kullanıcının dilini en üste, diğerlerini sıraya koy
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
 
   const [formData, setFormData] = useState({
     id: undefined as number | undefined,
@@ -172,7 +194,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
       }
     } catch (error) {
       console.error('Error loading product:', error);
-      setToast({ message: 'Ürün yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.productForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -332,14 +354,14 @@ export default function ProductForm({ productId }: ProductFormProps) {
 
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Ürün kaydedilirken hata oluştu', 
+          message: response.errorMessage || t('admin.productForm.saveError'), 
           type: 'error' 
         });
         return;
       }
 
       setToast({ 
-        message: isEditing ? 'Ürün güncellendi' : 'Ürün eklendi', 
+        message: isEditing ? t('admin.productForm.updateSuccess') : t('admin.productForm.createSuccess'), 
         type: 'success' 
       });
 
@@ -349,7 +371,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
     } catch (error: any) {
       console.error('Error saving product:', error);
       setToast({ 
-        message: error.message || 'Beklenmeyen bir hata oluştu', 
+        message: error.message || t('admin.productForm.unexpectedError'), 
         type: 'error' 
       });
     } finally {
@@ -363,38 +385,36 @@ export default function ProductForm({ productId }: ProductFormProps) {
         <div className="mb-8">
           <Button variant="outline" onClick={() => router.push('/admin/products')} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Geri
+            {t('common.back')}
           </Button>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {isEditing ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
+            {isEditing ? t('admin.productForm.editProduct') : t('admin.productForm.newProduct')}
           </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Ürün Bilgileri</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.productForm.productInfo')}</h2>
               <div className="space-y-4">
                 {/* Name - Localized */}
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">Ürün Adı</label>
+                    <label className="text-sm font-medium text-gray-700">{t('admin.productForm.productName')}</label>
                     <button type="button" onClick={() => toggleField('name')} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                      <span>{expandedFields.has('name') ? '🌐' : '🌍'} Diğer Diller</span>
+                      <span>{expandedFields.has('name') ? '🌐' : '🌍'} {t('admin.productForm.otherLanguages')}</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('name') ? '▼' : '▶'}</span>
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
-                    <Input placeholder="🇹🇷 Türkçe" value={formData.name.tr} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, tr: e.target.value } })} />
+                    <Input placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`} value={formData.name[orderedLanguages[0]]} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, [orderedLanguages[0]]: e.target.value } })} />
                     {expandedFields.has('name') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Input placeholder="🇬🇧 English" value={formData.name.en} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, en: e.target.value } })} />
-                        <Input placeholder="🇩🇪 Deutsch" value={formData.name.de} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, de: e.target.value } })} />
-                        <Input placeholder="🇫🇷 Français" value={formData.name.fr} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, fr: e.target.value } })} />
-                        <Input placeholder="🇪🇸 Español" value={formData.name.es} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, es: e.target.value } })} />
-                        <Input placeholder="🇮🇹 Italiano" value={formData.name.it} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, it: e.target.value } })} />
+                        {orderedLanguages.slice(1).map((lang) => (
+                          <Input key={lang} placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`} value={formData.name[lang]} onChange={(e) => setFormData({ ...formData, name: { ...formData.name, [lang]: e.target.value } })} />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -403,22 +423,20 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 {/* Short Description - Localized */}
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">Kısa Açıklama</label>
+                    <label className="text-sm font-medium text-gray-700">{t('admin.productForm.shortDescription')}</label>
                     <button type="button" onClick={() => toggleField('shortDescription')} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                      <span>{expandedFields.has('shortDescription') ? '🌐' : '🌍'} Diğer Diller</span>
+                      <span>{expandedFields.has('shortDescription') ? '🌐' : '🌍'} {t('admin.productForm.otherLanguages')}</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('shortDescription') ? '▼' : '▶'}</span>
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
-                    <Input placeholder="🇹🇷 Türkçe" value={formData.shortDescription.tr} onChange={(e) => setFormData({ ...formData, shortDescription: { ...formData.shortDescription, tr: e.target.value } })} />
+                    <Input placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`} value={formData.shortDescription[orderedLanguages[0]]} onChange={(e) => setFormData({ ...formData, shortDescription: { ...formData.shortDescription, [orderedLanguages[0]]: e.target.value } })} />
                     {expandedFields.has('shortDescription') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Input placeholder="🇬🇧 English" value={formData.shortDescription.en} onChange={(e) => setFormData({ ...formData, shortDescription: { ...formData.shortDescription, en: e.target.value } })} />
-                        <Input placeholder="🇩🇪 Deutsch" value={formData.shortDescription.de} onChange={(e) => setFormData({ ...formData, shortDescription: { ...formData.shortDescription, de: e.target.value } })} />
-                        <Input placeholder="🇫🇷 Français" value={formData.shortDescription.fr} onChange={(e) => setFormData({ ...formData, shortDescription: { ...formData.shortDescription, fr: e.target.value } })} />
-                        <Input placeholder="🇪🇸 Español" value={formData.shortDescription.es} onChange={(e) => setFormData({ ...formData, shortDescription: { ...formData.shortDescription, es: e.target.value } })} />
-                        <Input placeholder="🇮🇹 Italiano" value={formData.shortDescription.it} onChange={(e) => setFormData({ ...formData, shortDescription: { ...formData.shortDescription, it: e.target.value } })} />
+                        {orderedLanguages.slice(1).map((lang) => (
+                          <Input key={lang} placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`} value={formData.shortDescription[lang]} onChange={(e) => setFormData({ ...formData, shortDescription: { ...formData.shortDescription, [lang]: e.target.value } })} />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -426,11 +444,11 @@ export default function ProductForm({ productId }: ProductFormProps) {
 
                 {/* Categories - Multi Select */}
                 <div className="relative category-dropdown-container">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Kategoriler (Çoklu Seçim)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('admin.productForm.categories')}</label>
                   <div className="relative">
                     <button type="button" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)} className="w-full px-4 py-2 text-left border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white flex items-center justify-between hover:border-gray-400">
                       <span className={formData.categories.length > 0 ? 'text-gray-900' : 'text-gray-500'}>
-                        {formData.categories.length > 0 ? `${formData.categories.length} kategori seçildi` : 'Kategori Seçin'}
+                        {formData.categories.length > 0 ? t('admin.productForm.categoriesSelected', { count: formData.categories.length }) : t('admin.productForm.selectCategories')}
                       </span>
                       <svg className={`w-5 h-5 text-gray-400 transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -440,7 +458,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                     {isCategoryDropdownOpen && (
                       <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-hidden">
                         <div className="p-2 border-b border-gray-200">
-                          <input type="text" placeholder="Kategori ara..." value={categorySearchTerm} onChange={(e) => setCategorySearchTerm(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm" onClick={(e) => e.stopPropagation()} />
+                          <input type="text" placeholder={t('admin.productForm.searchCategory')} value={categorySearchTerm} onChange={(e) => setCategorySearchTerm(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm" onClick={(e) => e.stopPropagation()} />
                         </div>
                         <div className="overflow-y-auto max-h-48">
                           {categories.filter(cat => {
@@ -449,7 +467,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                           }).map((category) => (
                             <button key={category.code} type="button" onClick={() => toggleCategory(category)} className={`w-full px-4 py-2 text-left hover:bg-blue-50 transition-colors flex items-center gap-2 ${formData.categories.some(c => c.code === category.code) ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}>
                               <input type="checkbox" checked={formData.categories.some(c => c.code === category.code)} onChange={() => {}} className="w-4 h-4 text-blue-600 border-gray-300 rounded" />
-                              <span className="text-sm">{category.name.tr || category.name.en}</span>
+                              <span className="text-sm">{getLocalizedText(category.name, locale)}</span>
                             </button>
                           ))}
                         </div>
@@ -460,7 +478,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                     <div className="flex flex-wrap gap-2 mt-2">
                       {formData.categories.map((cat) => (
                         <span key={cat.code} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
-                          {cat.name.tr || cat.name.en}
+                          {getLocalizedText(cat.name, locale)}
                           <button type="button" onClick={() => toggleCategory(cat)} className="hover:bg-blue-200 rounded-full p-0.5">
                             <X className="w-3 h-3" />
                           </button>
@@ -472,11 +490,11 @@ export default function ProductForm({ productId }: ProductFormProps) {
 
                 {/* Responsible Users - Multi Select with Pictures */}
                 <div className="relative user-dropdown-container">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Ürün Sorumluları (Çoklu Seçim)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('admin.productForm.responsibleUsers')}</label>
                   <div className="relative">
                     <button type="button" onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)} className="w-full px-4 py-2 text-left border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white flex items-center justify-between hover:border-gray-400">
                       <span className={formData.responsibleUsers.length > 0 ? 'text-gray-900' : 'text-gray-500'}>
-                        {formData.responsibleUsers.length > 0 ? `${formData.responsibleUsers.length} sorumlu seçildi` : 'Sorumlu Seçin'}
+                        {formData.responsibleUsers.length > 0 ? t('admin.productForm.usersSelected', { count: formData.responsibleUsers.length }) : t('admin.productForm.selectUsers')}
                       </span>
                       <svg className={`w-5 h-5 text-gray-400 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -486,7 +504,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                     {isUserDropdownOpen && (
                       <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-hidden">
                         <div className="p-2 border-b border-gray-200">
-                          <input type="text" placeholder="Kullanıcı ara..." value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm" onClick={(e) => e.stopPropagation()} />
+                          <input type="text" placeholder={t('admin.productForm.searchUser')} value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm" onClick={(e) => e.stopPropagation()} />
                         </div>
                         <div className="overflow-y-auto max-h-48">
                           {users.filter(user => {
@@ -540,12 +558,12 @@ export default function ProductForm({ productId }: ProductFormProps) {
 
                 {/* Features */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Özellikler</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('admin.productForm.features')}</label>
                   <div className="space-y-3">
                     <div className="flex gap-2">
-                      <Input value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} onKeyDown={handleFeatureKeyDown} placeholder="Bir özellik yazın ve Enter'a basın" />
+                      <Input value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} onKeyDown={handleFeatureKeyDown} placeholder={t('admin.productForm.featurePlaceholder')} />
                       <Button type="button" onClick={handleAddFeature} className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap">
-                        Ekle
+                        {t('admin.productForm.add')}
                       </Button>
                     </div>
                     
@@ -564,7 +582,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                     
                     {formData.features.length === 0 && (
                       <div className="text-sm text-gray-500 italic p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        Henüz özellik eklenmedi. Yukarıdaki alana yazıp Enter'a basarak özellik ekleyebilirsiniz.
+                        {t('admin.productForm.noFeatures')}
                       </div>
                     )}
                   </div>
@@ -573,8 +591,8 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 {/* Video Link */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Video Linki
-                    <span className="text-xs text-gray-500 ml-2">(YouTube, Vimeo, Dailymotion, Wistia vb.)</span>
+                    {t('admin.productForm.videoLink')}
+                    <span className="text-xs text-gray-500 ml-2">({t('admin.productForm.videoLinkHint')})</span>
                   </label>
                   <Input 
                     value={formData.videoLink} 
@@ -582,15 +600,15 @@ export default function ProductForm({ productId }: ProductFormProps) {
                     placeholder="https://www.youtube.com/watch?v=..." 
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Video platformu linkini veya direkt embed URL'ini girebilirsiniz.
+                    {t('admin.productForm.videoLinkDescription')}
                   </p>
                 </div>
 
                 {/* Images with Main Image Selection */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ürün Görselleri
-                    {imageFiles.length > 0 && <span className="text-xs text-gray-500 ml-2">(Ana görsel için yıldıza tıklayın)</span>}
+                    {t('admin.productForm.productImages')}
+                    {imageFiles.length > 0 && <span className="text-xs text-gray-500 ml-2">({t('admin.productForm.mainImageHint')})</span>}
                   </label>
                   
                   {/* Custom Image Grid with Main Selection */}
@@ -691,7 +709,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         {imageFiles.length < 10 && (
                           <label className="w-full h-28 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all">
                             <Plus className="w-6 h-6 text-gray-400" />
-                            <span className="text-xs text-gray-500 mt-1">Görsel Ekle</span>
+                            <span className="text-xs text-gray-500 mt-1">{t('admin.productForm.addImage')}</span>
                             <input
                               type="file"
                               accept="image/*"
@@ -714,7 +732,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                       </div>
                       
                       <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded">
-                        💡 İpucu: Yıldız ikonuna tıklayarak ana görseli seçin. Görselleri sürükleyerek sıralayabilirsiniz.
+                        💡 {t('admin.productForm.imageTip')}
                       </div>
                     </div>
                   ) : (
@@ -726,26 +744,21 @@ export default function ProductForm({ productId }: ProductFormProps) {
 
             {/* Description with HTML Editor */}
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Detaylı Açıklama (HTML)</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.productForm.detailedDescription')}</h2>
               <div className="space-y-4">
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 border-b border-gray-200">
                     <div className="flex overflow-x-auto">
-                      {(['tr', 'en', 'de', 'fr', 'es', 'it'] as const).map((lang) => (
+                      {orderedLanguages.map((lang) => (
                         <button key={lang} type="button" onClick={() => setActiveDescTab(lang)} className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${activeDescTab === lang ? 'bg-white text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}>
-                          {lang === 'tr' && '🇹🇷 Türkçe'}
-                          {lang === 'en' && '🇬🇧 English'}
-                          {lang === 'de' && '🇩🇪 Deutsch'}
-                          {lang === 'fr' && '🇫🇷 Français'}
-                          {lang === 'es' && '🇪🇸 Español'}
-                          {lang === 'it' && '🇮🇹 Italiano'}
+                          {languageInfo[lang].code} - {languageInfo[lang].name}
                         </button>
                       ))}
                     </div>
                   </div>
                   
                   <div className="p-4">
-                    <RichTextEditor value={formData.description[activeDescTab]} onChange={(value) => setFormData({...formData, description: { ...formData.description, [activeDescTab]: value }})} placeholder="Ürünün detaylı açıklamasını buraya yazın..." />
+                    <RichTextEditor value={formData.description[activeDescTab]} onChange={(value) => setFormData({...formData, description: { ...formData.description, [activeDescTab]: value }})} placeholder={t('admin.productForm.descriptionPlaceholder')} />
                   </div>
                 </div>
               </div>
@@ -755,29 +768,29 @@ export default function ProductForm({ productId }: ProductFormProps) {
           {/* Sidebar */}
           <div className="space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Durum</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.productForm.status')}</h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <input type="checkbox" id="active" checked={formData.active} onChange={(e) => setFormData({...formData, active: e.target.checked})} className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-                  <label htmlFor="active" className="text-sm font-medium text-gray-700">Aktif</label>
+                  <label htmlFor="active" className="text-sm font-medium text-gray-700">{t('admin.productForm.active')}</label>
                 </div>
                 <div className="flex items-center gap-3">
                   <input type="checkbox" id="deleted" checked={formData.deleted} onChange={(e) => setFormData({...formData, deleted: e.target.checked})} className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500" />
-                  <label htmlFor="deleted" className="text-sm font-medium text-gray-700">Silinmiş</label>
+                  <label htmlFor="deleted" className="text-sm font-medium text-gray-700">{t('admin.productForm.deleted')}</label>
                 </div>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.productForm.actions')}</h2>
               <div className="space-y-3">
                 <Button onClick={handleSave} fullWidth className="bg-blue-600 hover:bg-blue-700" disabled={loading}>
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  {loading ? t('admin.productForm.saving') : t('admin.productForm.save')}
                 </Button>
                 <Button variant="outline" onClick={() => router.push('/admin/products')} fullWidth disabled={loading}>
                   <X className="w-4 h-4 mr-2" />
-                  İptal
+                  {t('admin.productForm.cancel')}
                 </Button>
               </div>
             </Card>
@@ -785,7 +798,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
         </div>
 
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-        <ImageLightbox isOpen={lightbox.isOpen} imageUrl={lightbox.imageUrl} alt="Ürün Görseli" onClose={() => setLightbox({ isOpen: false, imageUrl: '' })} />
+        <ImageLightbox isOpen={lightbox.isOpen} imageUrl={lightbox.imageUrl} alt={t('admin.productForm.productImageAlt')} onClose={() => setLightbox({ isOpen: false, imageUrl: '' })} />
       </Container>
     </Section>
   );
