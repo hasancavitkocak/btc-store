@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -11,15 +12,18 @@ import Toast from '../../components/Toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { searchService, SearchFormData } from '../../services/search.service';
 import { sectorService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface Sector {
   code: string;
-  name: { tr: string; en: string };
+  name: { tr: string; en: string; de: string; fr: string; es: string; it: string };
   active: boolean;
 }
 
 export default function Sectors() {
   const router = useRouter();
+  const t = useTranslations('admin.sectorsPage');
+  const locale = useLocale() as SupportedLocale;
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [sectors, setSectors] = useState<Sector[]>([]);
   const [loading, setLoading] = useState(false);
@@ -63,17 +67,17 @@ export default function Sectors() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Sektör listesi yüklenirken hata oluştu', 
+          message: response.errorMessage || t('loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading sectors:', error);
-      setToast({ message: 'Sektör listesi yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -84,17 +88,17 @@ export default function Sectors() {
       const response = await sectorService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Sektör silindi', type: 'success' });
+        setToast({ message: t('deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadSectors();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting sector:', error);
-      setToast({ message: 'Sektör silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('deleteError'), type: 'error' });
     }
   };
 
@@ -104,29 +108,29 @@ export default function Sectors() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Sektörler
+              {t('title')}
             </h1>
-            <p className="text-gray-600">Toplam {totalElements} sektör</p>
+            <p className="text-gray-600">{t('totalSectors', { count: totalElements })}</p>
           </div>
           <Button onClick={() => router.push('/admin/sectors/new')} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-5 h-5 mr-2" />
-            Yeni Sektör
+            {t('newSector')}
           </Button>
         </div>
 
         {loading ? (
           <Card className="p-12 text-center">
-            <p className="text-gray-500">Yükleniyor...</p>
+            <p className="text-gray-500">{t('loading')}</p>
           </Card>
         ) : (
           <>
             <Card>
               {sectors.length === 0 ? (
                 <div className="p-12 text-center">
-                  <p className="text-gray-500 mb-4">Henüz sektör eklenmemiş</p>
+                  <p className="text-gray-500 mb-4">{t('noSectors')}</p>
                   <Button onClick={() => router.push('/admin/sectors/new')} className="bg-blue-600 hover:bg-blue-700">
                     <Plus className="w-4 h-4 mr-2" />
-                    İlk Sektörü Ekle
+                    {t('addFirstSector')}
                   </Button>
                 </div>
               ) : (
@@ -135,22 +139,24 @@ export default function Sectors() {
                     <table className="w-full">
                       <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sektör Adı</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('sectorName')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('status')}</th>
+                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('actions')}</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {sectors.map((sector) => (
                           <tr key={sector.code} className="hover:bg-gray-50 transition-colors">
                             <td className="px-6 py-4">
-                              <div className="text-sm font-medium text-gray-900">{sector.name.tr || sector.name.en || '-'}</div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {getLocalizedText(sector.name, locale)}
+                              </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                 sector.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                               }`}>
-                                {sector.active ? 'Aktif' : 'Pasif'}
+                                {sector.active ? t('active') : t('inactive')}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -169,7 +175,7 @@ export default function Sectors() {
                                   onClick={() => setDeleteDialog({ 
                                     isOpen: true, 
                                     code: sector.code, 
-                                    name: sector.name.tr || sector.name.en 
+                                    name: getLocalizedText(sector.name, locale)
                                   })}
                                   className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
                                 >
@@ -186,7 +192,7 @@ export default function Sectors() {
                   {totalElements > 0 && (
                     <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                       <div className="text-sm text-gray-600">
-                        Toplam <span className="font-medium">{totalElements}</span> kayıt
+                        {t('totalRecords', { count: totalElements })}
                       </div>
                       
                       <div className="flex items-center gap-2">
@@ -197,11 +203,11 @@ export default function Sectors() {
                           disabled={page === 1 || loading}
                         >
                           <ChevronLeft className="w-4 h-4" />
-                          Önceki
+                          {t('previous')}
                         </Button>
                         
                         <span className="text-sm text-gray-600 px-4">
-                          Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                          {t('page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                         </span>
                         
                         <Button
@@ -210,7 +216,7 @@ export default function Sectors() {
                           onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                           disabled={page === totalPages || loading}
                         >
-                          Sonraki
+                          {t('next')}
                           <ChevronRight className="w-4 h-4" />
                         </Button>
                       </div>
@@ -234,10 +240,10 @@ export default function Sectors() {
           isOpen={deleteDialog.isOpen}
           onClose={() => setDeleteDialog({ isOpen: false, code: '', name: '' })}
           onConfirm={() => handleDelete(deleteDialog.code)}
-          title="Sektör Sil"
-          message={`"${deleteDialog.name}" sektörünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-          confirmText="Sil"
-          cancelText="İptal"
+          title={t('deleteDialogTitle')}
+          message={t('deleteDialogMessage', { name: deleteDialog.name })}
+          confirmText={t('delete')}
+          cancelText={t('cancel')}
           type="danger"
         />
       </Container>
