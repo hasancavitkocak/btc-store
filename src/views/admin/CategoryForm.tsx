@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Save, X, ArrowLeft } from 'lucide-react';
 import Container from '../../components/Container';
@@ -12,12 +13,25 @@ import Toast from '../../components/Toast';
 import ImageUpload from '../../components/ImageUpload';
 import ImageLightbox from '../../components/ImageLightbox';
 import { categoryService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface CategoryFormProps {
   categoryId?: string;
 }
 
+// Dil bilgileri
+const languageInfo: Record<SupportedLocale, { code: string; name: string }> = {
+  tr: { code: 'TR', name: 'Türkçe' },
+  en: { code: 'EN', name: 'English' },
+  de: { code: 'DE', name: 'Deutsch' },
+  fr: { code: 'FR', name: 'Français' },
+  es: { code: 'ES', name: 'Español' },
+  it: { code: 'IT', name: 'Italiano' }
+};
+
 export default function CategoryForm({ categoryId }: CategoryFormProps) {
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
@@ -31,6 +45,14 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
   });
   
   const isEditing = !!categoryId;
+
+  // Kullanıcının dilini en üste, diğerlerini sıraya koy
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
 
   const toggleField = (fieldName: string) => {
     const newExpanded = new Set(expandedFields);
@@ -50,7 +72,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
     backgroundColor: '#ffffff',
     textColor: '#000000',
     showButton: true,
-    buttonText: { tr: 'Detayları Gör', en: 'View Details', de: '', fr: '', es: '', it: '' },
+    buttonText: { tr: 'Detayları Gör', en: 'View Details', de: 'Details ansehen', fr: 'Voir les détails', es: 'Ver detalles', it: 'Vedi dettagli' },
     buttonLink: '',
     buttonBackgroundColor: '#3b82f6',
     buttonBorderColor: '#2563eb',
@@ -98,7 +120,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
       }
     } catch (error) {
       console.error('Error loading category:', error);
-      setToast({ message: 'Kategori yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.categoryForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -152,14 +174,14 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
 
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Kategori kaydedilirken hata oluştu', 
+          message: response.errorMessage || t('admin.categoryForm.saveError'), 
           type: 'error' 
         });
         return;
       }
 
       setToast({ 
-        message: isEditing ? 'Kategori güncellendi' : 'Kategori eklendi', 
+        message: isEditing ? t('admin.categoryForm.updateSuccess') : t('admin.categoryForm.createSuccess'), 
         type: 'success' 
       });
 
@@ -169,7 +191,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
     } catch (error: any) {
       console.error('Error saving category:', error);
       setToast({ 
-        message: error.message || 'Beklenmeyen bir hata oluştu', 
+        message: error.message || t('admin.categoryForm.unexpectedError'), 
         type: 'error' 
       });
     } finally {
@@ -187,68 +209,51 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Geri
+            {t('common.back')}
           </Button>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {isEditing ? 'Kategori Düzenle' : 'Yeni Kategori'}
+            {isEditing ? t('admin.categoryForm.editCategory') : t('admin.categoryForm.newCategory')}
           </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Kategori Bilgileri</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.categoryForm.categoryInfo')}</h2>
               
               <div className="space-y-4">
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">İsim</label>
+                    <label className="text-sm font-medium text-gray-700">{t('admin.categoryForm.name')}</label>
                     <button
                       type="button"
                       onClick={() => toggleField('name')}
                       className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                     >
                       <span className="text-base">{expandedFields.has('name') ? '🌐' : '🌍'}</span>
-                      <span>Diğer Diller</span>
+                      <span>{t('admin.categoryForm.otherLanguages')}</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('name') ? '▼' : '▶'}</span>
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
                     <Input
-                      placeholder="🇹🇷 Türkçe"
-                      value={formData.name.tr}
-                      onChange={(e) => setFormData({ ...formData, name: { ...formData.name, tr: e.target.value } })}
+                      placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                      value={formData.name[orderedLanguages[0]]}
+                      onChange={(e) => setFormData({ ...formData, name: { ...formData.name, [orderedLanguages[0]]: e.target.value } })}
                     />
                     
                     {expandedFields.has('name') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Input
-                          placeholder="🇬🇧 English"
-                          value={formData.name.en}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, en: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇩🇪 Deutsch"
-                          value={formData.name.de}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, de: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇫🇷 Français"
-                          value={formData.name.fr}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, fr: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇪🇸 Español"
-                          value={formData.name.es}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, es: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇮🇹 Italiano"
-                          value={formData.name.it}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, it: e.target.value } })}
-                        />
+                        {orderedLanguages.slice(1).map((lang) => (
+                          <Input
+                            key={lang}
+                            placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                            value={formData.name[lang]}
+                            onChange={(e) => setFormData({ ...formData, name: { ...formData.name, [lang]: e.target.value } })}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -256,52 +261,35 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
 
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">Açıklama</label>
+                    <label className="text-sm font-medium text-gray-700">{t('admin.categoryForm.description')}</label>
                     <button
                       type="button"
                       onClick={() => toggleField('description')}
                       className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                     >
                       <span className="text-base">{expandedFields.has('description') ? '🌐' : '🌍'}</span>
-                      <span>Diğer Diller</span>
+                      <span>{t('admin.categoryForm.otherLanguages')}</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('description') ? '▼' : '▶'}</span>
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
                     <Input
-                      placeholder="🇹🇷 Türkçe"
-                      value={formData.description.tr}
-                      onChange={(e) => setFormData({ ...formData, description: { ...formData.description, tr: e.target.value } })}
+                      placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                      value={formData.description[orderedLanguages[0]]}
+                      onChange={(e) => setFormData({ ...formData, description: { ...formData.description, [orderedLanguages[0]]: e.target.value } })}
                     />
                     
                     {expandedFields.has('description') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Input
-                          placeholder="🇬🇧 English"
-                          value={formData.description.en}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, en: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇩🇪 Deutsch"
-                          value={formData.description.de}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, de: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇫🇷 Français"
-                          value={formData.description.fr}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, fr: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇪🇸 Español"
-                          value={formData.description.es}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, es: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇮🇹 Italiano"
-                          value={formData.description.it}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, it: e.target.value } })}
-                        />
+                        {orderedLanguages.slice(1).map((lang) => (
+                          <Input
+                            key={lang}
+                            placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                            value={formData.description[lang]}
+                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, [lang]: e.target.value } })}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -312,11 +300,11 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                   onChange={handleImageChange}
                   onImageClick={(imageUrl) => setLightbox({ isOpen: true, imageUrl })}
                   maxImages={1}
-                  label="Kategori Görseli"
+                  label={t('admin.categoryForm.categoryImage')}
                 />
                 
                 <Input
-                  label="Sıra"
+                  label={t('admin.categoryForm.order')}
                   type="number"
                   value={formData.order.toString()}
                   onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
@@ -325,11 +313,11 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Renk Ayarları</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.categoryForm.colorSettings')}</h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Arka Plan Rengi
+                    {t('admin.categoryForm.backgroundColor')}
                   </label>
                   <div className="flex gap-2">
                     <input
@@ -348,7 +336,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Metin Rengi
+                    {t('admin.categoryForm.textColor')}
                   </label>
                   <div className="flex gap-2">
                     <input
@@ -368,7 +356,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Buton Ayarları</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.categoryForm.buttonSettings')}</h2>
               <div className="space-y-4">
                 <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
                   <input
@@ -379,7 +367,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="showButton" className="text-sm font-medium text-gray-700">
-                    Butonu Göster
+                    {t('admin.categoryForm.showButton')}
                   </label>
                 </div>
 
@@ -387,59 +375,42 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                   <>
                     <div className="border border-gray-200 rounded-lg overflow-hidden">
                       <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                        <label className="text-sm font-medium text-gray-700">Buton Metni</label>
+                        <label className="text-sm font-medium text-gray-700">{t('admin.categoryForm.buttonText')}</label>
                         <button
                           type="button"
                           onClick={() => toggleField('buttonText')}
                           className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                         >
                           <span className="text-base">{expandedFields.has('buttonText') ? '🌐' : '🌍'}</span>
-                          <span>Diğer Diller</span>
+                          <span>{t('admin.categoryForm.otherLanguages')}</span>
                           <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                           <span className="text-gray-400">{expandedFields.has('buttonText') ? '▼' : '▶'}</span>
                         </button>
                       </div>
                       <div className="p-4 space-y-3">
                         <Input
-                          placeholder="🇹🇷 Türkçe"
-                          value={formData.buttonText.tr}
-                          onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, tr: e.target.value } })}
+                          placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                          value={formData.buttonText[orderedLanguages[0]]}
+                          onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, [orderedLanguages[0]]: e.target.value } })}
                         />
                         
                         {expandedFields.has('buttonText') && (
                           <div className="space-y-3 pt-3 border-t border-gray-200">
-                            <Input
-                              placeholder="🇬🇧 English"
-                              value={formData.buttonText.en}
-                              onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, en: e.target.value } })}
-                            />
-                            <Input
-                              placeholder="🇩🇪 Deutsch"
-                              value={formData.buttonText.de}
-                              onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, de: e.target.value } })}
-                            />
-                            <Input
-                              placeholder="🇫🇷 Français"
-                              value={formData.buttonText.fr}
-                              onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, fr: e.target.value } })}
-                            />
-                            <Input
-                              placeholder="🇪🇸 Español"
-                              value={formData.buttonText.es}
-                              onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, es: e.target.value } })}
-                            />
-                            <Input
-                              placeholder="🇮🇹 Italiano"
-                              value={formData.buttonText.it}
-                              onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, it: e.target.value } })}
-                            />
+                            {orderedLanguages.slice(1).map((lang) => (
+                              <Input
+                                key={lang}
+                                placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                                value={formData.buttonText[lang]}
+                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, [lang]: e.target.value } })}
+                              />
+                            ))}
                           </div>
                         )}
                       </div>
                     </div>
 
                     <Input
-                      label="Buton Linki"
+                      label={t('admin.categoryForm.buttonLink')}
                       value={formData.buttonLink}
                       onChange={(e) => setFormData({ ...formData, buttonLink: e.target.value })}
                       placeholder="/products?category=..."
@@ -447,7 +418,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Buton Arka Plan Rengi
+                        {t('admin.categoryForm.buttonBackgroundColor')}
                       </label>
                       <div className="flex gap-2">
                         <input
@@ -466,7 +437,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Buton Çerçeve Rengi
+                        {t('admin.categoryForm.buttonBorderColor')}
                       </label>
                       <div className="flex gap-2">
                         <input
@@ -485,7 +456,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Buton Metin Rengi
+                        {t('admin.categoryForm.buttonTextColor')}
                       </label>
                       <div className="flex gap-2">
                         <input
@@ -509,7 +480,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
 
           <div className="space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Önizleme</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.categoryForm.preview')}</h2>
               <div 
                 className="rounded-lg p-6 min-h-[250px] flex flex-col items-center justify-center gap-4"
                 style={{ backgroundColor: formData.backgroundColor }}
@@ -525,13 +496,13 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                   className="text-xl font-bold text-center"
                   style={{ color: formData.textColor }}
                 >
-                  {formData.name.tr || 'Kategori İsmi'}
+                  {getLocalizedText(formData.name, locale) || t('admin.categoryForm.categoryName')}
                 </h3>
                 <p 
                   className="text-sm text-center max-w-xs"
                   style={{ color: formData.textColor }}
                 >
-                  {formData.description.tr || 'Kategori açıklaması buraya gelecek'}
+                  {getLocalizedText(formData.description, locale) || t('admin.categoryForm.categoryDescription')}
                 </p>
                 {formData.showButton && (
                   <button
@@ -544,14 +515,14 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                       color: formData.buttonTextColor
                     }}
                   >
-                    {formData.buttonText.tr || 'Detayları Gör'}
+                    {getLocalizedText(formData.buttonText, locale) || t('admin.categoryForm.viewDetails')}
                   </button>
                 )}
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Görünürlük</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.categoryForm.visibility')}</h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <input
@@ -562,7 +533,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="showOnHomepage" className="text-sm font-medium text-gray-700">
-                    Anasayfada Göster
+                    {t('admin.categoryForm.showOnHomepage')}
                   </label>
                 </div>
                 <div className="flex items-center gap-3">
@@ -574,14 +545,14 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                    Aktif
+                    {t('admin.categoryForm.active')}
                   </label>
                 </div>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.categoryForm.actions')}</h2>
               <div className="space-y-3">
                 <Button 
                   onClick={handleSave} 
@@ -590,7 +561,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                   disabled={loading}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  {loading ? t('admin.categoryForm.saving') : t('common.save')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -599,7 +570,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
                   disabled={loading}
                 >
                   <X className="w-4 h-4 mr-2" />
-                  İptal
+                  {t('common.cancel')}
                 </Button>
               </div>
             </Card>
@@ -617,7 +588,7 @@ export default function CategoryForm({ categoryId }: CategoryFormProps) {
         <ImageLightbox
           isOpen={lightbox.isOpen}
           imageUrl={lightbox.imageUrl}
-          alt="Kategori Görseli"
+          alt={t('admin.categoryForm.categoryImage')}
           onClose={() => setLightbox({ isOpen: false, imageUrl: '' })}
         />
       </Container>

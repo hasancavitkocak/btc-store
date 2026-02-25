@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Edit, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '../../components/Container';
@@ -12,11 +13,12 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import ImageLightbox from '../../components/ImageLightbox';
 import { searchService, SearchFormData } from '../../services/search.service';
 import { categoryService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface Category {
   code: string;
-  name: { tr: string; en: string };
-  description: { tr: string; en: string };
+  name: { tr: string; en: string; de: string; fr: string; es: string; it: string };
+  description: { tr: string; en: string; de: string; fr: string; es: string; it: string };
   media?: { absolutePath: string };
   order: number;
   active: boolean;
@@ -24,6 +26,8 @@ interface Category {
 }
 
 export default function Categories() {
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -73,17 +77,17 @@ export default function Categories() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('admin.categoriesPage.dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Kategori listesi yüklenirken hata oluştu', 
+          message: response.errorMessage || t('admin.categoriesPage.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading categories:', error);
-      setToast({ message: 'Kategori listesi yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.categoriesPage.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -94,17 +98,17 @@ export default function Categories() {
       const response = await categoryService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Kategori silindi', type: 'success' });
+        setToast({ message: t('admin.categoriesPage.deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadCategories();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('admin.categoriesPage.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting category:', error);
-      setToast({ message: 'Kategori silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.categoriesPage.deleteError'), type: 'error' });
     }
   };
 
@@ -114,19 +118,19 @@ export default function Categories() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Kategoriler
+              {t('admin.categoriesPage.title')}
             </h1>
-            <p className="text-gray-600">Toplam {totalElements} kategori</p>
+            <p className="text-gray-600">{t('admin.categoriesPage.totalCategories', { count: totalElements })}</p>
           </div>
           <Button onClick={() => router.push('/admin/categories/new')} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-5 h-5 mr-2" />
-            Yeni Kategori
+            {t('admin.categoriesPage.newCategory')}
           </Button>
         </div>
 
         {loading ? (
           <Card className="p-12 text-center">
-            <p className="text-gray-500">Yükleniyor...</p>
+            <p className="text-gray-500">{t('admin.categoriesPage.loading')}</p>
           </Card>
         ) : (
           <>
@@ -136,27 +140,27 @@ export default function Categories() {
                   <div className="flex items-center gap-4">
                     <img
                       src={category.media?.absolutePath || '/no-image.svg'}
-                      alt={category.name.tr}
+                      alt={getLocalizedText(category.name, locale)}
                       className="w-32 h-20 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => category.media?.absolutePath && setLightbox({
                         isOpen: true,
                         imageUrl: category.media.absolutePath,
-                        alt: category.name.tr || category.name.en
+                        alt: getLocalizedText(category.name, locale)
                       })}
                     />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{category.name.tr || category.name.en}</h3>
-                      <p className="text-gray-600 text-sm">{category.description.tr || category.description.en}</p>
+                      <h3 className="font-semibold text-lg">{getLocalizedText(category.name, locale)}</h3>
+                      <p className="text-gray-600 text-sm">{getLocalizedText(category.description, locale)}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className={`text-xs px-2 py-1 rounded ${category.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {category.active ? 'Aktif' : 'Pasif'}
+                          {category.active ? t('admin.categoriesPage.active') : t('admin.categoriesPage.inactive')}
                         </span>
                         {category.showOnHomepage && (
                           <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700">
-                            🏠 Anasayfada
+                            🏠 {t('admin.categoriesPage.homePage')}
                           </span>
                         )}
-                        <span className="text-xs text-gray-500">Sıra: {category.order}</span>
+                        <span className="text-xs text-gray-500">{t('admin.categoriesPage.order')}: {category.order}</span>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -174,7 +178,7 @@ export default function Categories() {
                         onClick={() => setDeleteDialog({ 
                           isOpen: true, 
                           code: category.code, 
-                          name: category.name.tr || category.name.en 
+                          name: getLocalizedText(category.name, locale)
                         })}
                         className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
                       >
@@ -188,10 +192,10 @@ export default function Categories() {
 
             {categories.length === 0 && (
               <Card className="p-12 text-center">
-                <p className="text-gray-500 mb-4">Henüz kategori eklenmemiş</p>
+                <p className="text-gray-500 mb-4">{t('admin.categoriesPage.noCategories')}</p>
                 <Button onClick={() => router.push('/admin/categories/new')} className="bg-blue-600 hover:bg-blue-700">
                   <Plus className="w-4 h-4 mr-2" />
-                  İlk Kategoriyi Ekle
+                  {t('admin.categoriesPage.addFirstCategory')}
                 </Button>
               </Card>
             )}
@@ -199,7 +203,7 @@ export default function Categories() {
             {totalElements > 0 && (
               <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
                 <div className="text-sm text-gray-600">
-                  Toplam <span className="font-medium">{totalElements}</span> kayıt
+                  {t('admin.categoriesPage.totalRecords', { count: totalElements })}
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -210,11 +214,11 @@ export default function Categories() {
                     disabled={page === 1 || loading}
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    Önceki
+                    {t('admin.categoriesPage.previous')}
                   </Button>
                   
                   <span className="text-sm text-gray-600 px-4">
-                    Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                    {t('admin.categoriesPage.page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                   </span>
                   
                   <Button
@@ -223,7 +227,7 @@ export default function Categories() {
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages || loading}
                   >
-                    Sonraki
+                    {t('admin.categoriesPage.next')}
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
@@ -244,10 +248,10 @@ export default function Categories() {
           isOpen={deleteDialog.isOpen}
           onClose={() => setDeleteDialog({ isOpen: false, code: '', name: '' })}
           onConfirm={() => handleDelete(deleteDialog.code)}
-          title="Kategori Sil"
-          message={`"${deleteDialog.name}" kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-          confirmText="Sil"
-          cancelText="İptal"
+          title={t('admin.categoriesPage.deleteDialogTitle')}
+          message={t('admin.categoriesPage.deleteDialogMessage', { name: deleteDialog.name })}
+          confirmText={t('admin.categoriesPage.delete')}
+          cancelText={t('admin.categoriesPage.cancel')}
           type="danger"
         />
 
