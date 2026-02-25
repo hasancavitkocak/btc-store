@@ -15,7 +15,7 @@ export type SupportedLocale = 'tr' | 'en' | 'de' | 'fr' | 'es' | 'it';
 
 /**
  * Get localized text from multi-language object based on current locale
- * Falls back to Turkish if the requested locale is not available
+ * Fallback order: requested locale -> Turkish (tr) -> English (en) -> empty string
  */
 export function getLocalizedText(
   multiLangText: MultiLangText | undefined | null,
@@ -25,13 +25,16 @@ export function getLocalizedText(
   
   // Try to get the text in the requested locale
   const text = multiLangText[locale];
+  if (text) return text;
   
-  // If not found, fallback to Turkish
-  if (!text) {
-    return multiLangText.tr || '';
-  }
+  // Fallback to Turkish
+  if (multiLangText.tr) return multiLangText.tr;
   
-  return text;
+  // Fallback to English
+  if (multiLangText.en) return multiLangText.en;
+  
+  // Return empty string if nothing found
+  return '';
 }
 
 /**

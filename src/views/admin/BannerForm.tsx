@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Save, X, ArrowLeft } from 'lucide-react';
 import Container from '../../components/Container';
@@ -13,13 +13,25 @@ import Toast from '../../components/Toast';
 import ImageUpload from '../../components/ImageUpload';
 import ImageLightbox from '../../components/ImageLightbox';
 import { bannerService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface BannerFormProps {
   bannerId?: string;
 }
 
+// Dil bilgileri
+const languageInfo: Record<SupportedLocale, { code: string; name: string }> = {
+  tr: { code: 'TR', name: 'Türkçe' },
+  en: { code: 'EN', name: 'English' },
+  de: { code: 'DE', name: 'Deutsch' },
+  fr: { code: 'FR', name: 'Français' },
+  es: { code: 'ES', name: 'Español' },
+  it: { code: 'IT', name: 'Italiano' }
+};
+
 export default function BannerForm({ bannerId }: BannerFormProps) {
   const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const router = useRouter();
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,6 +45,14 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
   });
   
   const isEditing = !!bannerId;
+
+  // Kullanıcının dilini en üste, diğerlerini sıraya koy
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
 
   const toggleField = (fieldName: string) => {
     const newExpanded = new Set(expandedFields);
@@ -98,7 +118,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
       }
     } catch (error) {
       console.error('Error loading banner:', error);
-      setToast({ message: 'Banner yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.bannerForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -149,14 +169,14 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
 
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Banner kaydedilirken hata oluştu', 
+          message: response.errorMessage || t('admin.bannerForm.saveError'), 
           type: 'error' 
         });
         return;
       }
 
       setToast({ 
-        message: isEditing ? 'Banner güncellendi' : 'Banner eklendi', 
+        message: isEditing ? t('admin.bannerForm.updateSuccess') : t('admin.bannerForm.createSuccess'), 
         type: 'success' 
       });
 
@@ -166,7 +186,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
     } catch (error: any) {
       console.error('Error saving banner:', error);
       setToast({ 
-        message: error.message || 'Beklenmeyen bir hata oluştu', 
+        message: error.message || t('admin.bannerForm.unexpectedError'), 
         type: 'error' 
       });
     } finally {
@@ -195,57 +215,40 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Banner Bilgileri</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.bannerForm.bannerInfo')}</h2>
               
               <div className="space-y-4">
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">Başlık</label>
+                    <label className="text-sm font-medium text-gray-700">{t('admin.bannerForm.title')}</label>
                     <button
                       type="button"
                       onClick={() => toggleField('title')}
                       className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                     >
                       <span className="text-base">{expandedFields.has('title') ? '🌐' : '🌍'}</span>
-                      <span>Diğer Diller</span>
+                      <span>{t('admin.bannerForm.otherLanguages')}</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('title') ? '▼' : '▶'}</span>
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
                     <Input
-                      placeholder="🇹🇷 Türkçe"
-                      value={formData.title.tr}
-                      onChange={(e) => setFormData({ ...formData, title: { ...formData.title, tr: e.target.value } })}
+                      placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                      value={formData.title[orderedLanguages[0]]}
+                      onChange={(e) => setFormData({ ...formData, title: { ...formData.title, [orderedLanguages[0]]: e.target.value } })}
                     />
                     
                     {expandedFields.has('title') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Input
-                          placeholder="🇬🇧 English"
-                          value={formData.title.en}
-                          onChange={(e) => setFormData({ ...formData, title: { ...formData.title, en: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇩🇪 Deutsch"
-                          value={formData.title.de}
-                          onChange={(e) => setFormData({ ...formData, title: { ...formData.title, de: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇫🇷 Français"
-                          value={formData.title.fr}
-                          onChange={(e) => setFormData({ ...formData, title: { ...formData.title, fr: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇪🇸 Español"
-                          value={formData.title.es}
-                          onChange={(e) => setFormData({ ...formData, title: { ...formData.title, es: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇮🇹 Italiano"
-                          value={formData.title.it}
-                          onChange={(e) => setFormData({ ...formData, title: { ...formData.title, it: e.target.value } })}
-                        />
+                        {orderedLanguages.slice(1).map((lang) => (
+                          <Input
+                            key={lang}
+                            placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                            value={formData.title[lang]}
+                            onChange={(e) => setFormData({ ...formData, title: { ...formData.title, [lang]: e.target.value } })}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -253,59 +256,42 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
 
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">Alt Başlık</label>
+                    <label className="text-sm font-medium text-gray-700">{t('admin.bannerForm.subtitle')}</label>
                     <button
                       type="button"
                       onClick={() => toggleField('subtitle')}
                       className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                     >
                       <span className="text-base">{expandedFields.has('subtitle') ? '🌐' : '🌍'}</span>
-                      <span>Diğer Diller</span>
+                      <span>{t('admin.bannerForm.otherLanguages')}</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('subtitle') ? '▼' : '▶'}</span>
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
                     <Input
-                      placeholder="🇹🇷 Türkçe"
-                      value={formData.subtitle.tr}
-                      onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, tr: e.target.value } })}
+                      placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                      value={formData.subtitle[orderedLanguages[0]]}
+                      onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, [orderedLanguages[0]]: e.target.value } })}
                     />
                     
                     {expandedFields.has('subtitle') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Input
-                          placeholder="🇬🇧 English"
-                          value={formData.subtitle.en}
-                          onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, en: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇩🇪 Deutsch"
-                          value={formData.subtitle.de}
-                          onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, de: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇫🇷 Français"
-                          value={formData.subtitle.fr}
-                          onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, fr: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇪🇸 Español"
-                          value={formData.subtitle.es}
-                          onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, es: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇮🇹 Italiano"
-                          value={formData.subtitle.it}
-                          onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, it: e.target.value } })}
-                        />
+                        {orderedLanguages.slice(1).map((lang) => (
+                          <Input
+                            key={lang}
+                            placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                            value={formData.subtitle[lang]}
+                            onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, [lang]: e.target.value } })}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-4">Görünürlük Ayarları</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('admin.bannerForm.visibilitySettings')}</h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <input
@@ -316,7 +302,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                         className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <label htmlFor="showTitle" className="text-sm font-medium text-gray-700">
-                        Başlık Göster
+                        {t('admin.bannerForm.showTitle')}
                       </label>
                     </div>
                     
@@ -329,7 +315,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                         className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <label htmlFor="showSubtitle" className="text-sm font-medium text-gray-700">
-                        Alt Başlık Göster
+                        {t('admin.bannerForm.showSubtitle')}
                       </label>
                     </div>
                     
@@ -342,7 +328,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                         className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       />
                       <label htmlFor="showButton" className="text-sm font-medium text-gray-700">
-                        Buton Göster
+                        {t('admin.bannerForm.showButton')}
                       </label>
                     </div>
                   </div>
@@ -350,74 +336,57 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
 
                 {formData.showButton && (
                   <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-4">Buton Ayarları</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('admin.bannerForm.buttonSettings')}</h3>
                     <div className="space-y-4">
                       <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
                         <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                          <label className="text-sm font-medium text-gray-700">Buton Metni</label>
+                          <label className="text-sm font-medium text-gray-700">{t('admin.bannerForm.buttonText')}</label>
                           <button
                             type="button"
                             onClick={() => toggleField('buttonText')}
                             className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                           >
                             <span className="text-base">{expandedFields.has('buttonText') ? '🌐' : '🌍'}</span>
-                            <span>Diğer Diller</span>
+                            <span>{t('admin.bannerForm.otherLanguages')}</span>
                             <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                             <span className="text-gray-400">{expandedFields.has('buttonText') ? '▼' : '▶'}</span>
                           </button>
                         </div>
                         <div className="p-4 space-y-3">
                           <Input
-                            placeholder="🇹🇷 Türkçe"
-                            value={formData.buttonText.tr}
-                            onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, tr: e.target.value } })}
+                            placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                            value={formData.buttonText[orderedLanguages[0]]}
+                            onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, [orderedLanguages[0]]: e.target.value } })}
                           />
                           
                           {expandedFields.has('buttonText') && (
                             <div className="space-y-3 pt-3 border-t border-gray-200">
-                              <Input
-                                placeholder="🇬🇧 English"
-                                value={formData.buttonText.en}
-                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, en: e.target.value } })}
-                              />
-                              <Input
-                                placeholder="🇩🇪 Deutsch"
-                                value={formData.buttonText.de}
-                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, de: e.target.value } })}
-                              />
-                              <Input
-                                placeholder="🇫🇷 Français"
-                                value={formData.buttonText.fr}
-                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, fr: e.target.value } })}
-                              />
-                              <Input
-                                placeholder="🇪🇸 Español"
-                                value={formData.buttonText.es}
-                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, es: e.target.value } })}
-                              />
-                              <Input
-                                placeholder="🇮🇹 Italiano"
-                                value={formData.buttonText.it}
-                                onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, it: e.target.value } })}
-                              />
+                              {orderedLanguages.slice(1).map((lang) => (
+                                <Input
+                                  key={lang}
+                                  placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                                  value={formData.buttonText[lang]}
+                                  onChange={(e) => setFormData({ ...formData, buttonText: { ...formData.buttonText, [lang]: e.target.value } })}
+                                />
+                              ))}
                             </div>
                           )}
                         </div>
                       </div>
 
                       <Input
-                        label="Buton Linki"
+                        label={t('admin.bannerForm.buttonLink')}
                         value={formData.buttonLink}
                         onChange={(e) => setFormData({ ...formData, buttonLink: e.target.value })}
                         placeholder="/products"
                       />
 
                       <div className="border-t border-gray-300 pt-4 mt-4">
-                        <h4 className="text-sm font-semibold text-gray-700 mb-3">Buton Renkleri</h4>
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3">{t('admin.bannerForm.buttonColors')}</h4>
                         <div className="space-y-3">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Arka Plan Rengi
+                              {t('admin.bannerForm.backgroundColor')}
                             </label>
                             <div className="flex gap-2 items-center">
                               <input
@@ -437,7 +406,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
 
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Çerçeve Rengi
+                              {t('admin.bannerForm.borderColor')}
                             </label>
                             <div className="flex gap-2 items-center">
                               <input
@@ -457,7 +426,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
 
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Metin Rengi
+                              {t('admin.bannerForm.textColor')}
                             </label>
                             <div className="flex gap-2 items-center">
                               <input
@@ -478,7 +447,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                       </div>
 
                       <div className="mt-4 p-4 bg-white rounded-lg border border-gray-200">
-                        <p className="text-xs text-gray-600 mb-3">Önizleme:</p>
+                        <p className="text-xs text-gray-600 mb-3">{t('admin.bannerForm.preview')}</p>
                         <button
                           type="button"
                           className="px-6 py-3 rounded-lg font-semibold transition-all"
@@ -490,7 +459,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                             color: formData.buttonTextColor
                           }}
                         >
-                          {formData.buttonText.tr || 'Buton Metni'}
+                          {getLocalizedText(formData.buttonText, locale) || t('admin.bannerForm.buttonTextPlaceholder')}
                         </button>
                       </div>
                     </div>
@@ -502,11 +471,11 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                   onChange={handleImageChange}
                   onImageClick={(imageUrl) => setLightbox({ isOpen: true, imageUrl })}
                   maxImages={1}
-                  label="Banner Görseli"
+                  label={t('admin.bannerForm.bannerImage')}
                 />
                 
                 <Input
-                  label="Sıra"
+                  label={t('admin.bannerForm.order')}
                   type="number"
                   value={formData.order.toString()}
                   onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
@@ -517,7 +486,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
 
           <div className="space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Durum</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.bannerForm.status')}</h2>
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
@@ -527,13 +496,13 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                   className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                  Aktif
+                  {t('admin.bannerForm.active')}
                 </label>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('admin.bannerForm.actions')}</h2>
               <div className="space-y-3">
                 <Button 
                   onClick={handleSave} 
@@ -542,7 +511,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                   disabled={loading}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  {loading ? t('admin.bannerForm.saving') : t('common.save')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -551,7 +520,7 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
                   disabled={loading}
                 >
                   <X className="w-4 h-4 mr-2" />
-                  İptal
+                  {t('common.cancel')}
                 </Button>
               </div>
             </Card>
@@ -569,10 +538,11 @@ export default function BannerForm({ bannerId }: BannerFormProps) {
         <ImageLightbox
           isOpen={lightbox.isOpen}
           imageUrl={lightbox.imageUrl}
-          alt="Banner Görseli"
+          alt={t('admin.bannerForm.bannerImage')}
           onClose={() => setLightbox({ isOpen: false, imageUrl: '' })}
         />
       </Container>
     </Section>
   );
 }
+
