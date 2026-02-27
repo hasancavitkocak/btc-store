@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { LayoutDashboard, Settings, Image, FolderTree, Package, Users, BookOpen, FileText, MessageSquare, Home, LogOut, ChevronDown, ChevronRight, Phone, Mail, Shield, LucideIcon, Edit, Trash2, Plus, Eye, Save, Upload, Download, Search, Filter, Calendar, Clock, CheckCircle, XCircle, AlertTriangle, User, Lock, Key, Globe, Database, Server, Cloud, Activity, BarChart, PieChart, TrendingUp, Award, Target, Briefcase } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api';
 import { MenuLinkItemData, LocalizeData } from '@/types/menu';
+import { getLocalizedText, getCurrentLocale } from '@/lib/i18n-utils';
 
 // Icon mapping - backend'den gelen icon string'ini Lucide icon'a çevir
 const iconMap: Record<string, LucideIcon> = {
@@ -91,15 +92,16 @@ const getMenuUrl = (menu: MenuLinkItemData): string => {
 };
 
 export default function AdminSidebar() {
-  const locale = useLocale();
+  const t = useTranslations();
   const pathname = usePathname();
   const router = useRouter();
   const currentUser = useAuthStore((state) => state.currentUser);
   const hasUserGroup = useAuthStore((state) => state.hasUserGroup);
   const logout = useAuthStore((state) => state.logout);
   
-  // Kullanıcının dilini auth store'dan al, yoksa locale kullan
-  const userLanguage = currentUser?.language || locale;
+  // Kullanıcının dilini auth store'dan al, yoksa current locale kullan
+  const currentLocale = getCurrentLocale();
+  const userLanguage = currentUser?.language || currentLocale;
   
   const [menus, setMenus] = useState<MenuLinkItemData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -181,9 +183,8 @@ export default function AdminSidebar() {
     // taskStep alanını çıkar
     const { taskStep, ...translations } = name;
     
-    // Kullanıcının diline göre çeviriyi al
-    const translation = translations[userLanguage] || translations['tr'] || translations['en'] || '';
-    return typeof translation === 'string' ? translation : '';
+    // getLocalizedText utility'sini kullan - userLanguage'i SupportedLocale olarak cast et
+    return getLocalizedText(translations, userLanguage as any);
   };
 
   // Root menüleri filtrele ve sırala
@@ -196,7 +197,7 @@ export default function AdminSidebar() {
   if (loading) {
     return (
       <aside className="w-64 bg-gray-900 text-white h-screen sticky top-0 flex items-center justify-center">
-        <div className="text-gray-400">Yükleniyor...</div>
+        <div className="text-gray-400">{t('admin.sidebar.loading')}</div>
       </aside>
     );
   }
@@ -205,7 +206,7 @@ export default function AdminSidebar() {
     <aside className="w-64 bg-gray-900 text-white h-screen sticky top-0 flex flex-col">
       <div className="p-4 flex-1 overflow-y-auto">
         <Link href="/admin" className="block mb-8">
-          <h2 className="text-2xl font-bold">Admin Panel</h2>
+          <h2 className="text-2xl font-bold">{t('admin.sidebar.adminPanel')}</h2>
         </Link>
 
         {currentUser && (
@@ -219,7 +220,7 @@ export default function AdminSidebar() {
                 />
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-400">Hoş geldiniz</p>
+                <p className="text-sm text-gray-400">{t('admin.sidebar.welcome')}</p>
                 <p className="font-semibold truncate">
                   {currentUser.firstName} {currentUser.lastName}
                 </p>
@@ -378,14 +379,14 @@ export default function AdminSidebar() {
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
         >
           <Home className="w-5 h-5" />
-          <span>Siteye Dön</span>
+          <span>{t('admin.sidebar.backToSite')}</span>
         </Link>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-red-600 hover:text-white transition-colors"
         >
           <LogOut className="w-5 h-5" />
-          <span>Çıkış Yap</span>
+          <span>{t('admin.sidebar.logout')}</span>
         </button>
       </div>
     </aside>

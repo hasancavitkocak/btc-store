@@ -250,6 +250,13 @@
       "quickActions": "Quick Actions",
       "modulesLoadError": "Error loading modules"
     },
+    "sidebar": {
+      "loading": "Loading...",
+      "adminPanel": "Admin Panel",
+      "welcome": "Welcome",
+      "backToSite": "Back to Site",
+      "logout": "Logout"
+    },
     "header": "Header Settings",
     "banners": "Banner Management",
     "categories": "Category Management",

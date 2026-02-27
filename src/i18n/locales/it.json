@@ -250,6 +250,13 @@
       "quickActions": "Azioni Rapide",
       "modulesLoadError": "Errore durante il caricamento dei moduli"
     },
+    "sidebar": {
+      "loading": "Caricamento...",
+      "adminPanel": "Pannello di Amministrazione",
+      "welcome": "Benvenuto",
+      "backToSite": "Torna al Sito",
+      "logout": "Disconnetti"
+    },
     "header": "Impostazioni Intestazione",
     "banners": "Gestione Banner",
     "categories": "Gestione Categorie",

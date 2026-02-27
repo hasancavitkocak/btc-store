@@ -205,6 +205,13 @@
       "quickActions": "Schnellaktionen",
       "modulesLoadError": "Fehler beim Laden der Module"
     },
+    "sidebar": {
+      "loading": "Wird geladen...",
+      "adminPanel": "Admin-Panel",
+      "welcome": "Willkommen",
+      "backToSite": "Zurück zur Website",
+      "logout": "Abmelden"
+    },
     "header": "Header-Einstellungen",
     "banners": "Banner-Verwaltung",
     "categories": "Kategorie-Verwaltung",

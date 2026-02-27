@@ -250,6 +250,13 @@
       "quickActions": "Hızlı İşlemler",
       "modulesLoadError": "Modüller yüklenirken hata oluştu"
     },
+    "sidebar": {
+      "loading": "Yükleniyor...",
+      "adminPanel": "Admin Panel",
+      "welcome": "Hoş geldiniz",
+      "backToSite": "Siteye Dön",
+      "logout": "Çıkış Yap"
+    },
     "header": "Başlık Ayarları",
     "banners": "Banner Yönetimi",
     "categories": "Kategori Yönetimi",

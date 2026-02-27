@@ -205,6 +205,13 @@
       "quickActions": "Acciones Rápidas",
       "modulesLoadError": "Error al cargar módulos"
     },
+    "sidebar": {
+      "loading": "Cargando...",
+      "adminPanel": "Panel de Administración",
+      "welcome": "Bienvenido",
+      "backToSite": "Volver al Sitio",
+      "logout": "Cerrar Sesión"
+    },
     "header": "Configuración de Encabezado",
     "banners": "Gestión de Banners",
     "categories": "Gestión de Categorías",
