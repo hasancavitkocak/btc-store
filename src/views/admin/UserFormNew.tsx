@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Save, X, ArrowLeft, Search } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -12,6 +13,7 @@ import Toast from '../../components/Toast';
 import ImageUpload from '../../components/ImageUpload';
 import ImageLightbox from '../../components/ImageLightbox';
 import { userService, userGroupService, languageService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface UserFormProps {
   userId?: string;
@@ -19,6 +21,8 @@ interface UserFormProps {
 
 export default function UserFormNew({ userId }: UserFormProps) {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
   const [userGroups, setUserGroups] = useState<any[]>([]);
@@ -123,7 +127,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
       }
     } catch (error) {
       console.error('Error loading user:', error);
-      setToast({ message: 'Kullanıcı yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('userForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -131,17 +135,17 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
   const handleSave = async () => {
     if (!formData.username.trim()) {
-      setToast({ message: 'Kullanıcı adı zorunludur', type: 'error' });
+      setToast({ message: t('userForm.usernameRequired'), type: 'error' });
       return;
     }
 
     if (!isEditing && !formData.definedPassword.trim()) {
-      setToast({ message: 'Şifre zorunludur', type: 'error' });
+      setToast({ message: t('userForm.passwordRequired'), type: 'error' });
       return;
     }
 
     if (formData.definedPassword && formData.definedPassword !== formData.confirmPassword) {
-      setToast({ message: 'Şifreler eşleşmiyor', type: 'error' });
+      setToast({ message: t('userForm.passwordMismatch'), type: 'error' });
       return;
     }
 
@@ -166,14 +170,14 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Kullanıcı kaydedilirken hata oluştu', 
+          message: response.errorMessage || t('userForm.saveError'), 
           type: 'error' 
         });
         return;
       }
 
       setToast({ 
-        message: isEditing ? 'Kullanıcı güncellendi' : 'Kullanıcı eklendi', 
+        message: isEditing ? t('userForm.updateSuccess') : t('userForm.createSuccess'), 
         type: 'success' 
       });
 
@@ -183,7 +187,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
     } catch (error: any) {
       console.error('Error saving user:', error);
       setToast({ 
-        message: error.message || 'Beklenmeyen bir hata oluştu', 
+        message: error.message || t('userForm.unexpectedError'), 
         type: 'error' 
       });
     } finally {
@@ -262,6 +266,18 @@ export default function UserFormNew({ userId }: UserFormProps) {
     }));
   };
 
+  const getSelectedLanguageName = () => {
+    if (!selectedLanguageCode) return t('userForm.selectLanguage');
+    const lang = languages.find(l => l.code === selectedLanguageCode);
+    return getLocalizedText(lang?.name, locale) || selectedLanguageCode;
+  };
+
+  const getGroupDisplayName = (group: any) => {
+    return getLocalizedText(group.description, locale) || 
+           getLocalizedText(group.name, locale) || 
+           group.code;
+  };
+
   return (
     <Section>
       <Container>
@@ -272,26 +288,26 @@ export default function UserFormNew({ userId }: UserFormProps) {
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Geri
+            {t('common.back')}
           </Button>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {isEditing ? 'Kullanıcı Düzenle' : 'Yeni Kullanıcı'}
+            {isEditing ? t('userForm.editUser') : t('userForm.newUser')}
           </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Kullanıcı Bilgileri</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('userForm.userInfo')}</h2>
               
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Kullanıcı Adı <span className="text-red-500">*</span>
+                    {t('userForm.username')} <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    placeholder="Kullanıcı adı"
+                    placeholder={t('userForm.usernamePlaceholder')}
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                     disabled={isEditing}
@@ -301,10 +317,10 @@ export default function UserFormNew({ userId }: UserFormProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ad
+                      {t('userForm.firstName')}
                     </label>
                     <Input
-                      placeholder="Ad"
+                      placeholder={t('userForm.firstNamePlaceholder')}
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     />
@@ -312,10 +328,10 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Soyad
+                      {t('userForm.lastName')}
                     </label>
                     <Input
-                      placeholder="Soyad"
+                      placeholder={t('userForm.lastNamePlaceholder')}
                       value={formData.lastName}
                       onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     />
@@ -324,11 +340,11 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    E-posta
+                    {t('userForm.email')}
                   </label>
                   <Input
                     type="email"
-                    placeholder="ornek@email.com"
+                    placeholder={t('userForm.emailPlaceholder')}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
@@ -336,10 +352,10 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Telefon
+                    {t('userForm.phone')}
                   </label>
                   <Input
-                    placeholder="+90 555 123 45 67"
+                    placeholder={t('userForm.phonePlaceholder')}
                     value={formData.phoneNumber}
                     onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                   />
@@ -347,7 +363,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
                 <div className="relative language-dropdown-container">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Dil
+                    {t('userForm.language')}
                   </label>
                   
                   {/* Dropdown Trigger */}
@@ -357,11 +373,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                     className="w-full px-4 py-2 text-left border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white flex items-center justify-between hover:border-gray-400 transition-colors"
                   >
                     <span className={selectedLanguageCode ? 'text-gray-900' : 'text-gray-500'}>
-                      {selectedLanguageCode 
-                        ? languages.find(l => l.code === selectedLanguageCode)?.name?.tr || 
-                          languages.find(l => l.code === selectedLanguageCode)?.name?.en || 
-                          selectedLanguageCode
-                        : 'Dil seçin...'}
+                      {getSelectedLanguageName()}
                     </span>
                     <Search className="w-5 h-5 text-gray-400" />
                   </button>
@@ -375,7 +387,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <input
                             type="text"
-                            placeholder="Dil ara..."
+                            placeholder={t('userForm.searchLanguage')}
                             value={languageSearchQuery}
                             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
                             onChange={(e) => {
@@ -409,7 +421,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                       <div className="max-h-64 overflow-y-auto">
                         {filteredLanguages.length === 0 ? (
                           <div className="px-4 py-8 text-center text-gray-500 text-sm">
-                            {languageSearchQuery ? 'Sonuç bulunamadı' : 'Dil bulunamadı'}
+                            {languageSearchQuery ? t('userForm.noSearchResults') : t('userForm.noLanguagesFound')}
                           </div>
                         ) : (
                           filteredLanguages.map(lang => (
@@ -427,12 +439,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                               }`}
                             >
                               <span className="text-sm flex-1">
-                                {lang.name?.tr || lang.name?.en || lang.code}
-                                {lang.name?.en && lang.name?.tr !== lang.name?.en && (
-                                  <span className="ml-2 text-xs text-gray-500">
-                                    ({lang.name.en})
-                                  </span>
-                                )}
+                                {getLocalizedText(lang.name, locale) || lang.code}
                               </span>
                               {selectedLanguageCode === lang.code && (
                                 <span className="text-blue-600 font-bold">✓</span>
@@ -447,7 +454,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {isEditing ? 'Yeni Şifre (Değiştirmek için doldurun)' : 'Şifre'} {!isEditing && <span className="text-red-500">*</span>}
+                    {isEditing ? t('userForm.newPassword') : t('userForm.password')} {!isEditing && <span className="text-red-500">*</span>}
                   </label>
                   <Input
                     type="password"
@@ -460,7 +467,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                 {formData.definedPassword && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Şifre Tekrar <span className="text-red-500">*</span>
+                      {t('userForm.confirmPassword')} <span className="text-red-500">*</span>
                     </label>
                     <Input
                       type="password"
@@ -474,11 +481,11 @@ export default function UserFormNew({ userId }: UserFormProps) {
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
                     <label className="text-sm font-medium text-gray-700">
-                      Kullanıcı Grupları
+                      {t('userForm.userGroups')}
                     </label>
                     {formData.userGroups.length > 0 && (
                       <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">
-                        {formData.userGroups.length} seçili
+                        {t('userForm.groupsSelected', { count: formData.userGroups.length })}
                       </span>
                     )}
                   </div>
@@ -489,7 +496,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="text"
-                        placeholder="Grup ara..."
+                        placeholder={t('userForm.searchGroup')}
                         value={groupSearchQuery}
                         className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                         onChange={(e) => handleUserGroupSearch(e.target.value)}
@@ -501,7 +508,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                     <div className="space-y-1 max-h-64 overflow-y-auto">
                       {filteredUserGroups.length === 0 ? (
                         <p className="text-sm text-gray-500 text-center py-4">
-                          {groupSearchQuery ? 'Arama sonucu bulunamadı' : 'Kullanıcı grubu bulunamadı'}
+                          {groupSearchQuery ? t('userForm.noSearchResults') : t('userForm.noGroupsFound')}
                         </p>
                       ) : (
                         filteredUserGroups.map(group => (
@@ -521,13 +528,8 @@ export default function UserFormNew({ userId }: UserFormProps) {
                             />
                             <div className="ml-3 flex-1">
                               <span className="text-sm font-medium text-gray-900">
-                                {group.description?.tr || group.description?.en || group.name?.tr || group.name?.en || group.code}
+                                {getGroupDisplayName(group)}
                               </span>
-                              {group.description?.en && group.description?.tr !== group.description?.en && (
-                                <span className="ml-2 text-xs text-gray-500">
-                                  ({group.description.en})
-                                </span>
-                              )}
                             </div>
                             {formData.userGroups.includes(group.code) && (
                               <span className="text-blue-600 font-bold">✓</span>
@@ -544,13 +546,13 @@ export default function UserFormNew({ userId }: UserFormProps) {
 
           <div className="space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Profil Resmi</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('userForm.profilePicture')}</h2>
               <div className="flex flex-col items-center">
                 {imageFiles.length > 0 ? (
                   <div className="relative group mb-4">
                     <img
                       src={imageFiles[0]}
-                      alt="Profil resmi"
+                      alt={t('userForm.profilePictureAlt')}
                       className="w-32 h-32 rounded-full object-cover border-2 border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
                       onClick={() => setLightbox({ isOpen: true, imageUrl: imageFiles[0] })}
                     />
@@ -588,16 +590,16 @@ export default function UserFormNew({ userId }: UserFormProps) {
                   htmlFor="profile-picture-upload"
                   className="cursor-pointer px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
-                  {imageFiles.length > 0 ? 'Resmi Değiştir' : 'Resim Yükle'}
+                  {imageFiles.length > 0 ? t('userForm.changePicture') : t('userForm.uploadPicture')}
                 </label>
                 <p className="text-xs text-gray-500 mt-2 text-center">
-                  400x400px (kare)
+                  {t('userForm.pictureSize')}
                 </p>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Durum</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('userForm.status')}</h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <input
@@ -608,14 +610,14 @@ export default function UserFormNew({ userId }: UserFormProps) {
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                    Aktif
+                    {t('userForm.active')}
                   </label>
                 </div>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('userForm.actions')}</h2>
               <div className="space-y-3">
                 <Button 
                   onClick={handleSave} 
@@ -624,7 +626,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                   disabled={loading}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  {loading ? t('userForm.saving') : t('common.save')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -633,7 +635,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
                   disabled={loading}
                 >
                   <X className="w-4 h-4 mr-2" />
-                  İptal
+                  {t('common.cancel')}
                 </Button>
               </div>
             </Card>
@@ -651,7 +653,7 @@ export default function UserFormNew({ userId }: UserFormProps) {
         <ImageLightbox
           isOpen={lightbox.isOpen}
           imageUrl={lightbox.imageUrl}
-          alt="Profil Resmi"
+          alt={t('userForm.profilePictureAlt')}
           onClose={() => setLightbox({ isOpen: false, imageUrl: '' })}
         />
       </Container>
