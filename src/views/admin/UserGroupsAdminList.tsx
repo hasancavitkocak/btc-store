@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Trash2, Edit2, Plus, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
@@ -9,6 +10,7 @@ import Toast from '../../components/Toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { searchService, SearchFormData } from '../../services/search.service';
 import { userGroupService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface UserGroup {
   id: number;
@@ -22,6 +24,8 @@ interface UserGroup {
 
 export default function UserGroupsAdminList() {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [userGroups, setUserGroups] = useState<UserGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -64,17 +68,17 @@ export default function UserGroupsAdminList() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('userGroupsAdmin.dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Roller yüklenirken hata oluştu', 
+          message: response.errorMessage || t('userGroupsAdmin.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading user groups:', error);
-      setToast({ message: 'Roller yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('userGroupsAdmin.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -85,24 +89,24 @@ export default function UserGroupsAdminList() {
       const response = await userGroupService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Rol silindi', type: 'success' });
+        setToast({ message: t('userGroupsAdmin.deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadUserGroups();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('userGroupsAdmin.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting user group:', error);
-      setToast({ message: 'Rol silinirken bir hata oluştu.', type: 'error' });
+      setToast({ message: t('userGroupsAdmin.deleteError'), type: 'error' });
     }
   };
 
   if (loading && !mounted) {
     return (
       <div className="p-8">
-        <div className="text-center">Yükleniyor...</div>
+        <div className="text-center">{t('userGroupsAdmin.loading')}</div>
       </div>
     );
   }
@@ -112,9 +116,9 @@ export default function UserGroupsAdminList() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Roller
+            {t('userGroupsAdmin.title')}
           </h1>
-          <p className="text-gray-600">Toplam {totalElements} rol</p>
+          <p className="text-gray-600">{t('userGroupsAdmin.totalRoles', { count: totalElements })}</p>
         </div>
         <div className="flex gap-3">
           <Button
@@ -122,21 +126,21 @@ export default function UserGroupsAdminList() {
             onClick={() => router.push('/admin/users')}
             className="flex items-center gap-2"
           >
-            Kullanıcılara Dön
+            {t('userGroupsAdmin.backToUsers')}
           </Button>
           <Button
             onClick={() => router.push('/admin/user-groups/new')}
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
           >
             <Plus className="w-5 h-5" />
-            Yeni Rol
+            {t('userGroupsAdmin.newRole')}
           </Button>
         </div>
       </div>
 
       {loading ? (
         <Card className="p-12 text-center">
-          <p className="text-gray-500">Yükleniyor...</p>
+          <p className="text-gray-500">{t('userGroupsAdmin.loading')}</p>
         </Card>
       ) : userGroups.length === 0 ? (
         <Card className="p-12 text-center">
@@ -145,12 +149,12 @@ export default function UserGroupsAdminList() {
               <Users className="w-8 h-8 text-gray-400" />
             </div>
             <div>
-              <p className="text-gray-900 font-medium mb-1">Henüz rol eklenmemiş</p>
-              <p className="text-gray-500 text-sm mb-4">İlk rolü ekleyerek başlayın</p>
+              <p className="text-gray-900 font-medium mb-1">{t('userGroupsAdmin.noRoles')}</p>
+              <p className="text-gray-500 text-sm mb-4">{t('userGroupsAdmin.addFirstRole')}</p>
             </div>
             <Button onClick={() => router.push('/admin/user-groups/new')} className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
-              İlk Rolü Ekle
+              {t('userGroupsAdmin.addFirstRoleButton')}
             </Button>
           </div>
         </Card>
@@ -162,16 +166,16 @@ export default function UserGroupsAdminList() {
                 <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Rol
+                      {t('userGroupsAdmin.role')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Açıklama
+                      {t('userGroupsAdmin.description')}
                     </th>
                     <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Oluşturulma
+                      {t('userGroupsAdmin.createdDate')}
                     </th>
                     <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      İşlemler
+                      {t('userGroupsAdmin.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -188,18 +192,18 @@ export default function UserGroupsAdminList() {
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-gray-900">{group.code}</div>
-                            <div className="text-xs text-gray-500">Kullanıcı Grubu</div>
+                            <div className="text-xs text-gray-500">{t('userGroupsAdmin.userGroup')}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-600">
-                          {group.description?.tr || group.description?.en || '-'}
+                          {getLocalizedText(group.description, locale) || '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <span className="text-xs text-gray-500">
-                          {group.createdDate ? new Date(group.createdDate).toLocaleDateString('tr-TR') : '-'}
+                          {group.createdDate ? new Date(group.createdDate).toLocaleDateString(locale === 'tr' ? 'tr-TR' : locale === 'en' ? 'en-US' : locale === 'de' ? 'de-DE' : locale === 'fr' ? 'fr-FR' : locale === 'es' ? 'es-ES' : 'it-IT') : '-'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -207,14 +211,14 @@ export default function UserGroupsAdminList() {
                           <button
                             onClick={() => router.push(`/admin/user-groups/${group.code}`)}
                             className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:bg-blue-100 transition-colors"
-                            title="Düzenle"
+                            title={t('userGroupsAdmin.edit')}
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setDeleteDialog({ isOpen: true, code: group.code })}
                             className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
-                            title="Sil"
+                            title={t('userGroupsAdmin.delete')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -229,7 +233,7 @@ export default function UserGroupsAdminList() {
 
           <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
             <div className="text-sm text-gray-600">
-              Toplam <span className="font-medium">{totalElements}</span> kayıt
+              {t('userGroupsAdmin.totalRecords', { count: totalElements })}
             </div>
             
             <div className="flex items-center gap-2">
@@ -240,11 +244,11 @@ export default function UserGroupsAdminList() {
                 disabled={page === 1 || loading}
               >
                 <ChevronLeft className="w-4 h-4" />
-                Önceki
+                {t('userGroupsAdmin.previous')}
               </Button>
               
               <span className="text-sm text-gray-600 px-4">
-                Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                {t('userGroupsAdmin.pageInfo', { current: page, total: totalPages || 1 })}
               </span>
               
               <Button
@@ -253,7 +257,7 @@ export default function UserGroupsAdminList() {
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages || loading}
               >
-                Sonraki
+                {t('userGroupsAdmin.next')}
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
@@ -273,10 +277,10 @@ export default function UserGroupsAdminList() {
         isOpen={deleteDialog.isOpen}
         onClose={() => setDeleteDialog({ isOpen: false, code: '' })}
         onConfirm={() => handleDelete(deleteDialog.code)}
-        title="Rol Sil"
-        message={`"${deleteDialog.code}" rolünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-        confirmText="Sil"
-        cancelText="İptal"
+        title={t('userGroupsAdmin.deleteDialogTitle')}
+        message={t('userGroupsAdmin.deleteDialogMessage', { code: deleteDialog.code })}
+        confirmText={t('userGroupsAdmin.deleteConfirm')}
+        cancelText={t('common.cancel')}
         type="danger"
       />
     </div>
