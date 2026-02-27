@@ -1236,5 +1236,97 @@
       "saveError": "Error saving configuration",
       "unexpectedError": "An unexpected error occurred"
     }
+  },
+  "dashboardModules": {
+    "title": "Dashboard Module Management",
+    "totalModules": "Total {count} modules",
+    "backToDashboard": "Back to Dashboard",
+    "newModule": "New Module",
+    "loading": "Loading...",
+    "dataFormatError": "Data format error",
+    "loadError": "Error loading modules",
+    "deleteSuccess": "Module deleted",
+    "deleteError": "An error occurred while deleting the module.",
+    "noModules": "No modules added yet",
+    "noModulesDesc": "Start by adding the first module",
+    "addFirstModule": "Add First Module",
+    "table": {
+      "module": "Module",
+      "type": "Type",
+      "link": "Link",
+      "authorizedGroups": "Authorized Groups",
+      "status": "Status",
+      "order": "Order",
+      "actions": "Actions"
+    },
+    "moduleTypes": {
+      "card": "Card",
+      "quickAction": "Quick Action"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "publicAccess": "Public Access",
+    "icon": "Icon",
+    "edit": "Edit",
+    "delete": "Delete",
+    "totalRecords": "Total {count} records",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "deleteDialog": {
+      "title": "Delete Module",
+      "message": "Are you sure you want to delete the \"{code}\" module? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "dashboardModuleForm": {
+    "editModule": "Edit Module",
+    "newModule": "Add New Module",
+    "back": "Back",
+    "loading": "Loading...",
+    "loadError": "Error loading module",
+    "saveSuccess": "Module saved successfully",
+    "saveError": "Error saving module",
+    "moduleInfo": "Module Information",
+    "moduleType": "Module Type",
+    "moduleTypeRequired": "Module Type *",
+    "moduleTypes": {
+      "card": "Card",
+      "quickAction": "Quick Action"
+    },
+    "order": "Order",
+    "name": "Name",
+    "nameRequired": "Name *",
+    "description": "Description",
+    "otherLanguages": "Other Languages",
+    "link": "Link",
+    "linkRequired": "Link *",
+    "linkPlaceholder": "/admin/...",
+    "icon": "Icon",
+    "iconRequired": "Icon *",
+    "iconSelect": "Select icon...",
+    "iconSelected": "Selected",
+    "visibilitySettings": "Visibility Settings",
+    "showCount": "Show Count",
+    "countSettings": "Count Settings",
+    "modelType": "Model Type",
+    "modelTypeRequired": "Model Type *",
+    "modelTypePlaceholder": "Select model...",
+    "filters": "Filters (JSON - Optional)",
+    "filtersPlaceholder": "Enter filters in JSON format...",
+    "filtersHint": "JSON format filters for SearchService",
+    "authorization": "Authorization",
+    "authorizedGroups": "Authorized User Groups",
+    "selectGroup": "Select group...",
+    "noGroupsNote": "If no groups are selected, the module will be public",
+    "status": "Status",
+    "active": "Active",
+    "actions": "Actions",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel"
   }
 }

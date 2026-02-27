@@ -1191,5 +1191,97 @@
       "saveError": "Erreur lors de l'enregistrement de la configuration",
       "unexpectedError": "Une erreur inattendue s'est produite"
     }
+  },
+  "dashboardModules": {
+    "title": "Gestion des Modules du Tableau de Bord",
+    "totalModules": "Total {count} modules",
+    "backToDashboard": "Retour au Tableau de Bord",
+    "newModule": "Nouveau Module",
+    "loading": "Chargement...",
+    "dataFormatError": "Erreur de format de données",
+    "loadError": "Erreur lors du chargement des modules",
+    "deleteSuccess": "Module supprimé",
+    "deleteError": "Une erreur s'est produite lors de la suppression du module.",
+    "noModules": "Aucun module ajouté pour le moment",
+    "noModulesDesc": "Commencez par ajouter le premier module",
+    "addFirstModule": "Ajouter le Premier Module",
+    "table": {
+      "module": "Module",
+      "type": "Type",
+      "link": "Lien",
+      "authorizedGroups": "Groupes Autorisés",
+      "status": "Statut",
+      "order": "Ordre",
+      "actions": "Actions"
+    },
+    "moduleTypes": {
+      "card": "Carte",
+      "quickAction": "Action Rapide"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "publicAccess": "Accès Public",
+    "icon": "Icône",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "totalRecords": "Total {count} enregistrements",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page",
+    "deleteDialog": {
+      "title": "Supprimer le Module",
+      "message": "Êtes-vous sûr de vouloir supprimer le module \"{code}\" ? Cette action ne peut pas être annulée.",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    }
+  },
+  "dashboardModuleForm": {
+    "editModule": "Modifier le Module",
+    "newModule": "Ajouter un Nouveau Module",
+    "back": "Retour",
+    "loading": "Chargement...",
+    "loadError": "Erreur lors du chargement du module",
+    "saveSuccess": "Module enregistré avec succès",
+    "saveError": "Erreur lors de l'enregistrement du module",
+    "moduleInfo": "Informations du Module",
+    "moduleType": "Type de Module",
+    "moduleTypeRequired": "Type de Module *",
+    "moduleTypes": {
+      "card": "Carte",
+      "quickAction": "Action Rapide"
+    },
+    "order": "Ordre",
+    "name": "Nom",
+    "nameRequired": "Nom *",
+    "description": "Description",
+    "otherLanguages": "Autres Langues",
+    "link": "Lien",
+    "linkRequired": "Lien *",
+    "linkPlaceholder": "/admin/...",
+    "icon": "Icône",
+    "iconRequired": "Icône *",
+    "iconSelect": "Sélectionner une icône...",
+    "iconSelected": "Sélectionné",
+    "visibilitySettings": "Paramètres de Visibilité",
+    "showCount": "Afficher le Nombre",
+    "countSettings": "Paramètres de Comptage",
+    "modelType": "Type de Modèle",
+    "modelTypeRequired": "Type de Modèle *",
+    "modelTypePlaceholder": "Sélectionner un modèle...",
+    "filters": "Filtres (JSON - Optionnel)",
+    "filtersPlaceholder": "Entrez les filtres au format JSON...",
+    "filtersHint": "Filtres au format JSON pour SearchService",
+    "authorization": "Autorisation",
+    "authorizedGroups": "Groupes d'Utilisateurs Autorisés",
+    "selectGroup": "Sélectionner un groupe...",
+    "noGroupsNote": "Si aucun groupe n'est sélectionné, le module sera public",
+    "status": "Statut",
+    "active": "Actif",
+    "actions": "Actions",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler"
   }
 }

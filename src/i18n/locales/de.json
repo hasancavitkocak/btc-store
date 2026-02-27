@@ -1191,5 +1191,97 @@
       "saveError": "Fehler beim Speichern der Konfiguration",
       "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"
     }
+  },
+  "dashboardModules": {
+    "title": "Dashboard-Modul-Verwaltung",
+    "totalModules": "Insgesamt {count} Module",
+    "backToDashboard": "Zurück zum Dashboard",
+    "newModule": "Neues Modul",
+    "loading": "Wird geladen...",
+    "dataFormatError": "Datenfehler",
+    "loadError": "Fehler beim Laden der Module",
+    "deleteSuccess": "Modul gelöscht",
+    "deleteError": "Beim Löschen des Moduls ist ein Fehler aufgetreten.",
+    "noModules": "Noch keine Module hinzugefügt",
+    "noModulesDesc": "Beginnen Sie mit dem Hinzufügen des ersten Moduls",
+    "addFirstModule": "Erstes Modul hinzufügen",
+    "table": {
+      "module": "Modul",
+      "type": "Typ",
+      "link": "Link",
+      "authorizedGroups": "Berechtigte Gruppen",
+      "status": "Status",
+      "order": "Reihenfolge",
+      "actions": "Aktionen"
+    },
+    "moduleTypes": {
+      "card": "Karte",
+      "quickAction": "Schnellaktion"
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "publicAccess": "Öffentlicher Zugang",
+    "icon": "Symbol",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "totalRecords": "Insgesamt {count} Datensätze",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "page": "Seite",
+    "deleteDialog": {
+      "title": "Modul löschen",
+      "message": "Sind Sie sicher, dass Sie das Modul \"{code}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "dashboardModuleForm": {
+    "editModule": "Modul bearbeiten",
+    "newModule": "Neues Modul hinzufügen",
+    "back": "Zurück",
+    "loading": "Wird geladen...",
+    "loadError": "Fehler beim Laden des Moduls",
+    "saveSuccess": "Modul erfolgreich gespeichert",
+    "saveError": "Fehler beim Speichern des Moduls",
+    "moduleInfo": "Modulinformationen",
+    "moduleType": "Modultyp",
+    "moduleTypeRequired": "Modultyp *",
+    "moduleTypes": {
+      "card": "Karte",
+      "quickAction": "Schnellaktion"
+    },
+    "order": "Reihenfolge",
+    "name": "Name",
+    "nameRequired": "Name *",
+    "description": "Beschreibung",
+    "otherLanguages": "Andere Sprachen",
+    "link": "Link",
+    "linkRequired": "Link *",
+    "linkPlaceholder": "/admin/...",
+    "icon": "Symbol",
+    "iconRequired": "Symbol *",
+    "iconSelect": "Symbol auswählen...",
+    "iconSelected": "Ausgewählt",
+    "visibilitySettings": "Sichtbarkeitseinstellungen",
+    "showCount": "Anzahl anzeigen",
+    "countSettings": "Anzahleinstellungen",
+    "modelType": "Modelltyp",
+    "modelTypeRequired": "Modelltyp *",
+    "modelTypePlaceholder": "Modell auswählen...",
+    "filters": "Filter (JSON - Optional)",
+    "filtersPlaceholder": "Filter im JSON-Format eingeben...",
+    "filtersHint": "JSON-Format-Filter für SearchService",
+    "authorization": "Autorisierung",
+    "authorizedGroups": "Berechtigte Benutzergruppen",
+    "selectGroup": "Gruppe auswählen...",
+    "noGroupsNote": "Wenn keine Gruppen ausgewählt sind, ist das Modul öffentlich",
+    "status": "Status",
+    "active": "Aktiv",
+    "actions": "Aktionen",
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "cancel": "Abbrechen"
   }
 }

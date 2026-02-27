@@ -1236,5 +1236,97 @@
       "saveError": "Konfigürasyon kaydedilirken hata oluştu",
       "unexpectedError": "Beklenmeyen bir hata oluştu"
     }
+  },
+  "dashboardModules": {
+    "title": "Dashboard Modül Yönetimi",
+    "totalModules": "Toplam {count} modül",
+    "backToDashboard": "Dashboard'a Dön",
+    "newModule": "Yeni Modül",
+    "loading": "Yükleniyor...",
+    "dataFormatError": "Veri formatı hatalı",
+    "loadError": "Modüller yüklenirken hata oluştu",
+    "deleteSuccess": "Modül silindi",
+    "deleteError": "Modül silinirken bir hata oluştu.",
+    "noModules": "Henüz modül eklenmemiş",
+    "noModulesDesc": "İlk modülü ekleyerek başlayın",
+    "addFirstModule": "İlk Modülü Ekle",
+    "table": {
+      "module": "Modül",
+      "type": "Tip",
+      "link": "Link",
+      "authorizedGroups": "Yetkili Gruplar",
+      "status": "Durum",
+      "order": "Sıra",
+      "actions": "İşlemler"
+    },
+    "moduleTypes": {
+      "card": "Kart",
+      "quickAction": "Hızlı İşlem"
+    },
+    "status": {
+      "active": "Aktif",
+      "inactive": "Pasif"
+    },
+    "publicAccess": "Herkese Açık",
+    "icon": "Icon",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "totalRecords": "Toplam {count} kayıt",
+    "previous": "Önceki",
+    "next": "Sonraki",
+    "page": "Sayfa",
+    "deleteDialog": {
+      "title": "Modül Sil",
+      "message": "\"{code}\" modülünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "confirm": "Sil",
+      "cancel": "İptal"
+    }
+  },
+  "dashboardModuleForm": {
+    "editModule": "Modül Düzenle",
+    "newModule": "Yeni Modül Ekle",
+    "back": "Geri",
+    "loading": "Yükleniyor...",
+    "loadError": "Modül yüklenirken hata oluştu",
+    "saveSuccess": "Modül başarıyla kaydedildi",
+    "saveError": "Modül kaydedilirken hata oluştu",
+    "moduleInfo": "Modül Bilgileri",
+    "moduleType": "Modül Tipi",
+    "moduleTypeRequired": "Modül Tipi *",
+    "moduleTypes": {
+      "card": "Kart",
+      "quickAction": "Hızlı İşlem"
+    },
+    "order": "Sıra",
+    "name": "İsim",
+    "nameRequired": "İsim *",
+    "description": "Açıklama",
+    "otherLanguages": "Diğer Diller",
+    "link": "Link",
+    "linkRequired": "Link *",
+    "linkPlaceholder": "/admin/...",
+    "icon": "Icon",
+    "iconRequired": "Icon *",
+    "iconSelect": "Icon seçin...",
+    "iconSelected": "Seçili",
+    "visibilitySettings": "Görünürlük Ayarları",
+    "showCount": "Sayı Göster",
+    "countSettings": "Sayı Ayarları",
+    "modelType": "Model Tipi",
+    "modelTypeRequired": "Model Tipi *",
+    "modelTypePlaceholder": "Model seçin...",
+    "filters": "Filtreler (JSON - Opsiyonel)",
+    "filtersPlaceholder": "JSON formatında filtre girin...",
+    "filtersHint": "SearchService için JSON formatında filtreler",
+    "authorization": "Yetkilendirme",
+    "authorizedGroups": "Yetkili Kullanıcı Grupları",
+    "selectGroup": "Grup seçin...",
+    "noGroupsNote": "Hiç grup seçilmezse modül herkese açık olur",
+    "status": "Durum",
+    "active": "Aktif",
+    "actions": "İşlemler",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor...",
+    "cancel": "İptal"
   }
 }

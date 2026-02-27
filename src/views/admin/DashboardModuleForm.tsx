@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { 
   ArrowLeft, Save, Image, FolderTree, Package, Users, BookOpen, FileText, 
   MessageSquare, Phone, Settings, UserCog, Mail, Shield, Globe, Menu, 
@@ -20,6 +21,7 @@ import Input from '@/components/Input';
 import Toast from '@/components/Toast';
 import SearchableAutocomplete from '@/components/SearchableAutocomplete';
 import { dashboardService } from '@/services/admin.service';
+import { type SupportedLocale } from '@/lib/i18n-utils';
 
 interface DashboardModuleFormProps {
   code?: string;
@@ -27,10 +29,31 @@ interface DashboardModuleFormProps {
 
 export default function DashboardModuleForm({ code }: DashboardModuleFormProps) {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
+  const [availableModels, setAvailableModels] = useState<Array<{className: string, displayName: string}>>([]);
+  
+  // Kullanıcının dilini en üste, diğerlerini sıraya koy
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
+
+  // Dil bilgileri
+  const languageInfo: Record<SupportedLocale, { code: string; name: string }> = {
+    tr: { code: 'TR', name: 'Türkçe' },
+    en: { code: 'EN', name: 'English' },
+    de: { code: 'DE', name: 'Deutsch' },
+    fr: { code: 'FR', name: 'Français' },
+    es: { code: 'ES', name: 'Español' },
+    it: { code: 'IT', name: 'Italiano' }
+  };
   
   const [formData, setFormData] = useState({
     id: undefined as number | undefined,
@@ -145,10 +168,38 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
   };
 
   useEffect(() => {
+    loadModels();
+  }, []);
+
+  useEffect(() => {
     if (code) {
       fetchModule();
     }
   }, [code]);
+
+  const loadModels = async () => {
+    try {
+      const { emailTemplateService } = await import('@/services/admin.service');
+      const response = await emailTemplateService.getAllModels();
+      
+      if (response.status === 'SUCCESS' && response.data) {
+        const innerData = (response.data as any).data;
+        const rawData = innerData || response.data;
+        
+        const modelsData = Array.isArray(rawData) 
+          ? rawData.map((item: any) => ({
+              className: item.code,
+              displayName: item.name
+            }))
+          : [];
+        
+        setAvailableModels(modelsData);
+      }
+    } catch (error) {
+      console.error('Failed to load models:', error);
+      setAvailableModels([]);
+    }
+  };
 
   const fetchModule = async () => {
     if (!code) return;
@@ -174,7 +225,7 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
       });
     } catch (error) {
       console.error('Failed to fetch module:', error);
-      setToast({ message: 'Modül yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('dashboardModuleForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -186,13 +237,13 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
 
     try {
       await dashboardService.save(formData);
-      setToast({ message: 'Modül başarıyla kaydedildi', type: 'success' });
+      setToast({ message: t('dashboardModuleForm.saveSuccess'), type: 'success' });
       setTimeout(() => {
         router.push('/admin/dashboard-modules');
       }, 1500);
     } catch (error) {
       console.error('Failed to save module:', error);
-      setToast({ message: 'Modül kaydedilirken hata oluştu', type: 'error' });
+      setToast({ message: t('dashboardModuleForm.saveError'), type: 'error' });
     } finally {
       setSaving(false);
     }
@@ -203,7 +254,7 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
       <Section>
         <Container>
           <div className="flex justify-center items-center min-h-[400px]">
-            <div className="text-gray-600">Yükleniyor...</div>
+            <div className="text-gray-600">{t('dashboardModuleForm.loading')}</div>
           </div>
         </Container>
       </Section>
@@ -220,11 +271,11 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Geri
+            {t('dashboardModuleForm.back')}
           </Button>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {code ? 'Modül Düzenle' : 'Yeni Modül Ekle'}
+            {code ? t('dashboardModuleForm.editModule') : t('dashboardModuleForm.newModule')}
           </h1>
         </div>
 
@@ -232,13 +283,13 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Modül Bilgileri</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('dashboardModuleForm.moduleInfo')}</h2>
                 
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Modül Tipi *
+                        {t('dashboardModuleForm.moduleTypeRequired')}
                       </label>
                       <select
                         value={formData.moduleType}
@@ -246,13 +297,13 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       >
-                        <option value="CARD">Kart</option>
-                        <option value="QUICK_ACTION">Hızlı İşlem</option>
+                        <option value="CARD">{t('dashboardModuleForm.moduleTypes.card')}</option>
+                        <option value="QUICK_ACTION">{t('dashboardModuleForm.moduleTypes.quickAction')}</option>
                       </select>
                     </div>
 
                     <Input
-                      label="Sıra"
+                      label={t('dashboardModuleForm.order')}
                       type="number"
                       value={formData.displayOrder}
                       onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
@@ -261,53 +312,36 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
 
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                      <label className="text-sm font-medium text-gray-700">İsim *</label>
+                      <label className="text-sm font-medium text-gray-700">{t('dashboardModuleForm.nameRequired')}</label>
                       <button
                         type="button"
                         onClick={() => toggleField('name')}
                         className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                       >
                         <span className="text-base">{expandedFields.has('name') ? '🌐' : '🌍'}</span>
-                        <span>Diğer Diller</span>
+                        <span>{t('dashboardModuleForm.otherLanguages')}</span>
                         <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                         <span className="text-gray-400">{expandedFields.has('name') ? '▼' : '▶'}</span>
                       </button>
                     </div>
                     <div className="p-4 space-y-3">
                       <Input
-                        placeholder="🇹🇷 Türkçe"
-                        value={formData.name.tr}
-                        onChange={(e) => setFormData({ ...formData, name: { ...formData.name, tr: e.target.value } })}
+                        placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                        value={formData.name[orderedLanguages[0]]}
+                        onChange={(e) => setFormData({ ...formData, name: { ...formData.name, [orderedLanguages[0]]: e.target.value } })}
                         required
                       />
                       
                       {expandedFields.has('name') && (
                         <div className="space-y-3 pt-3 border-t border-gray-200">
-                          <Input
-                            placeholder="🇬🇧 English"
-                            value={formData.name.en}
-                            onChange={(e) => setFormData({ ...formData, name: { ...formData.name, en: e.target.value } })}
-                          />
-                          <Input
-                            placeholder="🇩🇪 Deutsch"
-                            value={formData.name.de}
-                            onChange={(e) => setFormData({ ...formData, name: { ...formData.name, de: e.target.value } })}
-                          />
-                          <Input
-                            placeholder="🇫🇷 Français"
-                            value={formData.name.fr}
-                            onChange={(e) => setFormData({ ...formData, name: { ...formData.name, fr: e.target.value } })}
-                          />
-                          <Input
-                            placeholder="🇪🇸 Español"
-                            value={formData.name.es}
-                            onChange={(e) => setFormData({ ...formData, name: { ...formData.name, es: e.target.value } })}
-                          />
-                          <Input
-                            placeholder="🇮🇹 Italiano"
-                            value={formData.name.it}
-                            onChange={(e) => setFormData({ ...formData, name: { ...formData.name, it: e.target.value } })}
-                          />
+                          {orderedLanguages.slice(1).map((lang) => (
+                            <Input
+                              key={lang}
+                              placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                              value={formData.name[lang]}
+                              onChange={(e) => setFormData({ ...formData, name: { ...formData.name, [lang]: e.target.value } })}
+                            />
+                          ))}
                         </div>
                       )}
                     </div>
@@ -315,52 +349,35 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
 
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                      <label className="text-sm font-medium text-gray-700">Açıklama</label>
+                      <label className="text-sm font-medium text-gray-700">{t('dashboardModuleForm.description')}</label>
                       <button
                         type="button"
                         onClick={() => toggleField('description')}
                         className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                       >
                         <span className="text-base">{expandedFields.has('description') ? '🌐' : '🌍'}</span>
-                        <span>Diğer Diller</span>
+                        <span>{t('dashboardModuleForm.otherLanguages')}</span>
                         <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                         <span className="text-gray-400">{expandedFields.has('description') ? '▼' : '▶'}</span>
                       </button>
                     </div>
                     <div className="p-4 space-y-3">
                       <Input
-                        placeholder="🇹🇷 Türkçe"
-                        value={formData.description.tr}
-                        onChange={(e) => setFormData({ ...formData, description: { ...formData.description, tr: e.target.value } })}
+                        placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                        value={formData.description[orderedLanguages[0]]}
+                        onChange={(e) => setFormData({ ...formData, description: { ...formData.description, [orderedLanguages[0]]: e.target.value } })}
                       />
                       
                       {expandedFields.has('description') && (
                         <div className="space-y-3 pt-3 border-t border-gray-200">
-                          <Input
-                            placeholder="��ts English"
-                            value={formData.description.en}
-                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, en: e.target.value } })}
-                          />
-                          <Input
-                            placeholder="�🇪 Deutsch"
-                            value={formData.description.de}
-                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, de: e.target.value } })}
-                          />
-                          <Input
-                            placeholder="�� Folrançais"
-                            value={formData.description.fr}
-                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, fr: e.target.value } })}
-                          />
-                          <Input
-                            placeholder="🇪🇸 Español"
-                            value={formData.description.es}
-                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, es: e.target.value } })}
-                          />
-                          <Input
-                            placeholder="🇮🇹 Italiano"
-                            value={formData.description.it}
-                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, it: e.target.value } })}
-                          />
+                          {orderedLanguages.slice(1).map((lang) => (
+                            <Input
+                              key={lang}
+                              placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                              value={formData.description[lang]}
+                              onChange={(e) => setFormData({ ...formData, description: { ...formData.description, [lang]: e.target.value } })}
+                            />
+                          ))}
                         </div>
                       )}
                     </div>
@@ -368,16 +385,16 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
-                      label="Link *"
+                      label={t('dashboardModuleForm.linkRequired')}
                       value={formData.link}
                       onChange={(e) => setFormData({ ...formData, link: e.target.value })}
                       required
-                      placeholder="/admin/..."
+                      placeholder={t('dashboardModuleForm.linkPlaceholder')}
                     />
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Icon *
+                        {t('dashboardModuleForm.iconRequired')}
                       </label>
                       <div className="relative">
                         <select
@@ -386,7 +403,7 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                           required
                         >
-                          <option value="">Icon seçin...</option>
+                          <option value="">{t('dashboardModuleForm.iconSelect')}</option>
                           {availableIcons.map((icon) => (
                             <option key={icon.value} value={icon.value}>
                               {icon.label}
@@ -408,14 +425,14 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
                       </div>
                       {formData.icon && (
                         <p className="text-xs text-gray-500 mt-1">
-                          Seçili: {availableIcons.find(i => i.value === formData.icon)?.label}
+                          {t('dashboardModuleForm.iconSelected')}: {availableIcons.find(i => i.value === formData.icon)?.label}
                         </p>
                       )}
                     </div>
                   </div>
 
                   <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-4">Görünürlük Ayarları</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('dashboardModuleForm.visibilitySettings')}</h3>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
                         <input
@@ -426,7 +443,7 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
                           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
                         <label htmlFor="showCount" className="text-sm font-medium text-gray-700">
-                          Sayı Göster
+                          {t('dashboardModuleForm.showCount')}
                         </label>
                       </div>
                     </div>
@@ -434,28 +451,39 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
 
                   {formData.showCount && (
                     <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
-                      <h3 className="text-sm font-semibold text-gray-700 mb-3">Sayı Ayarları</h3>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('dashboardModuleForm.countSettings')}</h3>
                       <div className="space-y-3">
-                        <Input
-                          label="Model Tipi *"
-                          value={formData.searchItemType}
-                          onChange={(e) => setFormData({ ...formData, searchItemType: e.target.value })}
-                          placeholder="BannerModel, ProductModel, etc."
-                          required={formData.showCount}
-                        />
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Filtreler (JSON - Opsiyonel)
+                            {t('dashboardModuleForm.modelTypeRequired')}
+                          </label>
+                          <select
+                            value={formData.searchItemType}
+                            onChange={(e) => setFormData({ ...formData, searchItemType: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required={formData.showCount}
+                          >
+                            <option value="">{t('dashboardModuleForm.modelTypePlaceholder')}</option>
+                            {availableModels.map((model) => (
+                              <option key={model.className} value={model.className}>
+                                {model.displayName}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            {t('dashboardModuleForm.filters')}
                           </label>
                           <textarea
                             value={formData.searchFilters}
                             onChange={(e) => setFormData({ ...formData, searchFilters: e.target.value })}
-                            placeholder='{"filters": [{"name": "active", "value": true}]}'
+                            placeholder='{"filters": [{"name": "active", "value": true, "searchCondition": "EQUALS"}]}'
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
                             rows={4}
                           />
                           <p className="text-xs text-gray-600 mt-2">
-                            SearchService için JSON formatında filtreler. Örnek: {`{"filters": [{"name": "active", "value": true}]}`}
+                            {t('dashboardModuleForm.filtersHint')}
                           </p>
                         </div>
                       </div>
@@ -465,7 +493,7 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
               </Card>
 
               <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Yetkilendirme</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('dashboardModuleForm.authorization')}</h2>
                 
                 <SearchableAutocomplete
                   itemType="UserGroupModel"
@@ -474,19 +502,19 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
                   onItemsChange={(selected: any[]) => setFormData({ ...formData, userGroups: selected })}
                   getItemKey={(option: any) => option.code}
                   getItemLabel={(option: any) => option.description?.tr || option.code}
-                  placeholder="Grup seçin..."
-                  label="Yetkili Kullanıcı Grupları"
+                  placeholder={t('dashboardModuleForm.selectGroup')}
+                  label={t('dashboardModuleForm.authorizedGroups')}
                   multiple
                 />
                 <p className="text-sm text-gray-500 mt-2">
-                  Hiç grup seçilmezse modül herkese açık olur
+                  {t('dashboardModuleForm.noGroupsNote')}
                 </p>
               </Card>
             </div>
 
             <div className="space-y-6">
               <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Durum</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('dashboardModuleForm.status')}</h2>
                 <div className="flex items-center gap-3">
                   <input
                     type="checkbox"
@@ -496,13 +524,13 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                    Aktif
+                    {t('dashboardModuleForm.active')}
                   </label>
                 </div>
               </Card>
 
               <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('dashboardModuleForm.actions')}</h2>
                 <div className="space-y-3">
                   <Button 
                     type="submit"
@@ -511,7 +539,7 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
                     disabled={saving}
                   >
                     <Save className="w-4 h-4 mr-2" />
-                    {saving ? 'Kaydediliyor...' : 'Kaydet'}
+                    {saving ? t('dashboardModuleForm.saving') : t('dashboardModuleForm.save')}
                   </Button>
                   <Button 
                     type="button"
@@ -520,7 +548,7 @@ export default function DashboardModuleForm({ code }: DashboardModuleFormProps) 
                     fullWidth
                     disabled={saving}
                   >
-                    İptal
+                    {t('dashboardModuleForm.cancel')}
                   </Button>
                 </div>
               </Card>

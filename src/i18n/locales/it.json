@@ -1235,5 +1235,97 @@
       "saveError": "Errore durante il salvataggio della configurazione",
       "unexpectedError": "Si è verificato un errore imprevisto"
     }
+  },
+  "dashboardModules": {
+    "title": "Gestione Moduli Dashboard",
+    "totalModules": "Totale {count} moduli",
+    "backToDashboard": "Torna alla Dashboard",
+    "newModule": "Nuovo Modulo",
+    "loading": "Caricamento...",
+    "dataFormatError": "Errore formato dati",
+    "loadError": "Errore durante il caricamento dei moduli",
+    "deleteSuccess": "Modulo eliminato",
+    "deleteError": "Si è verificato un errore durante l'eliminazione del modulo.",
+    "noModules": "Nessun modulo aggiunto ancora",
+    "noModulesDesc": "Inizia aggiungendo il primo modulo",
+    "addFirstModule": "Aggiungi Primo Modulo",
+    "table": {
+      "module": "Modulo",
+      "type": "Tipo",
+      "link": "Link",
+      "authorizedGroups": "Gruppi Autorizzati",
+      "status": "Stato",
+      "order": "Ordine",
+      "actions": "Azioni"
+    },
+    "moduleTypes": {
+      "card": "Scheda",
+      "quickAction": "Azione Rapida"
+    },
+    "status": {
+      "active": "Attivo",
+      "inactive": "Inattivo"
+    },
+    "publicAccess": "Accesso Pubblico",
+    "icon": "Icona",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "totalRecords": "Totale {count} record",
+    "previous": "Precedente",
+    "next": "Successivo",
+    "page": "Pagina",
+    "deleteDialog": {
+      "title": "Elimina Modulo",
+      "message": "Sei sicuro di voler eliminare il modulo \"{code}\"? Questa azione non può essere annullata.",
+      "confirm": "Elimina",
+      "cancel": "Annulla"
+    }
+  },
+  "dashboardModuleForm": {
+    "editModule": "Modifica Modulo",
+    "newModule": "Aggiungi Nuovo Modulo",
+    "back": "Indietro",
+    "loading": "Caricamento...",
+    "loadError": "Errore durante il caricamento del modulo",
+    "saveSuccess": "Modulo salvato con successo",
+    "saveError": "Errore durante il salvataggio del modulo",
+    "moduleInfo": "Informazioni Modulo",
+    "moduleType": "Tipo di Modulo",
+    "moduleTypeRequired": "Tipo di Modulo *",
+    "moduleTypes": {
+      "card": "Scheda",
+      "quickAction": "Azione Rapida"
+    },
+    "order": "Ordine",
+    "name": "Nome",
+    "nameRequired": "Nome *",
+    "description": "Descrizione",
+    "otherLanguages": "Altre Lingue",
+    "link": "Link",
+    "linkRequired": "Link *",
+    "linkPlaceholder": "/admin/...",
+    "icon": "Icona",
+    "iconRequired": "Icona *",
+    "iconSelect": "Seleziona icona...",
+    "iconSelected": "Selezionato",
+    "visibilitySettings": "Impostazioni Visibilità",
+    "showCount": "Mostra Conteggio",
+    "countSettings": "Impostazioni Conteggio",
+    "modelType": "Tipo di Modello",
+    "modelTypeRequired": "Tipo di Modello *",
+    "modelTypePlaceholder": "Seleziona modello...",
+    "filters": "Filtri (JSON - Opzionale)",
+    "filtersPlaceholder": "Inserisci filtri in formato JSON...",
+    "filtersHint": "Filtri in formato JSON per SearchService. Esempio: filters con name e value",
+    "authorization": "Autorizzazione",
+    "authorizedGroups": "Gruppi Utenti Autorizzati",
+    "selectGroup": "Seleziona gruppo...",
+    "noGroupsNote": "Se non vengono selezionati gruppi, il modulo sarà pubblico",
+    "status": "Stato",
+    "active": "Attivo",
+    "actions": "Azioni",
+    "save": "Salva",
+    "saving": "Salvataggio...",
+    "cancel": "Annulla"
   }
 }

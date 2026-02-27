@@ -1191,5 +1191,97 @@
       "saveError": "Error al guardar la configuración",
       "unexpectedError": "Se produjo un error inesperado"
     }
+  },
+  "dashboardModules": {
+    "title": "Gestión de Módulos del Panel",
+    "totalModules": "Total {count} módulos",
+    "backToDashboard": "Volver al Panel",
+    "newModule": "Nuevo Módulo",
+    "loading": "Cargando...",
+    "dataFormatError": "Error de formato de datos",
+    "loadError": "Error al cargar los módulos",
+    "deleteSuccess": "Módulo eliminado",
+    "deleteError": "Se produjo un error al eliminar el módulo.",
+    "noModules": "Aún no se han agregado módulos",
+    "noModulesDesc": "Comience agregando el primer módulo",
+    "addFirstModule": "Agregar Primer Módulo",
+    "table": {
+      "module": "Módulo",
+      "type": "Tipo",
+      "link": "Enlace",
+      "authorizedGroups": "Grupos Autorizados",
+      "status": "Estado",
+      "order": "Orden",
+      "actions": "Acciones"
+    },
+    "moduleTypes": {
+      "card": "Tarjeta",
+      "quickAction": "Acción Rápida"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "publicAccess": "Acceso Público",
+    "icon": "Icono",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "totalRecords": "Total {count} registros",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página",
+    "deleteDialog": {
+      "title": "Eliminar Módulo",
+      "message": "¿Está seguro de que desea eliminar el módulo \"{code}\"? Esta acción no se puede deshacer.",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    }
+  },
+  "dashboardModuleForm": {
+    "editModule": "Editar Módulo",
+    "newModule": "Agregar Nuevo Módulo",
+    "back": "Atrás",
+    "loading": "Cargando...",
+    "loadError": "Error al cargar el módulo",
+    "saveSuccess": "Módulo guardado exitosamente",
+    "saveError": "Error al guardar el módulo",
+    "moduleInfo": "Información del Módulo",
+    "moduleType": "Tipo de Módulo",
+    "moduleTypeRequired": "Tipo de Módulo *",
+    "moduleTypes": {
+      "card": "Tarjeta",
+      "quickAction": "Acción Rápida"
+    },
+    "order": "Orden",
+    "name": "Nombre",
+    "nameRequired": "Nombre *",
+    "description": "Descripción",
+    "otherLanguages": "Otros Idiomas",
+    "link": "Enlace",
+    "linkRequired": "Enlace *",
+    "linkPlaceholder": "/admin/...",
+    "icon": "Icono",
+    "iconRequired": "Icono *",
+    "iconSelect": "Seleccionar icono...",
+    "iconSelected": "Seleccionado",
+    "visibilitySettings": "Configuración de Visibilidad",
+    "showCount": "Mostrar Contador",
+    "countSettings": "Configuración de Contador",
+    "modelType": "Tipo de Modelo",
+    "modelTypeRequired": "Tipo de Modelo *",
+    "modelTypePlaceholder": "Seleccionar modelo...",
+    "filters": "Filtros (JSON - Opcional)",
+    "filtersPlaceholder": "Ingrese filtros en formato JSON...",
+    "filtersHint": "Filtros en formato JSON para SearchService",
+    "authorization": "Autorización",
+    "authorizedGroups": "Grupos de Usuarios Autorizados",
+    "selectGroup": "Seleccionar grupo...",
+    "noGroupsNote": "Si no se seleccionan grupos, el módulo será público",
+    "status": "Estado",
+    "active": "Activo",
+    "actions": "Acciones",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "cancel": "Cancelar"
   }
 }
