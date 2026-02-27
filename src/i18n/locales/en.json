@@ -788,7 +788,7 @@
       "productImageAlt": "Product Image"
     },
     "callRequestsAdmin": {
-      "title": "Call Request Management",
+      "title": "All Calls",
       "totalRequests": "Total {count} call requests",
       "total": "Total",
       "pending": "Pending",

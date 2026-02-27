@@ -788,7 +788,7 @@
       "productImageAlt": "Ürün Görseli"
     },
     "callRequestsAdmin": {
-      "title": "Call Request Yönetimi",
+      "title": "Tüm Çağrılar",
       "totalRequests": "Toplam {count} call request",
       "total": "Toplam",
       "pending": "Beklemede",

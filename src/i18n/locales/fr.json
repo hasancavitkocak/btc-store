@@ -743,7 +743,7 @@
       "productImageAlt": "Image du produit"
     },
     "callRequestsAdmin": {
-      "title": "Gestion des Demandes d'Appel",
+      "title": "Tous les appels",
       "totalRequests": "Total {count} demandes d'appel",
       "total": "Total",
       "pending": "En Attente",
