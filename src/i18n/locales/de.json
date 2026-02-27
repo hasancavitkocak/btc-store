@@ -427,7 +427,7 @@
       "cancel": "Abbrechen"
     },
     "partnersPage": {
-      "title": "Partnerverwaltung",
+      "title": "Partner",
       "totalPartners": "Insgesamt {count} Partner",
       "newPartner": "Neuer Partner",
       "loading": "Wird geladen...",
@@ -590,7 +590,7 @@
       "cancel": "Abbrechen"
     },
     "categoriesPage": {
-      "title": "Kategorien",
+      "title": "Kategorieverwaltung",
       "totalCategories": "Insgesamt {count} Kategorien",
       "newCategory": "Neue Kategorie",
       "loading": "Wird geladen...",
@@ -973,7 +973,7 @@
       "CONSENT_TEXT": "Einwilligungstext"
     },
     "emailTemplates": {
-      "title": "E-Mail-Vorlagenverwaltung",
+      "title": "E-Mail-Vorlagen",
       "subtitle": "E-Mail-Vorlagen erstellen und bearbeiten",
       "newTemplate": "Neue Vorlage",
       "stats": {

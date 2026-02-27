@@ -194,7 +194,7 @@
     "text": "GDPR text"
   },
   "emailTemplates": {
-    "title": "Email Template Management",
+    "title": "Email Templates",
     "subtitle": "Create and edit email templates",
     "newTemplate": "New Template",
     "stats": {
@@ -472,7 +472,7 @@
       "cancel": "Cancel"
     },
     "partnersPage": {
-      "title": "Partner Management",
+      "title": "Partners",
       "totalPartners": "Total {count} partners",
       "newPartner": "New Partner",
       "loading": "Loading...",
@@ -635,7 +635,7 @@
       "cancel": "Cancel"
     },
     "categoriesPage": {
-      "title": "Categories",
+      "title": "Category Management",
       "totalCategories": "Total {count} categories",
       "newCategory": "New Category",
       "loading": "Loading...",
@@ -1018,7 +1018,7 @@
       "CONSENT_TEXT": "Consent Text"
     },
     "emailTemplates": {
-      "title": "Email Template Management",
+      "title": "Email Templates",
       "subtitle": "Create and edit email templates",
       "newTemplate": "New Template",
       "stats": {

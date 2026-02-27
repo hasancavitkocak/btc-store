@@ -427,7 +427,7 @@
       "cancel": "Cancelar"
     },
     "partnersPage": {
-      "title": "Gestión de Socios",
+      "title": "Socios",
       "totalPartners": "Total {count} socios",
       "newPartner": "Nuevo Socio",
       "loading": "Cargando...",
@@ -590,7 +590,7 @@
       "cancel": "Cancelar"
     },
     "categoriesPage": {
-      "title": "Categorías",
+      "title": "Gestión de categorías",
       "totalCategories": "Total {count} categorías",
       "newCategory": "Nueva Categoría",
       "loading": "Cargando...",
@@ -973,7 +973,7 @@
       "CONSENT_TEXT": "Texto de Consentimiento"
     },
     "emailTemplates": {
-      "title": "Gestión de Plantillas de Email",
+      "title": "Plantillas de correo electrónico",
       "subtitle": "Crear y editar plantillas de email",
       "newTemplate": "Nueva Plantilla",
       "stats": {

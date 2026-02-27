@@ -194,7 +194,7 @@
     "text": "Testo sulla privacy"
   },
   "emailTemplates": {
-    "title": "Gestione Modelli Email",
+    "title": "Modelli e-mail",
     "subtitle": "Crea e modifica modelli email",
     "newTemplate": "Nuovo Modello",
     "stats": {
@@ -471,7 +471,7 @@
       "cancel": "Annulla"
     },
     "partnersPage": {
-      "title": "Gestione Partner",
+      "title": "Partner",
       "totalPartners": "Totale {count} partner",
       "newPartner": "Nuovo Partner",
       "loading": "Caricamento...",
@@ -634,7 +634,7 @@
       "cancel": "Annulla"
     },
     "categoriesPage": {
-      "title": "Categorie",
+      "title": "Gestione categorie",
       "totalCategories": "Totale {count} categorie",
       "newCategory": "Nuova Categoria",
       "loading": "Caricamento...",
@@ -1017,7 +1017,7 @@
       "CONSENT_TEXT": "Testo di Consenso"
     },
     "emailTemplates": {
-      "title": "Gestione Modelli Email",
+      "title": "Modelli e-mail",
       "subtitle": "Crea e modifica modelli email",
       "newTemplate": "Nuovo Modello",
       "stats": {

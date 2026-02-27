@@ -194,7 +194,7 @@
     "text": "KVKK metni"
   },
   "emailTemplates": {
-    "title": "Email Template Yönetimi",
+    "title": "E-Posta Şablonları",
     "subtitle": "Mail şablonlarını oluşturun ve düzenleyin",
     "newTemplate": "Yeni Template",
     "stats": {
@@ -472,7 +472,7 @@
       "cancel": "İptal"
     },
     "partnersPage": {
-      "title": "Partner Yönetimi",
+      "title": "Partnerler",
       "totalPartners": "Toplam {count} partner",
       "newPartner": "Yeni Partner",
       "loading": "Yükleniyor...",
@@ -635,7 +635,7 @@
       "cancel": "İptal"
     },
     "categoriesPage": {
-      "title": "Kategoriler",
+      "title": "Kategori Yönetimi",
       "totalCategories": "Toplam {count} kategori",
       "newCategory": "Yeni Kategori",
       "loading": "Yükleniyor...",
@@ -1018,7 +1018,7 @@
       "CONSENT_TEXT": "Onay Metni"
     },
     "emailTemplates": {
-      "title": "Email Şablon Yönetimi",
+      "title": "E-Posta Şablonları",
       "subtitle": "Mail şablonlarını oluşturun ve düzenleyin",
       "newTemplate": "Yeni Şablon",
       "stats": {
