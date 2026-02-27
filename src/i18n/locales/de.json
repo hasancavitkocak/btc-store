@@ -1110,6 +1110,73 @@
       "yes": "Ja"
     }
   },
+  "parametersAdmin": {
+    "title": "Parameter",
+    "totalParameters": "Insgesamt {count} Parameter",
+    "newParameter": "Neuer Parameter",
+    "loading": "Wird geladen...",
+    "dataFormatError": "Datenformatfehler",
+    "loadError": "Fehler beim Laden der Parameterliste",
+    "deleteSuccess": "Parameter gelöscht",
+    "deleteError": "Fehler beim Löschen des Parameters",
+    "deleteFailed": "Löschvorgang fehlgeschlagen",
+    "table": {
+      "code": "Code",
+      "value": "Wert",
+      "description": "Beschreibung",
+      "type": "Typ",
+      "actions": "Aktionen"
+    },
+    "encrypted": "Verschlüsselt",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "noParameters": "Noch keine Parameter hinzugefügt",
+    "noParametersDesc": "Beginnen Sie mit dem Hinzufügen des ersten Parameters",
+    "addFirstParameter": "Ersten Parameter hinzufügen",
+    "totalRecords": "Insgesamt {count} Datensätze",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "page": "Seite",
+    "deleteDialog": {
+      "title": "Parameter löschen",
+      "message": "Sind Sie sicher, dass Sie den Parameter \"{value}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirm": "Löschen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "parameterForm": {
+    "editParameter": "Parameter bearbeiten",
+    "newParameter": "Neuer Parameter",
+    "parameterInfo": "Parameterinformationen",
+    "code": "Code",
+    "codePlaceholder": "Parametercode (z.B. SITE_NAME)",
+    "value": "Wert",
+    "valuePlaceholder": "Parameterwert",
+    "description": "Beschreibung",
+    "otherLanguages": "Andere Sprachen",
+    "settings": "Einstellungen",
+    "dataType": "Datentyp",
+    "dataTypes": {
+      "string": "Text",
+      "integer": "Ganzzahl",
+      "double": "Dezimalzahl",
+      "boolean": "Boolean"
+    },
+    "parameterType": "Parametertyp",
+    "parameterTypes": {
+      "system": "System",
+      "user": "Benutzer"
+    },
+    "encrypted": "Verschlüsselt",
+    "actions": "Aktionen",
+    "saving": "Wird gespeichert...",
+    "codeRequired": "Code-Feld ist erforderlich",
+    "valueRequired": "Wert-Feld ist erforderlich",
+    "saveError": "Fehler beim Speichern des Parameters",
+    "updateSuccess": "Parameter aktualisiert",
+    "createSuccess": "Parameter hinzugefügt",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"
+  },
   "partners": {
     "title": "Unsere Partner",
     "subtitle": "Wir arbeiten mit führenden Unternehmen der Branche"

@@ -11,6 +11,7 @@ import Toast from '../../components/Toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { searchService, SearchFormData } from '../../services/search.service';
 import { parameterService } from '../../services/admin.service';
+import { useTranslations } from 'next-intl';
 
 interface Parameter {
   code: string;
@@ -23,6 +24,7 @@ interface Parameter {
 
 export default function ParametersAdmin() {
   const router = useRouter();
+  const t = useTranslations();
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [parameters, setParameters] = useState<Parameter[]>([]);
   const [loading, setLoading] = useState(false);
@@ -66,17 +68,17 @@ export default function ParametersAdmin() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('parametersAdmin.dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Parametre listesi yüklenirken hata oluştu', 
+          message: response.errorMessage || t('parametersAdmin.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading parameters:', error);
-      setToast({ message: 'Parametre listesi yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('parametersAdmin.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -87,17 +89,17 @@ export default function ParametersAdmin() {
       const response = await parameterService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Parametre silindi', type: 'success' });
+        setToast({ message: t('parametersAdmin.deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadParameters();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('parametersAdmin.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting parameter:', error);
-      setToast({ message: 'Parametre silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('parametersAdmin.deleteError'), type: 'error' });
     }
   };
 
@@ -107,19 +109,19 @@ export default function ParametersAdmin() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Parametreler
+              {t('parametersAdmin.title')}
             </h1>
-            <p className="text-gray-600">Toplam {totalElements} parametre</p>
+            <p className="text-gray-600">{t('parametersAdmin.totalParameters', { count: totalElements })}</p>
           </div>
           <Button onClick={() => router.push('/admin/parameters/new')} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-5 h-5 mr-2" />
-            Yeni Parametre
+            {t('parametersAdmin.newParameter')}
           </Button>
         </div>
 
         {loading ? (
           <Card className="p-12 text-center">
-            <p className="text-gray-500">Yükleniyor...</p>
+            <p className="text-gray-500">{t('parametersAdmin.loading')}</p>
           </Card>
         ) : (
           <>
@@ -129,19 +131,19 @@ export default function ParametersAdmin() {
                   <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Kod
+                        {t('parametersAdmin.table.code')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Değer
+                        {t('parametersAdmin.table.value')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Açıklama
+                        {t('parametersAdmin.table.description')}
                       </th>
                       <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Tip
+                        {t('parametersAdmin.table.type')}
                       </th>
                       <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        İşlemler
+                        {t('parametersAdmin.table.actions')}
                       </th>
                     </tr>
                   </thead>
@@ -155,7 +157,7 @@ export default function ParametersAdmin() {
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-semibold text-gray-900">{parameter.code}</span>
                             {parameter.encrypt && (
-                              <span className="text-yellow-600" title="Şifreli">🔒</span>
+                              <span className="text-yellow-600" title={t('parametersAdmin.encrypted')}>🔒</span>
                             )}
                           </div>
                         </td>
@@ -184,7 +186,7 @@ export default function ParametersAdmin() {
                             <button
                               onClick={() => router.push(`/admin/parameters/${parameter.code}`)}
                               className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:bg-blue-100 transition-colors"
-                              title="Düzenle"
+                              title={t('parametersAdmin.edit')}
                             >
                               <Edit className="w-4 h-4" />
                             </button>
@@ -195,7 +197,7 @@ export default function ParametersAdmin() {
                                 value: parameter.code 
                               })}
                               className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
-                              title="Sil"
+                              title={t('parametersAdmin.delete')}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -215,12 +217,12 @@ export default function ParametersAdmin() {
                     <span className="text-3xl">⚙️</span>
                   </div>
                   <div>
-                    <p className="text-gray-900 font-medium mb-1">Henüz parametre eklenmemiş</p>
-                    <p className="text-gray-500 text-sm mb-4">İlk parametreyi ekleyerek başlayın</p>
+                    <p className="text-gray-900 font-medium mb-1">{t('parametersAdmin.noParameters')}</p>
+                    <p className="text-gray-500 text-sm mb-4">{t('parametersAdmin.noParametersDesc')}</p>
                   </div>
                   <Button onClick={() => router.push('/admin/parameters/new')} className="bg-blue-600 hover:bg-blue-700">
                     <Plus className="w-4 h-4 mr-2" />
-                    İlk Parametreyi Ekle
+                    {t('parametersAdmin.addFirstParameter')}
                   </Button>
                 </div>
               </Card>
@@ -229,7 +231,7 @@ export default function ParametersAdmin() {
             {totalElements > 0 && (
               <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
                 <div className="text-sm text-gray-600">
-                  Toplam <span className="font-medium">{totalElements}</span> kayıt
+                  {t('parametersAdmin.totalRecords', { count: totalElements })}
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -240,11 +242,11 @@ export default function ParametersAdmin() {
                     disabled={page === 1 || loading}
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    Önceki
+                    {t('parametersAdmin.previous')}
                   </Button>
                   
                   <span className="text-sm text-gray-600 px-4">
-                    Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                    {t('parametersAdmin.page')} <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
                   </span>
                   
                   <Button
@@ -253,7 +255,7 @@ export default function ParametersAdmin() {
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages || loading}
                   >
-                    Sonraki
+                    {t('parametersAdmin.next')}
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
@@ -274,10 +276,10 @@ export default function ParametersAdmin() {
           isOpen={deleteDialog.isOpen}
           onClose={() => setDeleteDialog({ isOpen: false, code: '', value: '' })}
           onConfirm={() => handleDelete(deleteDialog.code)}
-          title="Parametre Sil"
-          message={`"${deleteDialog.value}" parametresini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-          confirmText="Sil"
-          cancelText="İptal"
+          title={t('parametersAdmin.deleteDialog.title')}
+          message={t('parametersAdmin.deleteDialog.message', { value: deleteDialog.value })}
+          confirmText={t('parametersAdmin.deleteDialog.confirm')}
+          cancelText={t('parametersAdmin.deleteDialog.cancel')}
           type="danger"
         />
       </Container>

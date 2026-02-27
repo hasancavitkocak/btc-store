@@ -1155,6 +1155,73 @@
       "yes": "Yes"
     }
   },
+  "parametersAdmin": {
+    "title": "Parameters",
+    "totalParameters": "Total {count} parameters",
+    "newParameter": "New Parameter",
+    "loading": "Loading...",
+    "dataFormatError": "Data format error",
+    "loadError": "Error loading parameter list",
+    "deleteSuccess": "Parameter deleted",
+    "deleteError": "Error deleting parameter",
+    "deleteFailed": "Delete operation failed",
+    "table": {
+      "code": "Code",
+      "value": "Value",
+      "description": "Description",
+      "type": "Type",
+      "actions": "Actions"
+    },
+    "encrypted": "Encrypted",
+    "edit": "Edit",
+    "delete": "Delete",
+    "noParameters": "No parameters added yet",
+    "noParametersDesc": "Start by adding the first parameter",
+    "addFirstParameter": "Add First Parameter",
+    "totalRecords": "Total {count} records",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "deleteDialog": {
+      "title": "Delete Parameter",
+      "message": "Are you sure you want to delete the parameter \"{value}\"? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "parameterForm": {
+    "editParameter": "Edit Parameter",
+    "newParameter": "New Parameter",
+    "parameterInfo": "Parameter Information",
+    "code": "Code",
+    "codePlaceholder": "Parameter code (e.g., SITE_NAME)",
+    "value": "Value",
+    "valuePlaceholder": "Parameter value",
+    "description": "Description",
+    "otherLanguages": "Other Languages",
+    "settings": "Settings",
+    "dataType": "Data Type",
+    "dataTypes": {
+      "string": "Text",
+      "integer": "Integer",
+      "double": "Decimal",
+      "boolean": "Boolean"
+    },
+    "parameterType": "Parameter Type",
+    "parameterTypes": {
+      "system": "System",
+      "user": "User"
+    },
+    "encrypted": "Encrypted",
+    "actions": "Actions",
+    "saving": "Saving...",
+    "codeRequired": "Code field is required",
+    "valueRequired": "Value field is required",
+    "saveError": "Error saving parameter",
+    "updateSuccess": "Parameter updated",
+    "createSuccess": "Parameter added",
+    "unexpectedError": "An unexpected error occurred"
+  },
   "partners": {
     "title": "Our Partners",
     "subtitle": "We work with leading companies in the industry"

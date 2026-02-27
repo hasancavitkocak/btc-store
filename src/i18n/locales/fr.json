@@ -1110,6 +1110,73 @@
       "yes": "Oui"
     }
   },
+  "parametersAdmin": {
+    "title": "Paramètres",
+    "totalParameters": "Total {count} paramètres",
+    "newParameter": "Nouveau Paramètre",
+    "loading": "Chargement...",
+    "dataFormatError": "Erreur de format de données",
+    "loadError": "Erreur lors du chargement de la liste des paramètres",
+    "deleteSuccess": "Paramètre supprimé",
+    "deleteError": "Erreur lors de la suppression du paramètre",
+    "deleteFailed": "Échec de l'opération de suppression",
+    "table": {
+      "code": "Code",
+      "value": "Valeur",
+      "description": "Description",
+      "type": "Type",
+      "actions": "Actions"
+    },
+    "encrypted": "Chiffré",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "noParameters": "Aucun paramètre ajouté pour le moment",
+    "noParametersDesc": "Commencez par ajouter le premier paramètre",
+    "addFirstParameter": "Ajouter le Premier Paramètre",
+    "totalRecords": "Total {count} enregistrements",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page",
+    "deleteDialog": {
+      "title": "Supprimer le Paramètre",
+      "message": "Êtes-vous sûr de vouloir supprimer le paramètre \"{value}\" ? Cette action ne peut pas être annulée.",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    }
+  },
+  "parameterForm": {
+    "editParameter": "Modifier le Paramètre",
+    "newParameter": "Nouveau Paramètre",
+    "parameterInfo": "Informations du Paramètre",
+    "code": "Code",
+    "codePlaceholder": "Code du paramètre (ex: SITE_NAME)",
+    "value": "Valeur",
+    "valuePlaceholder": "Valeur du paramètre",
+    "description": "Description",
+    "otherLanguages": "Autres Langues",
+    "settings": "Paramètres",
+    "dataType": "Type de Données",
+    "dataTypes": {
+      "string": "Texte",
+      "integer": "Entier",
+      "double": "Décimal",
+      "boolean": "Booléen"
+    },
+    "parameterType": "Type de Paramètre",
+    "parameterTypes": {
+      "system": "Système",
+      "user": "Utilisateur"
+    },
+    "encrypted": "Chiffré",
+    "actions": "Actions",
+    "saving": "Enregistrement...",
+    "codeRequired": "Le champ code est obligatoire",
+    "valueRequired": "Le champ valeur est obligatoire",
+    "saveError": "Erreur lors de l'enregistrement du paramètre",
+    "updateSuccess": "Paramètre mis à jour",
+    "createSuccess": "Paramètre ajouté",
+    "unexpectedError": "Une erreur inattendue s'est produite"
+  },
   "partners": {
     "title": "Nos Partenaires",
     "subtitle": "Nous travaillons avec des entreprises leaders du secteur"

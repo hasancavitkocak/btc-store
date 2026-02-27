@@ -1154,6 +1154,73 @@
       "yes": "Sì"
     }
   },
+  "parametersAdmin": {
+    "title": "Parametri",
+    "totalParameters": "Totale {count} parametri",
+    "newParameter": "Nuovo Parametro",
+    "loading": "Caricamento...",
+    "dataFormatError": "Errore nel formato dei dati",
+    "loadError": "Errore durante il caricamento dell'elenco dei parametri",
+    "deleteSuccess": "Parametro eliminato",
+    "deleteError": "Errore durante l'eliminazione del parametro",
+    "deleteFailed": "Operazione di eliminazione fallita",
+    "table": {
+      "code": "Codice",
+      "value": "Valore",
+      "description": "Descrizione",
+      "type": "Tipo",
+      "actions": "Azioni"
+    },
+    "encrypted": "Crittografato",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "noParameters": "Nessun parametro aggiunto ancora",
+    "noParametersDesc": "Inizia aggiungendo il primo parametro",
+    "addFirstParameter": "Aggiungi Primo Parametro",
+    "totalRecords": "Totale {count} record",
+    "previous": "Precedente",
+    "next": "Successivo",
+    "page": "Pagina",
+    "deleteDialog": {
+      "title": "Elimina Parametro",
+      "message": "Sei sicuro di voler eliminare il parametro \"{value}\"? Questa azione non può essere annullata.",
+      "confirm": "Elimina",
+      "cancel": "Annulla"
+    }
+  },
+  "parameterForm": {
+    "editParameter": "Modifica Parametro",
+    "newParameter": "Nuovo Parametro",
+    "parameterInfo": "Informazioni Parametro",
+    "code": "Codice",
+    "codePlaceholder": "Codice parametro (es: SITE_NAME)",
+    "value": "Valore",
+    "valuePlaceholder": "Valore parametro",
+    "description": "Descrizione",
+    "otherLanguages": "Altre Lingue",
+    "settings": "Impostazioni",
+    "dataType": "Tipo di Dati",
+    "dataTypes": {
+      "string": "Testo",
+      "integer": "Intero",
+      "double": "Decimale",
+      "boolean": "Booleano"
+    },
+    "parameterType": "Tipo di Parametro",
+    "parameterTypes": {
+      "system": "Sistema",
+      "user": "Utente"
+    },
+    "encrypted": "Crittografato",
+    "actions": "Azioni",
+    "saving": "Salvataggio...",
+    "codeRequired": "Il campo codice è obbligatorio",
+    "valueRequired": "Il campo valore è obbligatorio",
+    "saveError": "Errore durante il salvataggio del parametro",
+    "updateSuccess": "Parametro aggiornato",
+    "createSuccess": "Parametro aggiunto",
+    "unexpectedError": "Si è verificato un errore imprevisto"
+  },
   "partners": {
     "title": "I Nostri Partner",
     "subtitle": "Lavoriamo con aziende leader del settore"

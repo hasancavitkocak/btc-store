@@ -1110,6 +1110,73 @@
       "yes": "Sí"
     }
   },
+  "parametersAdmin": {
+    "title": "Parámetros",
+    "totalParameters": "Total {count} parámetros",
+    "newParameter": "Nuevo Parámetro",
+    "loading": "Cargando...",
+    "dataFormatError": "Error de formato de datos",
+    "loadError": "Error al cargar la lista de parámetros",
+    "deleteSuccess": "Parámetro eliminado",
+    "deleteError": "Error al eliminar el parámetro",
+    "deleteFailed": "Operación de eliminación fallida",
+    "table": {
+      "code": "Código",
+      "value": "Valor",
+      "description": "Descripción",
+      "type": "Tipo",
+      "actions": "Acciones"
+    },
+    "encrypted": "Encriptado",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "noParameters": "Aún no se han agregado parámetros",
+    "noParametersDesc": "Comience agregando el primer parámetro",
+    "addFirstParameter": "Agregar Primer Parámetro",
+    "totalRecords": "Total {count} registros",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página",
+    "deleteDialog": {
+      "title": "Eliminar Parámetro",
+      "message": "¿Está seguro de que desea eliminar el parámetro \"{value}\"? Esta acción no se puede deshacer.",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    }
+  },
+  "parameterForm": {
+    "editParameter": "Editar Parámetro",
+    "newParameter": "Nuevo Parámetro",
+    "parameterInfo": "Información del Parámetro",
+    "code": "Código",
+    "codePlaceholder": "Código del parámetro (ej: SITE_NAME)",
+    "value": "Valor",
+    "valuePlaceholder": "Valor del parámetro",
+    "description": "Descripción",
+    "otherLanguages": "Otros Idiomas",
+    "settings": "Configuración",
+    "dataType": "Tipo de Datos",
+    "dataTypes": {
+      "string": "Texto",
+      "integer": "Entero",
+      "double": "Decimal",
+      "boolean": "Booleano"
+    },
+    "parameterType": "Tipo de Parámetro",
+    "parameterTypes": {
+      "system": "Sistema",
+      "user": "Usuario"
+    },
+    "encrypted": "Encriptado",
+    "actions": "Acciones",
+    "saving": "Guardando...",
+    "codeRequired": "El campo código es obligatorio",
+    "valueRequired": "El campo valor es obligatorio",
+    "saveError": "Error al guardar el parámetro",
+    "updateSuccess": "Parámetro actualizado",
+    "createSuccess": "Parámetro agregado",
+    "unexpectedError": "Ocurrió un error inesperado"
+  },
   "partners": {
     "title": "Nuestros Socios",
     "subtitle": "Trabajamos con empresas líderes de la industria"

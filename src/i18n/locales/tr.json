@@ -1155,6 +1155,73 @@
       "yes": "Evet"
     }
   },
+  "parametersAdmin": {
+    "title": "Parametreler",
+    "totalParameters": "Toplam {count} parametre",
+    "newParameter": "Yeni Parametre",
+    "loading": "Yükleniyor...",
+    "dataFormatError": "Veri formatı hatalı",
+    "loadError": "Parametre listesi yüklenirken hata oluştu",
+    "deleteSuccess": "Parametre silindi",
+    "deleteError": "Parametre silinirken hata oluştu",
+    "deleteFailed": "Silme işlemi başarısız",
+    "table": {
+      "code": "Kod",
+      "value": "Değer",
+      "description": "Açıklama",
+      "type": "Tip",
+      "actions": "İşlemler"
+    },
+    "encrypted": "Şifreli",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "noParameters": "Henüz parametre eklenmemiş",
+    "noParametersDesc": "İlk parametreyi ekleyerek başlayın",
+    "addFirstParameter": "İlk Parametreyi Ekle",
+    "totalRecords": "Toplam {count} kayıt",
+    "previous": "Önceki",
+    "next": "Sonraki",
+    "page": "Sayfa",
+    "deleteDialog": {
+      "title": "Parametre Sil",
+      "message": "\"{value}\" parametresini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "confirm": "Sil",
+      "cancel": "İptal"
+    }
+  },
+  "parameterForm": {
+    "editParameter": "Parametre Düzenle",
+    "newParameter": "Yeni Parametre",
+    "parameterInfo": "Parametre Bilgileri",
+    "code": "Kod",
+    "codePlaceholder": "Parametre kodu (örn: SITE_NAME)",
+    "value": "Değer",
+    "valuePlaceholder": "Parametre değeri",
+    "description": "Açıklama",
+    "otherLanguages": "Diğer Diller",
+    "settings": "Ayarlar",
+    "dataType": "Veri Tipi",
+    "dataTypes": {
+      "string": "Metin",
+      "integer": "Tam Sayı",
+      "double": "Ondalık Sayı",
+      "boolean": "Boolean"
+    },
+    "parameterType": "Parametre Tipi",
+    "parameterTypes": {
+      "system": "Sistem",
+      "user": "Kullanıcı"
+    },
+    "encrypted": "Şifreli",
+    "actions": "İşlemler",
+    "saving": "Kaydediliyor...",
+    "codeRequired": "Kod alanı zorunludur",
+    "valueRequired": "Değer alanı zorunludur",
+    "saveError": "Parametre kaydedilirken hata oluştu",
+    "updateSuccess": "Parametre güncellendi",
+    "createSuccess": "Parametre eklendi",
+    "unexpectedError": "Beklenmeyen bir hata oluştu"
+  },
   "partners": {
     "title": "Partnerlerimiz",
     "subtitle": "Sektörün önde gelen firmaları ile çalışıyoruz"

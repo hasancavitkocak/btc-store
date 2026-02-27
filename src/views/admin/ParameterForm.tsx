@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Save, X, ArrowLeft } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -11,18 +12,39 @@ import Input from '../../components/Input';
 import Textarea from '../../components/Textarea';
 import Toast from '../../components/Toast';
 import { parameterService } from '../../services/admin.service';
+import { type SupportedLocale } from '../../lib/i18n-utils';
 
 interface ParameterFormProps {
   parameterId?: string;
 }
 
+// Dil bilgileri
+const languageInfo: Record<SupportedLocale, { code: string; name: string }> = {
+  tr: { code: 'TR', name: 'Türkçe' },
+  en: { code: 'EN', name: 'English' },
+  de: { code: 'DE', name: 'Deutsch' },
+  fr: { code: 'FR', name: 'Français' },
+  es: { code: 'ES', name: 'Español' },
+  it: { code: 'IT', name: 'Italiano' }
+};
+
 export default function ParameterForm({ parameterId }: ParameterFormProps) {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
   const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
   
   const isEditing = !!parameterId;
+
+  // Kullanıcının dilini en üste, diğerlerini sıraya koy
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
 
   const toggleField = (fieldName: string) => {
     const newExpanded = new Set(expandedFields);
@@ -70,7 +92,7 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
       }
     } catch (error) {
       console.error('Error loading parameter:', error);
-      setToast({ message: 'Parametre yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('parametersAdmin.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -78,12 +100,12 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
 
   const handleSave = async () => {
     if (!formData.code.trim()) {
-      setToast({ message: 'Kod alanı zorunludur', type: 'error' });
+      setToast({ message: t('parameterForm.codeRequired'), type: 'error' });
       return;
     }
 
     if (!formData.value.trim()) {
-      setToast({ message: 'Değer alanı zorunludur', type: 'error' });
+      setToast({ message: t('parameterForm.valueRequired'), type: 'error' });
       return;
     }
 
@@ -104,14 +126,14 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
 
       if (response.status === 'ERROR') {
         setToast({ 
-          message: response.errorMessage || 'Parametre kaydedilirken hata oluştu', 
+          message: response.errorMessage || t('parameterForm.saveError'), 
           type: 'error' 
         });
         return;
       }
 
       setToast({ 
-        message: isEditing ? 'Parametre güncellendi' : 'Parametre eklendi', 
+        message: isEditing ? t('parameterForm.updateSuccess') : t('parameterForm.createSuccess'), 
         type: 'success' 
       });
 
@@ -121,7 +143,7 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
     } catch (error: any) {
       console.error('Error saving parameter:', error);
       setToast({ 
-        message: error.message || 'Beklenmeyen bir hata oluştu', 
+        message: error.message || t('parameterForm.unexpectedError'), 
         type: 'error' 
       });
     } finally {
@@ -139,26 +161,26 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Geri
+            {t('common.back')}
           </Button>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {isEditing ? 'Parametre Düzenle' : 'Yeni Parametre'}
+            {isEditing ? t('parameterForm.editParameter') : t('parameterForm.newParameter')}
           </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Parametre Bilgileri</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('parameterForm.parameterInfo')}</h2>
               
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Kod <span className="text-red-500">*</span>
+                    {t('parameterForm.code')} <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    placeholder="Parametre kodu (örn: SITE_NAME)"
+                    placeholder={t('parameterForm.codePlaceholder')}
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                     disabled={isEditing}
@@ -167,10 +189,10 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Değer <span className="text-red-500">*</span>
+                    {t('parameterForm.value')} <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    placeholder="Parametre değeri"
+                    placeholder={t('parameterForm.valuePlaceholder')}
                     value={formData.value}
                     onChange={(e) => setFormData({ ...formData, value: e.target.value })}
                     type={formData.encrypt ? 'password' : 'text'}
@@ -179,58 +201,37 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
 
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">Açıklama</label>
+                    <label className="text-sm font-medium text-gray-700">{t('parameterForm.description')}</label>
                     <button
                       type="button"
                       onClick={() => toggleField('description')}
                       className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                     >
                       <span className="text-base">{expandedFields.has('description') ? '🌐' : '🌍'}</span>
-                      <span>Diğer Diller</span>
+                      <span>{t('parameterForm.otherLanguages')}</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('description') ? '▼' : '▶'}</span>
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
                     <Textarea
-                      placeholder="🇹🇷 Türkçe açıklama"
-                      value={formData.description.tr}
-                      onChange={(e) => setFormData({ ...formData, description: { ...formData.description, tr: e.target.value } })}
+                      placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                      value={formData.description[orderedLanguages[0]]}
+                      onChange={(e) => setFormData({ ...formData, description: { ...formData.description, [orderedLanguages[0]]: e.target.value } })}
                       rows={3}
                     />
                     
                     {expandedFields.has('description') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Textarea
-                          placeholder="🇬🇧 English description"
-                          value={formData.description.en}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, en: e.target.value } })}
-                          rows={3}
-                        />
-                        <Textarea
-                          placeholder="🇩🇪 Deutsch Beschreibung"
-                          value={formData.description.de}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, de: e.target.value } })}
-                          rows={3}
-                        />
-                        <Textarea
-                          placeholder="🇫🇷 Description française"
-                          value={formData.description.fr}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, fr: e.target.value } })}
-                          rows={3}
-                        />
-                        <Textarea
-                          placeholder="🇪🇸 Descripción en español"
-                          value={formData.description.es}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, es: e.target.value } })}
-                          rows={3}
-                        />
-                        <Textarea
-                          placeholder="🇮🇹 Descrizione italiana"
-                          value={formData.description.it}
-                          onChange={(e) => setFormData({ ...formData, description: { ...formData.description, it: e.target.value } })}
-                          rows={3}
-                        />
+                        {orderedLanguages.slice(1).map((lang) => (
+                          <Textarea
+                            key={lang}
+                            placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                            value={formData.description[lang]}
+                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, [lang]: e.target.value } })}
+                            rows={3}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -241,35 +242,35 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
 
           <div className="space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Ayarlar</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('parameterForm.settings')}</h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Veri Tipi
+                    {t('parameterForm.dataType')}
                   </label>
                   <select
                     value={formData.dataType}
                     onChange={(e) => setFormData({ ...formData, dataType: e.target.value as any })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="STRING">Metin</option>
-                    <option value="INTEGER">Tam Sayı</option>
-                    <option value="DOUBLE">Ondalık Sayı</option>
-                    <option value="BOOLEAN">Boolean</option>
+                    <option value="STRING">{t('parameterForm.dataTypes.string')}</option>
+                    <option value="INTEGER">{t('parameterForm.dataTypes.integer')}</option>
+                    <option value="DOUBLE">{t('parameterForm.dataTypes.double')}</option>
+                    <option value="BOOLEAN">{t('parameterForm.dataTypes.boolean')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Parametre Tipi
+                    {t('parameterForm.parameterType')}
                   </label>
                   <select
                     value={formData.parameterType}
                     onChange={(e) => setFormData({ ...formData, parameterType: e.target.value as any })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="SYSTEM">Sistem</option>
-                    <option value="USER">Kullanıcı</option>
+                    <option value="SYSTEM">{t('parameterForm.parameterTypes.system')}</option>
+                    <option value="USER">{t('parameterForm.parameterTypes.user')}</option>
                   </select>
                 </div>
 
@@ -282,14 +283,14 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="encrypt" className="text-sm font-medium text-gray-700">
-                    Şifreli
+                    {t('parameterForm.encrypted')}
                   </label>
                 </div>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('parameterForm.actions')}</h2>
               <div className="space-y-3">
                 <Button 
                   onClick={handleSave} 
@@ -298,7 +299,7 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
                   disabled={loading}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  {loading ? t('parameterForm.saving') : t('common.save')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -307,7 +308,7 @@ export default function ParameterForm({ parameterId }: ParameterFormProps) {
                   disabled={loading}
                 >
                   <X className="w-4 h-4 mr-2" />
-                  İptal
+                  {t('common.cancel')}
                 </Button>
               </div>
             </Card>
