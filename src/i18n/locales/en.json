@@ -1341,8 +1341,8 @@
     "adminMenus": {
       "title": "Admin Panel Menus",
       "totalMenus": "Total {count} menus",
-      "newMenu": "New Admin Menu",
-      "publicMenus": "Public Menus",
+      "newMenu": "New Admin Panel Menu",
+      "publicMenus": "Site Menus",
       "loading": "Loading...",
       "dataFormatError": "Menu list format error",
       "loadError": "Error loading menu list",
@@ -1363,23 +1363,23 @@
         "sub": "Sub"
       },
       "allGroups": "All",
-      "noMenus": "No admin menus added yet",
-      "noMenusDesc": "Start by adding the first admin menu",
-      "addFirstMenu": "Add First Admin Menu",
+      "noMenus": "No admin panel menus added yet",
+      "noMenusDesc": "Start by adding the first admin panel menu",
+      "addFirstMenu": "Add First Admin Panel Menu",
       "edit": "Edit",
       "delete": "Delete",
       "deleteDialog": {
-        "title": "Delete Admin Menu",
+        "title": "Delete Admin Panel Menu",
         "message": "Are you sure you want to delete the menu \"{name}\"? This action cannot be undone.",
         "confirm": "Delete",
         "cancel": "Cancel"
       }
     },
     "publicMenus": {
-      "title": "Public Menus",
+      "title": "Site Menus",
       "totalMenus": "Total {count} menus",
-      "newMenu": "New Public Menu",
-      "adminMenus": "Admin Menus",
+      "newMenu": "New Site Menu",
+      "adminMenus": "Admin Panel Menus",
       "loading": "Loading...",
       "dataFormatError": "Menu list format error",
       "loadError": "Error loading menu list",
@@ -1398,13 +1398,13 @@
         "inactive": "Inactive",
         "sub": "Sub"
       },
-      "noMenus": "No public menus added yet",
-      "noMenusDesc": "Start by adding the first public menu",
-      "addFirstMenu": "Add First Public Menu",
+      "noMenus": "No site menus added yet",
+      "noMenusDesc": "Start by adding the first site menu",
+      "addFirstMenu": "Add First Site Menu",
       "edit": "Edit",
       "delete": "Delete",
       "deleteDialog": {
-        "title": "Delete Public Menu",
+        "title": "Delete Site Menu",
         "message": "Are you sure you want to delete the menu \"{name}\"? This action cannot be undone.",
         "confirm": "Delete",
         "cancel": "Cancel"
@@ -1414,7 +1414,7 @@
       "back": "Back",
       "editMenu": "Edit Menu",
       "newAdminMenu": "New Admin Panel Menu",
-      "newPublicMenu": "New Public Menu",
+      "newPublicMenu": "New Site Menu",
       "menuInfo": "Menu Information",
       "menuName": "Menu Name",
       "otherLanguages": "Other Languages",

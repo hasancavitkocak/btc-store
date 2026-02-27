@@ -1338,10 +1338,10 @@
   },
   "menusPage": {
     "adminMenus": {
-      "title": "Menu del pannello di amministrazione",
+      "title": "Menu pannello di amministrazione",
       "totalMenus": "Totale {count} menu",
-      "newMenu": "Nuovo menu admin",
-      "publicMenus": "Menu pubblici",
+      "newMenu": "Nuovo menu pannello di amministrazione",
+      "publicMenus": "Menu del sito",
       "loading": "Caricamento...",
       "dataFormatError": "Errore formato elenco menu",
       "loadError": "Errore durante il caricamento dell'elenco dei menu",
@@ -1362,23 +1362,23 @@
         "sub": "Sotto"
       },
       "allGroups": "Tutti",
-      "noMenus": "Nessun menu admin aggiunto ancora",
-      "noMenusDesc": "Inizia aggiungendo il primo menu admin",
-      "addFirstMenu": "Aggiungi primo menu admin",
+      "noMenus": "Nessun menu pannello di amministrazione aggiunto ancora",
+      "noMenusDesc": "Inizia aggiungendo il primo menu pannello di amministrazione",
+      "addFirstMenu": "Aggiungi primo menu pannello di amministrazione",
       "edit": "Modifica",
       "delete": "Elimina",
       "deleteDialog": {
-        "title": "Elimina menu admin",
+        "title": "Elimina menu pannello di amministrazione",
         "message": "Sei sicuro di voler eliminare il menu \"{name}\"? Questa azione non può essere annullata.",
         "confirm": "Elimina",
         "cancel": "Annulla"
       }
     },
     "publicMenus": {
-      "title": "Menu pubblici",
+      "title": "Menu del sito",
       "totalMenus": "Totale {count} menu",
-      "newMenu": "Nuovo menu pubblico",
-      "adminMenus": "Menu admin",
+      "newMenu": "Nuovo menu del sito",
+      "adminMenus": "Menu pannello di amministrazione",
       "loading": "Caricamento...",
       "dataFormatError": "Errore formato elenco menu",
       "loadError": "Errore durante il caricamento dell'elenco dei menu",
@@ -1397,13 +1397,13 @@
         "inactive": "Inattivo",
         "sub": "Sotto"
       },
-      "noMenus": "Nessun menu pubblico aggiunto ancora",
-      "noMenusDesc": "Inizia aggiungendo il primo menu pubblico",
-      "addFirstMenu": "Aggiungi primo menu pubblico",
+      "noMenus": "Nessun menu del sito aggiunto ancora",
+      "noMenusDesc": "Inizia aggiungendo il primo menu del sito",
+      "addFirstMenu": "Aggiungi primo menu del sito",
       "edit": "Modifica",
       "delete": "Elimina",
       "deleteDialog": {
-        "title": "Elimina menu pubblico",
+        "title": "Elimina menu del sito",
         "message": "Sei sicuro di voler eliminare il menu \"{name}\"? Questa azione non può essere annullata.",
         "confirm": "Elimina",
         "cancel": "Annulla"
@@ -1412,8 +1412,8 @@
     "menuForm": {
       "back": "Indietro",
       "editMenu": "Modifica menu",
-      "newAdminMenu": "Nuovo menu del pannello di amministrazione",
-      "newPublicMenu": "Nuovo menu pubblico",
+      "newAdminMenu": "Nuovo menu pannello di amministrazione",
+      "newPublicMenu": "Nuovo menu del sito",
       "menuInfo": "Informazioni sul menu",
       "menuName": "Nome del menu",
       "otherLanguages": "Altre lingue",

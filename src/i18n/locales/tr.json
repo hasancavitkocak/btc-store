@@ -1339,10 +1339,10 @@
   },
   "menusPage": {
     "adminMenus": {
-      "title": "Admin Panel Menüleri",
+      "title": "Yönetim Paneli Menüleri",
       "totalMenus": "Toplam {count} menü",
-      "newMenu": "Yeni Admin Menü",
-      "publicMenus": "Public Menüler",
+      "newMenu": "Yeni Yönetim Paneli Menüsü",
+      "publicMenus": "Site Menüleri",
       "loading": "Yükleniyor...",
       "dataFormatError": "Menü listesi formatı hatalı",
       "loadError": "Menü listesi yüklenirken hata oluştu",
@@ -1363,23 +1363,23 @@
         "sub": "Alt"
       },
       "allGroups": "Tümü",
-      "noMenus": "Henüz admin menü eklenmemiş",
-      "noMenusDesc": "İlk admin menüyü ekleyerek başlayın",
-      "addFirstMenu": "İlk Admin Menüyü Ekle",
+      "noMenus": "Henüz yönetim paneli menüsü eklenmemiş",
+      "noMenusDesc": "İlk yönetim paneli menüsünü ekleyerek başlayın",
+      "addFirstMenu": "İlk Yönetim Paneli Menüsünü Ekle",
       "edit": "Düzenle",
       "delete": "Sil",
       "deleteDialog": {
-        "title": "Admin Menü Sil",
+        "title": "Yönetim Paneli Menüsü Sil",
         "message": "\"{name}\" menüsünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
         "confirm": "Sil",
         "cancel": "İptal"
       }
     },
     "publicMenus": {
-      "title": "Public Menüler",
+      "title": "Site Menüleri",
       "totalMenus": "Toplam {count} menü",
-      "newMenu": "Yeni Public Menü",
-      "adminMenus": "Admin Menüler",
+      "newMenu": "Yeni Site Menüsü",
+      "adminMenus": "Yönetim Paneli Menüleri",
       "loading": "Yükleniyor...",
       "dataFormatError": "Menü listesi formatı hatalı",
       "loadError": "Menü listesi yüklenirken hata oluştu",
@@ -1398,13 +1398,13 @@
         "inactive": "Pasif",
         "sub": "Alt"
       },
-      "noMenus": "Henüz public menü eklenmemiş",
-      "noMenusDesc": "İlk public menüyü ekleyerek başlayın",
-      "addFirstMenu": "İlk Public Menüyü Ekle",
+      "noMenus": "Henüz site menüsü eklenmemiş",
+      "noMenusDesc": "İlk site menüsünü ekleyerek başlayın",
+      "addFirstMenu": "İlk Site Menüsünü Ekle",
       "edit": "Düzenle",
       "delete": "Sil",
       "deleteDialog": {
-        "title": "Public Menü Sil",
+        "title": "Site Menüsü Sil",
         "message": "\"{name}\" menüsünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
         "confirm": "Sil",
         "cancel": "İptal"
@@ -1413,8 +1413,8 @@
     "menuForm": {
       "back": "Geri",
       "editMenu": "Menü Düzenle",
-      "newAdminMenu": "Yeni Admin Panel Menü",
-      "newPublicMenu": "Yeni Public Menü",
+      "newAdminMenu": "Yeni Yönetim Paneli Menüsü",
+      "newPublicMenu": "Yeni Site Menüsü",
       "menuInfo": "Menü Bilgileri",
       "menuName": "Menü Adı",
       "otherLanguages": "Diğer Diller",

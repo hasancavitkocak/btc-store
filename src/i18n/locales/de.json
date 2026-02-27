@@ -1296,8 +1296,8 @@
     "adminMenus": {
       "title": "Admin-Panel-Menüs",
       "totalMenus": "Insgesamt {count} Menüs",
-      "newMenu": "Neues Admin-Menü",
-      "publicMenus": "Öffentliche Menüs",
+      "newMenu": "Neues Admin-Panel-Menü",
+      "publicMenus": "Website-Menüs",
       "loading": "Wird geladen...",
       "dataFormatError": "Menülistenformatfehler",
       "loadError": "Fehler beim Laden der Menüliste",
@@ -1318,23 +1318,23 @@
         "sub": "Unter"
       },
       "allGroups": "Alle",
-      "noMenus": "Noch keine Admin-Menüs hinzugefügt",
-      "noMenusDesc": "Beginnen Sie mit dem Hinzufügen des ersten Admin-Menüs",
-      "addFirstMenu": "Erstes Admin-Menü hinzufügen",
+      "noMenus": "Noch keine Admin-Panel-Menüs hinzugefügt",
+      "noMenusDesc": "Beginnen Sie mit dem Hinzufügen des ersten Admin-Panel-Menüs",
+      "addFirstMenu": "Erstes Admin-Panel-Menü hinzufügen",
       "edit": "Bearbeiten",
       "delete": "Löschen",
       "deleteDialog": {
-        "title": "Admin-Menü löschen",
+        "title": "Admin-Panel-Menü löschen",
         "message": "Sind Sie sicher, dass Sie das Menü \"{name}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
         "confirm": "Löschen",
         "cancel": "Abbrechen"
       }
     },
     "publicMenus": {
-      "title": "Öffentliche Menüs",
+      "title": "Website-Menüs",
       "totalMenus": "Insgesamt {count} Menüs",
-      "newMenu": "Neues öffentliches Menü",
-      "adminMenus": "Admin-Menüs",
+      "newMenu": "Neues Website-Menü",
+      "adminMenus": "Admin-Panel-Menüs",
       "loading": "Wird geladen...",
       "dataFormatError": "Menülistenformatfehler",
       "loadError": "Fehler beim Laden der Menüliste",
@@ -1353,13 +1353,13 @@
         "inactive": "Inaktiv",
         "sub": "Unter"
       },
-      "noMenus": "Noch keine öffentlichen Menüs hinzugefügt",
-      "noMenusDesc": "Beginnen Sie mit dem Hinzufügen des ersten öffentlichen Menüs",
-      "addFirstMenu": "Erstes öffentliches Menü hinzufügen",
+      "noMenus": "Noch keine Website-Menüs hinzugefügt",
+      "noMenusDesc": "Beginnen Sie mit dem Hinzufügen des ersten Website-Menüs",
+      "addFirstMenu": "Erstes Website-Menü hinzufügen",
       "edit": "Bearbeiten",
       "delete": "Löschen",
       "deleteDialog": {
-        "title": "Öffentliches Menü löschen",
+        "title": "Website-Menü löschen",
         "message": "Sind Sie sicher, dass Sie das Menü \"{name}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
         "confirm": "Löschen",
         "cancel": "Abbrechen"
@@ -1369,7 +1369,7 @@
       "back": "Zurück",
       "editMenu": "Menü bearbeiten",
       "newAdminMenu": "Neues Admin-Panel-Menü",
-      "newPublicMenu": "Neues öffentliches Menü",
+      "newPublicMenu": "Neues Website-Menü",
       "menuInfo": "Menüinformationen",
       "menuName": "Menüname",
       "otherLanguages": "Andere Sprachen",
