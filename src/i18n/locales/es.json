@@ -179,6 +179,14 @@
       "itemsSelected": "{count} elementos seleccionados",
       "noResults": "No se encontraron resultados",
       "noItems": "No se encontraron elementos"
+    },
+    "iconPicker": {
+      "selectIcon": "Seleccionar icono...",
+      "emoji": "Emoji",
+      "icons": "Iconos",
+      "searchEmoji": "Buscar emoji...",
+      "searchIcon": "Buscar icono...",
+      "noResults": "No se encontraron resultados"
     }
   },
   "kvkk": {
@@ -1283,5 +1291,110 @@
     "save": "Guardar",
     "saving": "Guardando...",
     "cancel": "Cancelar"
+  },
+  "menusPage": {
+    "adminMenus": {
+      "title": "Menús del panel de administración",
+      "totalMenus": "Total {count} menús",
+      "newMenu": "Nuevo menú de administración",
+      "publicMenus": "Menús públicos",
+      "loading": "Cargando...",
+      "dataFormatError": "Error de formato de lista de menús",
+      "loadError": "Error al cargar la lista de menús",
+      "deleteSuccess": "Menú eliminado",
+      "deleteError": "Error al eliminar el menú",
+      "deleteFailed": "Operación de eliminación fallida",
+      "table": {
+        "menu": "Menú",
+        "url": "URL",
+        "groups": "Grupos",
+        "order": "Orden",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "sub": "Sub"
+      },
+      "allGroups": "Todos",
+      "noMenus": "Aún no se han agregado menús de administración",
+      "noMenusDesc": "Comience agregando el primer menú de administración",
+      "addFirstMenu": "Agregar primer menú de administración",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteDialog": {
+        "title": "Eliminar menú de administración",
+        "message": "¿Está seguro de que desea eliminar el menú \"{name}\"? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      }
+    },
+    "publicMenus": {
+      "title": "Menús públicos",
+      "totalMenus": "Total {count} menús",
+      "newMenu": "Nuevo menú público",
+      "adminMenus": "Menús de administración",
+      "loading": "Cargando...",
+      "dataFormatError": "Error de formato de lista de menús",
+      "loadError": "Error al cargar la lista de menús",
+      "deleteSuccess": "Menú eliminado",
+      "deleteError": "Error al eliminar el menú",
+      "deleteFailed": "Operación de eliminación fallida",
+      "table": {
+        "menu": "Menú",
+        "url": "URL",
+        "order": "Orden",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "sub": "Sub"
+      },
+      "noMenus": "Aún no se han agregado menús públicos",
+      "noMenusDesc": "Comience agregando el primer menú público",
+      "addFirstMenu": "Agregar primer menú público",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteDialog": {
+        "title": "Eliminar menú público",
+        "message": "¿Está seguro de que desea eliminar el menú \"{name}\"? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      }
+    },
+    "menuForm": {
+      "back": "Atrás",
+      "editMenu": "Editar menú",
+      "newAdminMenu": "Nuevo menú del panel de administración",
+      "newPublicMenu": "Nuevo menú público",
+      "menuInfo": "Información del menú",
+      "menuName": "Nombre del menú",
+      "otherLanguages": "Otros idiomas",
+      "icon": "Icono",
+      "selectedIcon": "Icono seleccionado:",
+      "order": "Orden",
+      "url": "URL",
+      "parentMenu": "Menú padre",
+      "parentMenuPlaceholder": "Menú principal (nivel superior)",
+      "userGroups": "Grupos de usuarios",
+      "selectedCount": "{count} seleccionado(s)",
+      "searchGroups": "Buscar grupos...",
+      "noGroupsFound": "No se encontraron grupos de usuarios",
+      "status": "Estado",
+      "active": "Activo",
+      "rootMenu": "Menú raíz",
+      "actions": "Acciones",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "loadError": "Error al cargar el menú",
+      "nameRequired": "El nombre del menú debe ingresarse en al menos un idioma",
+      "saveError": "Operación fallida",
+      "updateSuccess": "Menú actualizado",
+      "createSuccess": "Menú creado"
+    }
   }
 }

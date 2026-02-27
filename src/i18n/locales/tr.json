@@ -179,6 +179,14 @@
       "itemsSelected": "{count} öğe seçildi",
       "noResults": "Sonuç bulunamadı",
       "noItems": "Öğe bulunamadı"
+    },
+    "iconPicker": {
+      "selectIcon": "İkon seçin...",
+      "emoji": "Emoji",
+      "icons": "İkonlar",
+      "searchEmoji": "Emoji ara...",
+      "searchIcon": "İkon ara...",
+      "noResults": "Sonuç bulunamadı"
     }
   },
   "kvkk": {
@@ -1328,5 +1336,110 @@
     "save": "Kaydet",
     "saving": "Kaydediliyor...",
     "cancel": "İptal"
+  },
+  "menusPage": {
+    "adminMenus": {
+      "title": "Admin Panel Menüleri",
+      "totalMenus": "Toplam {count} menü",
+      "newMenu": "Yeni Admin Menü",
+      "publicMenus": "Public Menüler",
+      "loading": "Yükleniyor...",
+      "dataFormatError": "Menü listesi formatı hatalı",
+      "loadError": "Menü listesi yüklenirken hata oluştu",
+      "deleteSuccess": "Menü silindi",
+      "deleteError": "Menü silinirken hata oluştu",
+      "deleteFailed": "Silme işlemi başarısız",
+      "table": {
+        "menu": "Menü",
+        "url": "URL",
+        "groups": "Gruplar",
+        "order": "Sıra",
+        "status": "Durum",
+        "actions": "İşlemler"
+      },
+      "status": {
+        "active": "Aktif",
+        "inactive": "Pasif",
+        "sub": "Alt"
+      },
+      "allGroups": "Tümü",
+      "noMenus": "Henüz admin menü eklenmemiş",
+      "noMenusDesc": "İlk admin menüyü ekleyerek başlayın",
+      "addFirstMenu": "İlk Admin Menüyü Ekle",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "deleteDialog": {
+        "title": "Admin Menü Sil",
+        "message": "\"{name}\" menüsünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "confirm": "Sil",
+        "cancel": "İptal"
+      }
+    },
+    "publicMenus": {
+      "title": "Public Menüler",
+      "totalMenus": "Toplam {count} menü",
+      "newMenu": "Yeni Public Menü",
+      "adminMenus": "Admin Menüler",
+      "loading": "Yükleniyor...",
+      "dataFormatError": "Menü listesi formatı hatalı",
+      "loadError": "Menü listesi yüklenirken hata oluştu",
+      "deleteSuccess": "Menü silindi",
+      "deleteError": "Menü silinirken hata oluştu",
+      "deleteFailed": "Silme işlemi başarısız",
+      "table": {
+        "menu": "Menü",
+        "url": "URL",
+        "order": "Sıra",
+        "status": "Durum",
+        "actions": "İşlemler"
+      },
+      "status": {
+        "active": "Aktif",
+        "inactive": "Pasif",
+        "sub": "Alt"
+      },
+      "noMenus": "Henüz public menü eklenmemiş",
+      "noMenusDesc": "İlk public menüyü ekleyerek başlayın",
+      "addFirstMenu": "İlk Public Menüyü Ekle",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "deleteDialog": {
+        "title": "Public Menü Sil",
+        "message": "\"{name}\" menüsünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "confirm": "Sil",
+        "cancel": "İptal"
+      }
+    },
+    "menuForm": {
+      "back": "Geri",
+      "editMenu": "Menü Düzenle",
+      "newAdminMenu": "Yeni Admin Panel Menü",
+      "newPublicMenu": "Yeni Public Menü",
+      "menuInfo": "Menü Bilgileri",
+      "menuName": "Menü Adı",
+      "otherLanguages": "Diğer Diller",
+      "icon": "İkon",
+      "selectedIcon": "Seçili ikon:",
+      "order": "Sıra",
+      "url": "URL",
+      "parentMenu": "Üst Menü",
+      "parentMenuPlaceholder": "Ana Menü (Üst Seviye)",
+      "userGroups": "Kullanıcı Grupları",
+      "selectedCount": "{count} seçili",
+      "searchGroups": "Grup ara...",
+      "noGroupsFound": "Kullanıcı grubu bulunamadı",
+      "status": "Durum",
+      "active": "Aktif",
+      "rootMenu": "Ana Menü",
+      "actions": "İşlemler",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor...",
+      "cancel": "İptal",
+      "loadError": "Menü yüklenirken hata oluştu",
+      "nameRequired": "En az bir dilde menü adı girilmelidir",
+      "saveError": "İşlem başarısız",
+      "updateSuccess": "Menü güncellendi",
+      "createSuccess": "Menü oluşturuldu"
+    }
   }
 }

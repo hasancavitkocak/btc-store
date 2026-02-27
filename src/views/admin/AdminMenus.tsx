@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Edit, Trash2, Plus, Menu as MenuIcon } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
@@ -11,6 +12,7 @@ import Button from '../../components/Button';
 import Toast from '../../components/Toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { menuLinkItemService } from '../../services/admin.service';
+import { getLocalizedText, getCurrentLocale, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface Menu {
   code: string;
@@ -27,6 +29,8 @@ interface Menu {
 
 export default function AdminMenus() {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = getCurrentLocale() as SupportedLocale;
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [menus, setMenus] = useState<Menu[]>([]);
   const [loading, setLoading] = useState(false);
@@ -69,7 +73,7 @@ export default function AdminMenus() {
           console.error('Backend data is not an array:', backendResponse);
           setMenus([]);
           setToast({ 
-            message: 'Menü listesi formatı hatalı', 
+            message: t('menusPage.adminMenus.dataFormatError'), 
             type: 'error' 
           });
         }
@@ -77,14 +81,14 @@ export default function AdminMenus() {
         console.log('Response not successful or no data');
         setMenus([]);
         setToast({ 
-          message: response.errorMessage || 'Menü listesi yüklenirken hata oluştu', 
+          message: response.errorMessage || t('menusPage.adminMenus.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading menus:', error);
       setMenus([]);
-      setToast({ message: 'Menü listesi yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('menusPage.adminMenus.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -134,14 +138,14 @@ export default function AdminMenus() {
       const response = await menuLinkItemService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Menü silindi', type: 'success' });
+        setToast({ message: t('menusPage.adminMenus.deleteSuccess'), type: 'success' });
         loadMenus();
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('menusPage.adminMenus.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting menu:', error);
-      setToast({ message: 'Menü silinirken hata oluştu', type: 'error' });
+      setToast({ message: t('menusPage.adminMenus.deleteError'), type: 'error' });
     }
   };
 
@@ -176,30 +180,30 @@ export default function AdminMenus() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              ⚙️ Admin Panel Menüleri
+              ⚙️ {t('menusPage.adminMenus.title')}
             </h1>
-            <p className="text-gray-600">Toplam {flatMenus.length} menü</p>
+            <p className="text-gray-600">{t('menusPage.adminMenus.totalMenus', { count: flatMenus.length })}</p>
           </div>
           <div className="flex gap-3">
             <Button 
               variant="outline" 
               onClick={() => router.push('/admin/menus/public')}
             >
-              🌐 Public Menüler
+              🌐 {t('menusPage.adminMenus.publicMenus')}
             </Button>
             <Button 
               onClick={() => router.push('/admin/menus/admin/new')} 
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Yeni Admin Menü
+              {t('menusPage.adminMenus.newMenu')}
             </Button>
           </div>
         </div>
 
         {loading ? (
           <Card className="p-12 text-center">
-            <p className="text-gray-500">Yükleniyor...</p>
+            <p className="text-gray-500">{t('menusPage.adminMenus.loading')}</p>
           </Card>
         ) : (
           <>
@@ -209,22 +213,22 @@ export default function AdminMenus() {
                   <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Menü
+                        {t('menusPage.adminMenus.table.menu')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        URL
+                        {t('menusPage.adminMenus.table.url')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Gruplar
+                        {t('menusPage.adminMenus.table.groups')}
                       </th>
                       <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Sıra
+                        {t('menusPage.adminMenus.table.order')}
                       </th>
                       <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Durum
+                        {t('menusPage.adminMenus.table.status')}
                       </th>
                       <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        İşlemler
+                        {t('menusPage.adminMenus.table.actions')}
                       </th>
                     </tr>
                   </thead>
@@ -249,11 +253,11 @@ export default function AdminMenus() {
                                 <div>
                                   <div className="flex items-center gap-2">
                                     <span className="text-sm font-semibold text-gray-900">
-                                      {menu.name?.tr || menu.name?.en || 'İsimsiz Menü'}
+                                      {getLocalizedText(menu.name, locale)}
                                     </span>
                                     {menu.level > 0 && (
                                       <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 text-gray-600">
-                                        Alt
+                                        {t('menusPage.adminMenus.status.sub')}
                                       </span>
                                     )}
                                   </div>
@@ -274,7 +278,7 @@ export default function AdminMenus() {
                                         key={idx}
                                         className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800"
                                       >
-                                        {ug.name?.tr || ug.name?.en || ug.code}
+                                        {getLocalizedText(ug.name, locale)}
                                       </span>
                                     ))}
                                     {menu.userGroups.length > 2 && (
@@ -284,7 +288,7 @@ export default function AdminMenus() {
                                     )}
                                   </>
                                 ) : (
-                                  <span className="text-xs text-gray-400">Tümü</span>
+                                  <span className="text-xs text-gray-400">{t('menusPage.adminMenus.allGroups')}</span>
                                 )}
                               </div>
                             </td>
@@ -302,7 +306,7 @@ export default function AdminMenus() {
                                 <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
                                   menu.active ? 'bg-green-600' : 'bg-red-600'
                                 }`}></span>
-                                {menu.active ? 'Aktif' : 'Pasif'}
+                                {menu.active ? t('menusPage.adminMenus.status.active') : t('menusPage.adminMenus.status.inactive')}
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right">
@@ -310,7 +314,7 @@ export default function AdminMenus() {
                                 <button
                                   onClick={() => router.push(`/admin/menus/admin/${menu.code}`)}
                                   className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:bg-blue-100 transition-colors"
-                                  title="Düzenle"
+                                  title={t('menusPage.adminMenus.edit')}
                                 >
                                   <Edit className="w-4 h-4" />
                                 </button>
@@ -318,10 +322,10 @@ export default function AdminMenus() {
                                   onClick={() => setDeleteDialog({ 
                                     isOpen: true, 
                                     code: menu.code, 
-                                    name: menu.name?.tr || menu.name?.en || 'İsimsiz Menü'
+                                    name: getLocalizedText(menu.name, locale)
                                   })}
                                   className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
-                                  title="Sil"
+                                  title={t('menusPage.adminMenus.delete')}
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
@@ -343,12 +347,12 @@ export default function AdminMenus() {
                     <span className="text-3xl">⚙️</span>
                   </div>
                   <div>
-                    <p className="text-gray-900 font-medium mb-1">Henüz admin menü eklenmemiş</p>
-                    <p className="text-gray-500 text-sm mb-4">İlk admin menüyü ekleyerek başlayın</p>
+                    <p className="text-gray-900 font-medium mb-1">{t('menusPage.adminMenus.noMenus')}</p>
+                    <p className="text-gray-500 text-sm mb-4">{t('menusPage.adminMenus.noMenusDesc')}</p>
                   </div>
                   <Button onClick={() => router.push('/admin/menus/admin/new')} className="bg-blue-600 hover:bg-blue-700">
                     <Plus className="w-4 h-4 mr-2" />
-                    İlk Admin Menüyü Ekle
+                    {t('menusPage.adminMenus.addFirstMenu')}
                   </Button>
                 </div>
               </Card>
@@ -368,10 +372,10 @@ export default function AdminMenus() {
           isOpen={deleteDialog.isOpen}
           onClose={() => setDeleteDialog({ isOpen: false, code: '', name: '' })}
           onConfirm={() => handleDelete(deleteDialog.code)}
-          title="Admin Menü Sil"
-          message={`"${deleteDialog.name}" menüsünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-          confirmText="Sil"
-          cancelText="İptal"
+          title={t('menusPage.adminMenus.deleteDialog.title')}
+          message={t('menusPage.adminMenus.deleteDialog.message', { name: deleteDialog.name })}
+          confirmText={t('menusPage.adminMenus.deleteDialog.confirm')}
+          cancelText={t('menusPage.adminMenus.deleteDialog.cancel')}
           type="danger"
         />
       </Container>

@@ -179,6 +179,14 @@
       "itemsSelected": "{count} elementi selezionati",
       "noResults": "Nessun risultato trovato",
       "noItems": "Nessun elemento trovato"
+    },
+    "iconPicker": {
+      "selectIcon": "Seleziona icona...",
+      "emoji": "Emoji",
+      "icons": "Icone",
+      "searchEmoji": "Cerca emoji...",
+      "searchIcon": "Cerca icona...",
+      "noResults": "Nessun risultato trovato"
     }
   },
   "kvkk": {
@@ -1327,5 +1335,110 @@
     "save": "Salva",
     "saving": "Salvataggio...",
     "cancel": "Annulla"
+  },
+  "menusPage": {
+    "adminMenus": {
+      "title": "Menu del pannello di amministrazione",
+      "totalMenus": "Totale {count} menu",
+      "newMenu": "Nuovo menu admin",
+      "publicMenus": "Menu pubblici",
+      "loading": "Caricamento...",
+      "dataFormatError": "Errore formato elenco menu",
+      "loadError": "Errore durante il caricamento dell'elenco dei menu",
+      "deleteSuccess": "Menu eliminato",
+      "deleteError": "Errore durante l'eliminazione del menu",
+      "deleteFailed": "Operazione di eliminazione fallita",
+      "table": {
+        "menu": "Menu",
+        "url": "URL",
+        "groups": "Gruppi",
+        "order": "Ordine",
+        "status": "Stato",
+        "actions": "Azioni"
+      },
+      "status": {
+        "active": "Attivo",
+        "inactive": "Inattivo",
+        "sub": "Sotto"
+      },
+      "allGroups": "Tutti",
+      "noMenus": "Nessun menu admin aggiunto ancora",
+      "noMenusDesc": "Inizia aggiungendo il primo menu admin",
+      "addFirstMenu": "Aggiungi primo menu admin",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "deleteDialog": {
+        "title": "Elimina menu admin",
+        "message": "Sei sicuro di voler eliminare il menu \"{name}\"? Questa azione non può essere annullata.",
+        "confirm": "Elimina",
+        "cancel": "Annulla"
+      }
+    },
+    "publicMenus": {
+      "title": "Menu pubblici",
+      "totalMenus": "Totale {count} menu",
+      "newMenu": "Nuovo menu pubblico",
+      "adminMenus": "Menu admin",
+      "loading": "Caricamento...",
+      "dataFormatError": "Errore formato elenco menu",
+      "loadError": "Errore durante il caricamento dell'elenco dei menu",
+      "deleteSuccess": "Menu eliminato",
+      "deleteError": "Errore durante l'eliminazione del menu",
+      "deleteFailed": "Operazione di eliminazione fallita",
+      "table": {
+        "menu": "Menu",
+        "url": "URL",
+        "order": "Ordine",
+        "status": "Stato",
+        "actions": "Azioni"
+      },
+      "status": {
+        "active": "Attivo",
+        "inactive": "Inattivo",
+        "sub": "Sotto"
+      },
+      "noMenus": "Nessun menu pubblico aggiunto ancora",
+      "noMenusDesc": "Inizia aggiungendo il primo menu pubblico",
+      "addFirstMenu": "Aggiungi primo menu pubblico",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "deleteDialog": {
+        "title": "Elimina menu pubblico",
+        "message": "Sei sicuro di voler eliminare il menu \"{name}\"? Questa azione non può essere annullata.",
+        "confirm": "Elimina",
+        "cancel": "Annulla"
+      }
+    },
+    "menuForm": {
+      "back": "Indietro",
+      "editMenu": "Modifica menu",
+      "newAdminMenu": "Nuovo menu del pannello di amministrazione",
+      "newPublicMenu": "Nuovo menu pubblico",
+      "menuInfo": "Informazioni sul menu",
+      "menuName": "Nome del menu",
+      "otherLanguages": "Altre lingue",
+      "icon": "Icona",
+      "selectedIcon": "Icona selezionata:",
+      "order": "Ordine",
+      "url": "URL",
+      "parentMenu": "Menu padre",
+      "parentMenuPlaceholder": "Menu principale (livello superiore)",
+      "userGroups": "Gruppi di utenti",
+      "selectedCount": "{count} selezionato/i",
+      "searchGroups": "Cerca gruppi...",
+      "noGroupsFound": "Nessun gruppo di utenti trovato",
+      "status": "Stato",
+      "active": "Attivo",
+      "rootMenu": "Menu radice",
+      "actions": "Azioni",
+      "save": "Salva",
+      "saving": "Salvataggio...",
+      "cancel": "Annulla",
+      "loadError": "Errore durante il caricamento del menu",
+      "nameRequired": "Il nome del menu deve essere inserito in almeno una lingua",
+      "saveError": "Operazione fallita",
+      "updateSuccess": "Menu aggiornato",
+      "createSuccess": "Menu creato"
+    }
   }
 }

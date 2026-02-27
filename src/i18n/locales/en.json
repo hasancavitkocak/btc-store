@@ -179,6 +179,14 @@
       "itemsSelected": "{count} items selected",
       "noResults": "No results found",
       "noItems": "No items found"
+    },
+    "iconPicker": {
+      "selectIcon": "Select icon...",
+      "emoji": "Emoji",
+      "icons": "Icons",
+      "searchEmoji": "Search emoji...",
+      "searchIcon": "Search icon...",
+      "noResults": "No results found"
     }
   },
   "kvkk": {
@@ -1328,5 +1336,110 @@
     "save": "Save",
     "saving": "Saving...",
     "cancel": "Cancel"
+  },
+  "menusPage": {
+    "adminMenus": {
+      "title": "Admin Panel Menus",
+      "totalMenus": "Total {count} menus",
+      "newMenu": "New Admin Menu",
+      "publicMenus": "Public Menus",
+      "loading": "Loading...",
+      "dataFormatError": "Menu list format error",
+      "loadError": "Error loading menu list",
+      "deleteSuccess": "Menu deleted",
+      "deleteError": "Error deleting menu",
+      "deleteFailed": "Delete operation failed",
+      "table": {
+        "menu": "Menu",
+        "url": "URL",
+        "groups": "Groups",
+        "order": "Order",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "sub": "Sub"
+      },
+      "allGroups": "All",
+      "noMenus": "No admin menus added yet",
+      "noMenusDesc": "Start by adding the first admin menu",
+      "addFirstMenu": "Add First Admin Menu",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteDialog": {
+        "title": "Delete Admin Menu",
+        "message": "Are you sure you want to delete the menu \"{name}\"? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      }
+    },
+    "publicMenus": {
+      "title": "Public Menus",
+      "totalMenus": "Total {count} menus",
+      "newMenu": "New Public Menu",
+      "adminMenus": "Admin Menus",
+      "loading": "Loading...",
+      "dataFormatError": "Menu list format error",
+      "loadError": "Error loading menu list",
+      "deleteSuccess": "Menu deleted",
+      "deleteError": "Error deleting menu",
+      "deleteFailed": "Delete operation failed",
+      "table": {
+        "menu": "Menu",
+        "url": "URL",
+        "order": "Order",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "sub": "Sub"
+      },
+      "noMenus": "No public menus added yet",
+      "noMenusDesc": "Start by adding the first public menu",
+      "addFirstMenu": "Add First Public Menu",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteDialog": {
+        "title": "Delete Public Menu",
+        "message": "Are you sure you want to delete the menu \"{name}\"? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      }
+    },
+    "menuForm": {
+      "back": "Back",
+      "editMenu": "Edit Menu",
+      "newAdminMenu": "New Admin Panel Menu",
+      "newPublicMenu": "New Public Menu",
+      "menuInfo": "Menu Information",
+      "menuName": "Menu Name",
+      "otherLanguages": "Other Languages",
+      "icon": "Icon",
+      "selectedIcon": "Selected icon:",
+      "order": "Order",
+      "url": "URL",
+      "parentMenu": "Parent Menu",
+      "parentMenuPlaceholder": "Main Menu (Top Level)",
+      "userGroups": "User Groups",
+      "selectedCount": "{count} selected",
+      "searchGroups": "Search groups...",
+      "noGroupsFound": "No user groups found",
+      "status": "Status",
+      "active": "Active",
+      "rootMenu": "Root Menu",
+      "actions": "Actions",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "loadError": "Error loading menu",
+      "nameRequired": "Menu name must be entered in at least one language",
+      "saveError": "Operation failed",
+      "updateSuccess": "Menu updated",
+      "createSuccess": "Menu created"
+    }
   }
 }

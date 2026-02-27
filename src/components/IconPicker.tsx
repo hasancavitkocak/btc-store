@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface IconPickerProps {
   value: string;
@@ -31,6 +32,7 @@ const POPULAR_LUCIDE_ICONS = [
 ];
 
 export default function IconPicker({ value, onChange, label }: IconPickerProps) {
+  const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'emoji' | 'lucide'>('emoji');
@@ -98,7 +100,7 @@ export default function IconPicker({ value, onChange, label }: IconPickerProps) 
               <span className="text-sm text-gray-600">{value}</span>
             </>
           ) : (
-            <span className="text-gray-500">İkon seçin...</span>
+            <span className="text-gray-500">{t('components.iconPicker.selectIcon')}</span>
           )}
         </div>
         {value && (
@@ -128,7 +130,7 @@ export default function IconPicker({ value, onChange, label }: IconPickerProps) 
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              😀 Emoji
+              😀 {t('components.iconPicker.emoji')}
             </button>
             <button
               type="button"
@@ -139,7 +141,7 @@ export default function IconPicker({ value, onChange, label }: IconPickerProps) 
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              🎨 İkonlar
+              🎨 {t('components.iconPicker.icons')}
             </button>
           </div>
 
@@ -151,7 +153,7 @@ export default function IconPicker({ value, onChange, label }: IconPickerProps) 
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={activeTab === 'emoji' ? 'Emoji ara...' : 'İkon ara...'}
+                placeholder={activeTab === 'emoji' ? t('components.iconPicker.searchEmoji') : t('components.iconPicker.searchIcon')}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 onClick={(e) => e.stopPropagation()}
               />
@@ -203,7 +205,7 @@ export default function IconPicker({ value, onChange, label }: IconPickerProps) 
             {((activeTab === 'emoji' && filteredEmojis.length === 0) ||
               (activeTab === 'lucide' && filteredLucideIcons.length === 0)) && (
               <p className="text-sm text-gray-500 text-center py-4">
-                Sonuç bulunamadı
+                {t('components.iconPicker.noResults')}
               </p>
             )}
           </div>

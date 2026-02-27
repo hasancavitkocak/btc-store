@@ -179,6 +179,14 @@
       "itemsSelected": "{count} Elemente ausgewählt",
       "noResults": "Keine Ergebnisse gefunden",
       "noItems": "Keine Elemente gefunden"
+    },
+    "iconPicker": {
+      "selectIcon": "Symbol auswählen...",
+      "emoji": "Emoji",
+      "icons": "Symbole",
+      "searchEmoji": "Emoji suchen...",
+      "searchIcon": "Symbol suchen...",
+      "noResults": "Keine Ergebnisse gefunden"
     }
   },
   "kvkk": {
@@ -1283,5 +1291,110 @@
     "save": "Speichern",
     "saving": "Wird gespeichert...",
     "cancel": "Abbrechen"
+  },
+  "menusPage": {
+    "adminMenus": {
+      "title": "Admin-Panel-Menüs",
+      "totalMenus": "Insgesamt {count} Menüs",
+      "newMenu": "Neues Admin-Menü",
+      "publicMenus": "Öffentliche Menüs",
+      "loading": "Wird geladen...",
+      "dataFormatError": "Menülistenformatfehler",
+      "loadError": "Fehler beim Laden der Menüliste",
+      "deleteSuccess": "Menü gelöscht",
+      "deleteError": "Fehler beim Löschen des Menüs",
+      "deleteFailed": "Löschvorgang fehlgeschlagen",
+      "table": {
+        "menu": "Menü",
+        "url": "URL",
+        "groups": "Gruppen",
+        "order": "Reihenfolge",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "sub": "Unter"
+      },
+      "allGroups": "Alle",
+      "noMenus": "Noch keine Admin-Menüs hinzugefügt",
+      "noMenusDesc": "Beginnen Sie mit dem Hinzufügen des ersten Admin-Menüs",
+      "addFirstMenu": "Erstes Admin-Menü hinzufügen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "deleteDialog": {
+        "title": "Admin-Menü löschen",
+        "message": "Sind Sie sicher, dass Sie das Menü \"{name}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "confirm": "Löschen",
+        "cancel": "Abbrechen"
+      }
+    },
+    "publicMenus": {
+      "title": "Öffentliche Menüs",
+      "totalMenus": "Insgesamt {count} Menüs",
+      "newMenu": "Neues öffentliches Menü",
+      "adminMenus": "Admin-Menüs",
+      "loading": "Wird geladen...",
+      "dataFormatError": "Menülistenformatfehler",
+      "loadError": "Fehler beim Laden der Menüliste",
+      "deleteSuccess": "Menü gelöscht",
+      "deleteError": "Fehler beim Löschen des Menüs",
+      "deleteFailed": "Löschvorgang fehlgeschlagen",
+      "table": {
+        "menu": "Menü",
+        "url": "URL",
+        "order": "Reihenfolge",
+        "status": "Status",
+        "actions": "Aktionen"
+      },
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "sub": "Unter"
+      },
+      "noMenus": "Noch keine öffentlichen Menüs hinzugefügt",
+      "noMenusDesc": "Beginnen Sie mit dem Hinzufügen des ersten öffentlichen Menüs",
+      "addFirstMenu": "Erstes öffentliches Menü hinzufügen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "deleteDialog": {
+        "title": "Öffentliches Menü löschen",
+        "message": "Sind Sie sicher, dass Sie das Menü \"{name}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "confirm": "Löschen",
+        "cancel": "Abbrechen"
+      }
+    },
+    "menuForm": {
+      "back": "Zurück",
+      "editMenu": "Menü bearbeiten",
+      "newAdminMenu": "Neues Admin-Panel-Menü",
+      "newPublicMenu": "Neues öffentliches Menü",
+      "menuInfo": "Menüinformationen",
+      "menuName": "Menüname",
+      "otherLanguages": "Andere Sprachen",
+      "icon": "Symbol",
+      "selectedIcon": "Ausgewähltes Symbol:",
+      "order": "Reihenfolge",
+      "url": "URL",
+      "parentMenu": "Übergeordnetes Menü",
+      "parentMenuPlaceholder": "Hauptmenü (oberste Ebene)",
+      "userGroups": "Benutzergruppen",
+      "selectedCount": "{count} ausgewählt",
+      "searchGroups": "Gruppen suchen...",
+      "noGroupsFound": "Keine Benutzergruppen gefunden",
+      "status": "Status",
+      "active": "Aktiv",
+      "rootMenu": "Hauptmenü",
+      "actions": "Aktionen",
+      "save": "Speichern",
+      "saving": "Wird gespeichert...",
+      "cancel": "Abbrechen",
+      "loadError": "Fehler beim Laden des Menüs",
+      "nameRequired": "Menüname muss in mindestens einer Sprache eingegeben werden",
+      "saveError": "Vorgang fehlgeschlagen",
+      "updateSuccess": "Menü aktualisiert",
+      "createSuccess": "Menü erstellt"
+    }
   }
 }

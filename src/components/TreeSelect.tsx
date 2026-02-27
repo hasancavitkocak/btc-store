@@ -3,10 +3,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ChevronRight, Search, X } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+import { getLocalizedText, type SupportedLocale } from '../lib/i18n-utils';
 
 interface TreeNode {
   code: string;
-  name: { tr: string; en: string };
+  name: { tr: string; en: string; de?: string; fr?: string; es?: string; it?: string };
   icon?: string;
   level: number;
   isRoot: boolean;
@@ -22,11 +24,16 @@ interface TreeSelectProps {
   label?: string;
 }
 
-export default function TreeSelect({ value, onChange, options, placeholder = 'Seçiniz...', label }: TreeSelectProps) {
+export default function TreeSelect({ value, onChange, options, placeholder, label }: TreeSelectProps) {
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Placeholder default değeri
+  const defaultPlaceholder = placeholder || t('menusPage.menuForm.parentMenuPlaceholder');
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -77,7 +84,7 @@ export default function TreeSelect({ value, onChange, options, placeholder = 'Se
             {renderIcon(selected.icon)}
           </div>
         )}
-        <span>{selected.name.tr || selected.name.en}</span>
+        <span>{getLocalizedText(selected.name, locale)}</span>
       </div>
     );
   };
@@ -87,9 +94,8 @@ export default function TreeSelect({ value, onChange, options, placeholder = 'Se
     const filtered: TreeNode[] = [];
     
     for (const node of nodes) {
-      const matches = 
-        node.name.tr.toLowerCase().includes(term.toLowerCase()) ||
-        node.name.en.toLowerCase().includes(term.toLowerCase());
+      const localizedName = getLocalizedText(node.name, locale);
+      const matches = localizedName.toLowerCase().includes(term.toLowerCase());
       
       const filteredChildren = node.children ? filterNodes(node.children, term) : [];
       
@@ -173,7 +179,7 @@ export default function TreeSelect({ value, onChange, options, placeholder = 'Se
               </div>
             )}
             <span className="text-sm">
-              {node.name?.tr || node.name?.en || 'İsimsiz'}
+              {getLocalizedText(node.name, locale)}
             </span>
             {isSelected && (
               <span className="ml-auto text-blue-600">✓</span>
@@ -208,7 +214,7 @@ export default function TreeSelect({ value, onChange, options, placeholder = 'Se
         {value ? (
           <span className="text-gray-900">{getSelectedLabel()}</span>
         ) : (
-          <span className="text-gray-500">{placeholder}</span>
+          <span className="text-gray-500">{defaultPlaceholder}</span>
         )}
         <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -223,7 +229,7 @@ export default function TreeSelect({ value, onChange, options, placeholder = 'Se
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Ara..."
+                placeholder={t('common.search')}
                 className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 onClick={(e) => e.stopPropagation()}
               />
@@ -246,7 +252,7 @@ export default function TreeSelect({ value, onChange, options, placeholder = 'Se
                 className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 rounded flex items-center gap-2"
               >
                 <span className="text-lg">🏠</span>
-                <span>Ana Menü (Üst Seviye)</span>
+                <span>{t('menusPage.menuForm.parentMenuPlaceholder')}</span>
               </button>
             </div>
           )}
@@ -255,7 +261,7 @@ export default function TreeSelect({ value, onChange, options, placeholder = 'Se
           <div className="overflow-y-auto max-h-80">
             {filteredOptions.length === 0 ? (
               <div className="p-4 text-center text-sm text-gray-500">
-                Sonuç bulunamadı
+                {t('components.searchableAutocomplete.noResults')}
               </div>
             ) : (
               filteredOptions.map(node => renderNode(node))

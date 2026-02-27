@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Save, X, ArrowLeft, Search } from 'lucide-react';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
@@ -12,14 +13,27 @@ import TreeSelect from '../../components/TreeSelect';
 import IconPicker from '../../components/IconPicker';
 import { menuLinkItemService, userGroupService } from '../../services/admin.service';
 import Toast from '@/components/Toast';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface MenuFormProps {
   menuId?: string;
   menuType: 'ADMIN_PANEL' | 'PUBLIC';
 }
 
+// Dil bilgileri
+const languageInfo: Record<SupportedLocale, { code: string; name: string }> = {
+  tr: { code: 'TR', name: 'Türkçe' },
+  en: { code: 'EN', name: 'English' },
+  de: { code: 'DE', name: 'Deutsch' },
+  fr: { code: 'FR', name: 'Français' },
+  es: { code: 'ES', name: 'Español' },
+  it: { code: 'IT', name: 'Italiano' }
+};
+
 export default function MenuForm({ menuId, menuType }: MenuFormProps) {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [loading, setLoading] = useState(false);
   const [menus, setMenus] = useState<any[]>([]);
@@ -28,6 +42,14 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
   const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
   
   const isEditing = !!menuId;
+
+  // Kullanıcının dilini en üste, diğerlerini sıraya koy
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
 
   const toggleField = (fieldName: string) => {
     const newExpanded = new Set(expandedFields);
@@ -201,7 +223,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
       }
     } catch (error) {
       console.error('Error loading menu:', error);
-      setToast({ message: 'Menü yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('menusPage.menuForm.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -209,7 +231,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
 
   const handleSave = async () => {
     if (!formData.name.tr && !formData.name.en) {
-      setToast({ message: 'En az bir dilde menü adı girilmelidir', type: 'error' });
+      setToast({ message: t('menusPage.menuForm.nameRequired'), type: 'error' });
       return;
     }
 
@@ -227,14 +249,14 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
       const response = await menuLinkItemService.save(submitData);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: isEditing ? 'Menü güncellendi' : 'Menü oluşturuldu', type: 'success' });
+        setToast({ message: isEditing ? t('menusPage.menuForm.updateSuccess') : t('menusPage.menuForm.createSuccess'), type: 'success' });
         setTimeout(() => router.push(menuType === 'ADMIN_PANEL' ? '/admin/menus/admin' : '/admin/menus/public'), 1500);
       } else {
-        setToast({ message: response.errorMessage || 'İşlem başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('menusPage.menuForm.saveError'), type: 'error' });
       }
     } catch (error) {
       console.error('Error saving menu:', error);
-      setToast({ message: 'Menü kaydedilirken hata oluştu', type: 'error' });
+      setToast({ message: t('menusPage.menuForm.saveError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -334,68 +356,56 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Geri
+            {t('menusPage.menuForm.back')}
           </Button>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {isEditing ? 'Menü Düzenle' : `Yeni ${menuType === 'ADMIN_PANEL' ? '⚙️ Admin Panel' : '🌐 Public'} Menü`}
+            {isEditing 
+              ? t('menusPage.menuForm.editMenu')
+              : menuType === 'ADMIN_PANEL' 
+                ? `⚙️ ${t('menusPage.menuForm.newAdminMenu')}`
+                : `🌐 ${t('menusPage.menuForm.newPublicMenu')}`
+            }
           </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Menü Bilgileri</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('menusPage.menuForm.menuInfo')}</h2>
               
               <div className="space-y-4">
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">Menü Adı</label>
+                    <label className="text-sm font-medium text-gray-700">{t('menusPage.menuForm.menuName')}</label>
                     <button
                       type="button"
                       onClick={() => toggleField('name')}
                       className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-all"
                     >
                       <span className="text-base">{expandedFields.has('name') ? '🌐' : '🌍'}</span>
-                      <span>Diğer Diller</span>
+                      <span>{t('menusPage.menuForm.otherLanguages')}</span>
                       <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">5</span>
                       <span className="text-gray-400">{expandedFields.has('name') ? '▼' : '▶'}</span>
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
                     <Input
-                      placeholder="🇹🇷 Türkçe"
-                      value={formData.name.tr}
-                      onChange={(e) => setFormData({ ...formData, name: { ...formData.name, tr: e.target.value } })}
+                      placeholder={`${languageInfo[orderedLanguages[0]].code} - ${languageInfo[orderedLanguages[0]].name}`}
+                      value={formData.name[orderedLanguages[0]]}
+                      onChange={(e) => setFormData({ ...formData, name: { ...formData.name, [orderedLanguages[0]]: e.target.value } })}
                     />
                     
                     {expandedFields.has('name') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        <Input
-                          placeholder="🇬🇧 English"
-                          value={formData.name.en}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, en: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇩🇪 Deutsch"
-                          value={formData.name.de}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, de: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇫🇷 Français"
-                          value={formData.name.fr}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, fr: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇪🇸 Español"
-                          value={formData.name.es}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, es: e.target.value } })}
-                        />
-                        <Input
-                          placeholder="🇮🇹 Italiano"
-                          value={formData.name.it}
-                          onChange={(e) => setFormData({ ...formData, name: { ...formData.name, it: e.target.value } })}
-                        />
+                        {orderedLanguages.slice(1).map((lang) => (
+                          <Input
+                            key={lang}
+                            placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                            value={formData.name[lang]}
+                            onChange={(e) => setFormData({ ...formData, name: { ...formData.name, [lang]: e.target.value } })}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -404,7 +414,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <IconPicker
-                      label="İkon"
+                      label={t('menusPage.menuForm.icon')}
                       value={formData.icon}
                       onChange={(value) => {
                         console.log('Icon selected:', value);
@@ -413,13 +423,13 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                     />
                     {formData.icon && (
                       <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
-                        <p className="text-xs text-gray-600 mb-1">Seçili ikon:</p>
+                        <p className="text-xs text-gray-600 mb-1">{t('menusPage.menuForm.selectedIcon')}</p>
                         <p className="text-sm font-mono text-gray-800">{formData.icon}</p>
                       </div>
                     )}
                   </div>
                   <Input
-                    label="Sıra"
+                    label={t('menusPage.menuForm.order')}
                     type="number"
                     value={formData.displayOrder}
                     onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
@@ -427,14 +437,14 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                 </div>
 
                 <Input
-                  label="URL"
+                  label={t('menusPage.menuForm.url')}
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                   placeholder="/admin/dashboard"
                 />
 
                 <TreeSelect
-                  label="Üst Menü"
+                  label={t('menusPage.menuForm.parentMenu')}
                   value={formData.parentMenuCode}
                   onChange={(value) => setFormData({ 
                     ...formData, 
@@ -442,7 +452,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                     isRoot: !value
                   })}
                   options={menuTree}
-                  placeholder="Ana Menü (Üst Seviye)"
+                  placeholder={t('menusPage.menuForm.parentMenuPlaceholder')}
                 />
 
                 {/* Kullanıcı Grupları - Sadece ADMIN_PANEL için göster */}
@@ -450,11 +460,11 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
                       <label className="text-sm font-medium text-gray-700">
-                        Kullanıcı Grupları
+                        {t('menusPage.menuForm.userGroups')}
                       </label>
                       {formData.userGroups.length > 0 && (
                         <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">
-                          {formData.userGroups.length} seçili
+                          {t('menusPage.menuForm.selectedCount', { count: formData.userGroups.length })}
                         </span>
                       )}
                     </div>
@@ -465,7 +475,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                           type="text"
-                          placeholder="Grup ara..."
+                          placeholder={t('menusPage.menuForm.searchGroups')}
                           className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                           onChange={(e) => handleUserGroupSearch(e.target.value)}
                         />
@@ -475,7 +485,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                     <div className="p-3">
                       <div className="space-y-1 max-h-64 overflow-y-auto">
                         {!Array.isArray(filteredUserGroups) || filteredUserGroups.length === 0 ? (
-                          <p className="text-sm text-gray-500 text-center py-4">Kullanıcı grubu bulunamadı</p>
+                          <p className="text-sm text-gray-500 text-center py-4">{t('menusPage.menuForm.noGroupsFound')}</p>
                         ) : (
                           filteredUserGroups.map(group => (
                             <label 
@@ -494,13 +504,8 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                               />
                               <div className="ml-3 flex-1">
                                 <span className="text-sm font-medium text-gray-900">
-                                {group.description?.tr || group.description?.en || group.code}
+                                {getLocalizedText(group.description, locale)}
                               </span>
-                              {group.description?.en && group.description?.tr !== group.description?.en && (
-                                <span className="ml-2 text-xs text-gray-500">
-                                  ({group.description.en})
-                                </span>
-                              )}
                             </div>
                             {formData.userGroups.includes(group.code) && (
                               <span className="text-blue-600 font-bold">✓</span>
@@ -518,7 +523,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
 
           <div className="space-y-6">
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Durum</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('menusPage.menuForm.status')}</h2>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <input
@@ -529,7 +534,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="active" className="text-sm font-medium text-gray-700">
-                    Aktif
+                    {t('menusPage.menuForm.active')}
                   </label>
                 </div>
                 <div className="flex items-center gap-3">
@@ -545,14 +550,14 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                   <label htmlFor="isRoot" className="text-sm font-medium text-gray-700">
-                    Ana Menü
+                    {t('menusPage.menuForm.rootMenu')}
                   </label>
                 </div>
               </div>
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">İşlemler</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('menusPage.menuForm.actions')}</h2>
               <div className="space-y-3">
                 <Button 
                   onClick={handleSave} 
@@ -561,7 +566,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                   disabled={loading}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  {loading ? t('menusPage.menuForm.saving') : t('menusPage.menuForm.save')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -570,7 +575,7 @@ export default function MenuForm({ menuId, menuType }: MenuFormProps) {
                   disabled={loading}
                 >
                   <X className="w-4 h-4 mr-2" />
-                  İptal
+                  {t('menusPage.menuForm.cancel')}
                 </Button>
               </div>
             </Card>
