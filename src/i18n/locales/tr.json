@@ -1451,7 +1451,7 @@
     }
   },
   "dashboardModules": {
-    "title": "Dashboard Modül Yönetimi",
+    "title": "Kontrol Paneli Modülleri",
     "totalModules": "Toplam {count} modül",
     "backToDashboard": "Dashboard'a Dön",
     "newModule": "Yeni Modül",

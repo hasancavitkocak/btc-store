@@ -1406,7 +1406,7 @@
     }
   },
   "dashboardModules": {
-    "title": "Gestión de Módulos del Panel",
+    "title": "Módulos del panel",
     "totalModules": "Total {count} módulos",
     "backToDashboard": "Volver al Panel",
     "newModule": "Nuevo Módulo",

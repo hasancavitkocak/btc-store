@@ -1450,7 +1450,7 @@
     }
   },
   "dashboardModules": {
-    "title": "Gestione Moduli Dashboard",
+    "title": "Moduli dashboard",
     "totalModules": "Totale {count} moduli",
     "backToDashboard": "Torna alla Dashboard",
     "newModule": "Nuovo Modulo",

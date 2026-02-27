@@ -1406,7 +1406,7 @@
     }
   },
   "dashboardModules": {
-    "title": "Gestion des Modules du Tableau de Bord",
+    "title": "Modules du tableau de bord",
     "totalModules": "Total {count} modules",
     "backToDashboard": "Retour au Tableau de Bord",
     "newModule": "Nouveau Module",

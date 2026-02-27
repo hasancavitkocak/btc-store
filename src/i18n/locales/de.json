@@ -1406,7 +1406,7 @@
     }
   },
   "dashboardModules": {
-    "title": "Dashboard-Modul-Verwaltung",
+    "title": "Dashboard-Module",
     "totalModules": "Insgesamt {count} Module",
     "backToDashboard": "Zurück zum Dashboard",
     "newModule": "Neues Modul",
