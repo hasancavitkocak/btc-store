@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { Trash2, Edit2, Plus, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
@@ -9,6 +10,7 @@ import Toast from '../../components/Toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { searchService, SearchFormData } from '../../services/search.service';
 import { userRoleService } from '../../services/admin.service';
+import { getLocalizedText, type SupportedLocale } from '../../lib/i18n-utils';
 
 interface UserRole {
   id: number;
@@ -23,6 +25,8 @@ interface UserRole {
 
 export default function UserRolesAdminList() {
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale() as SupportedLocale;
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -65,17 +69,17 @@ export default function UserRolesAdminList() {
           setTotalElements(pageData.totalElements || 0);
         } else {
           console.error('pageData structure is wrong:', pageData);
-          setToast({ message: 'Veri formatı hatalı', type: 'error' });
+          setToast({ message: t('userRolesAdmin.dataFormatError'), type: 'error' });
         }
       } else {
         setToast({ 
-          message: response.errorMessage || 'Yetkiler yüklenirken hata oluştu', 
+          message: response.errorMessage || t('userRolesAdmin.loadError'), 
           type: 'error' 
         });
       }
     } catch (error) {
       console.error('Error loading user roles:', error);
-      setToast({ message: 'Yetkiler yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('userRolesAdmin.loadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -86,24 +90,24 @@ export default function UserRolesAdminList() {
       const response = await userRoleService.delete(code);
       
       if (response.status === 'SUCCESS') {
-        setToast({ message: 'Yetki silindi', type: 'success' });
+        setToast({ message: t('userRolesAdmin.deleteSuccess'), type: 'success' });
         setPage(1);
         if (page === 1) {
           loadUserRoles();
         }
       } else {
-        setToast({ message: response.errorMessage || 'Silme işlemi başarısız', type: 'error' });
+        setToast({ message: response.errorMessage || t('userRolesAdmin.deleteFailed'), type: 'error' });
       }
     } catch (error) {
       console.error('Error deleting user role:', error);
-      setToast({ message: 'Yetki silinirken bir hata oluştu.', type: 'error' });
+      setToast({ message: t('userRolesAdmin.deleteError'), type: 'error' });
     }
   };
 
   if (loading && !mounted) {
     return (
       <div className="p-8">
-        <div className="text-center">Yükleniyor...</div>
+        <div className="text-center">{t('userRolesAdmin.loading')}</div>
       </div>
     );
   }
@@ -113,9 +117,9 @@ export default function UserRolesAdminList() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Yetkiler
+            {t('userRolesAdmin.title')}
           </h1>
-          <p className="text-gray-600">Toplam {totalElements} yetki</p>
+          <p className="text-gray-600">{t('userRolesAdmin.totalPermissions', { count: totalElements })}</p>
         </div>
         <div className="flex gap-3">
           <Button
@@ -123,21 +127,21 @@ export default function UserRolesAdminList() {
             onClick={() => router.push('/admin/users')}
             className="flex items-center gap-2"
           >
-            Kullanıcılara Dön
+            {t('userRolesAdmin.backToUsers')}
           </Button>
           <Button
             onClick={() => router.push('/admin/user-roles/new')}
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
           >
             <Plus className="w-5 h-5" />
-            Yeni Yetki
+            {t('userRolesAdmin.newPermission')}
           </Button>
         </div>
       </div>
 
       {loading ? (
         <Card className="p-12 text-center">
-          <p className="text-gray-500">Yükleniyor...</p>
+          <p className="text-gray-500">{t('userRolesAdmin.loading')}</p>
         </Card>
       ) : userRoles.length === 0 ? (
         <Card className="p-12 text-center">
@@ -146,12 +150,12 @@ export default function UserRolesAdminList() {
               <Shield className="w-8 h-8 text-gray-400" />
             </div>
             <div>
-              <p className="text-gray-900 font-medium mb-1">Henüz yetki eklenmemiş</p>
-              <p className="text-gray-500 text-sm mb-4">İlk yetkiyi ekleyerek başlayın</p>
+              <p className="text-gray-900 font-medium mb-1">{t('userRolesAdmin.noPermissions')}</p>
+              <p className="text-gray-500 text-sm mb-4">{t('userRolesAdmin.addFirstPermission')}</p>
             </div>
             <Button onClick={() => router.push('/admin/user-roles/new')} className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
-              İlk Yetkiyi Ekle
+              {t('userRolesAdmin.addFirstPermissionButton')}
             </Button>
           </div>
         </Card>
@@ -163,19 +167,19 @@ export default function UserRolesAdminList() {
                 <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Yetki
+                      {t('userRolesAdmin.permission')}
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Açıklama
+                      {t('userRolesAdmin.description')}
                     </th>
                     <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Durum
+                      {t('userRolesAdmin.status')}
                     </th>
                     <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Oluşturulma
+                      {t('userRolesAdmin.createdDate')}
                     </th>
                     <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      İşlemler
+                      {t('userRolesAdmin.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -192,13 +196,13 @@ export default function UserRolesAdminList() {
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-gray-900">{role.code}</div>
-                            <div className="text-xs text-gray-500">Kullanıcı Yetkisi</div>
+                            <div className="text-xs text-gray-500">{t('userRolesAdmin.userPermission')}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-600">
-                          {role.description?.tr || role.description?.en || '-'}
+                          {getLocalizedText(role.description, locale) || '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -210,12 +214,12 @@ export default function UserRolesAdminList() {
                           <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
                             role.active ? 'bg-green-600' : 'bg-red-600'
                           }`}></span>
-                          {role.active ? 'Aktif' : 'Pasif'}
+                          {role.active ? t('userRolesAdmin.active') : t('userRolesAdmin.inactive')}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <span className="text-xs text-gray-500">
-                          {role.createdDate ? new Date(role.createdDate).toLocaleDateString('tr-TR') : '-'}
+                          {role.createdDate ? new Date(role.createdDate).toLocaleDateString(locale === 'tr' ? 'tr-TR' : locale === 'en' ? 'en-US' : locale === 'de' ? 'de-DE' : locale === 'fr' ? 'fr-FR' : locale === 'es' ? 'es-ES' : 'it-IT') : '-'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -223,14 +227,14 @@ export default function UserRolesAdminList() {
                           <button
                             onClick={() => router.push(`/admin/user-roles/${role.code}`)}
                             className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:bg-blue-100 transition-colors"
-                            title="Düzenle"
+                            title={t('userRolesAdmin.edit')}
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setDeleteDialog({ isOpen: true, code: role.code })}
                             className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-100 transition-colors"
-                            title="Sil"
+                            title={t('userRolesAdmin.delete')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -245,7 +249,7 @@ export default function UserRolesAdminList() {
 
           <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
             <div className="text-sm text-gray-600">
-              Toplam <span className="font-medium">{totalElements}</span> kayıt
+              {t('userRolesAdmin.totalRecords', { count: totalElements })}
             </div>
             
             <div className="flex items-center gap-2">
@@ -256,11 +260,11 @@ export default function UserRolesAdminList() {
                 disabled={page === 1 || loading}
               >
                 <ChevronLeft className="w-4 h-4" />
-                Önceki
+                {t('userRolesAdmin.previous')}
               </Button>
               
               <span className="text-sm text-gray-600 px-4">
-                Sayfa <span className="font-medium">{page}</span> / <span className="font-medium">{totalPages || 1}</span>
+                {t('userRolesAdmin.pageInfo', { current: page, total: totalPages || 1 })}
               </span>
               
               <Button
@@ -269,7 +273,7 @@ export default function UserRolesAdminList() {
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages || loading}
               >
-                Sonraki
+                {t('userRolesAdmin.next')}
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
@@ -289,10 +293,10 @@ export default function UserRolesAdminList() {
         isOpen={deleteDialog.isOpen}
         onClose={() => setDeleteDialog({ isOpen: false, code: '' })}
         onConfirm={() => handleDelete(deleteDialog.code)}
-        title="Yetki Sil"
-        message={`"${deleteDialog.code}" yetkisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-        confirmText="Sil"
-        cancelText="İptal"
+        title={t('userRolesAdmin.deleteDialogTitle')}
+        message={t('userRolesAdmin.deleteDialogMessage', { code: deleteDialog.code })}
+        confirmText={t('userRolesAdmin.deleteConfirm')}
+        cancelText={t('common.cancel')}
         type="danger"
       />
     </div>
