@@ -196,6 +196,15 @@
   "admin": {
     "title": "Panel de Administración",
     "dashboard": "Panel de Control",
+    "dashboardPage": {
+      "loading": "Cargando...",
+      "refresh": "Actualizar",
+      "refreshing": "Actualizando datos...",
+      "noAccess": "Sin Permiso de Acceso",
+      "noAccessDescription": "No tiene permiso para acceder a este panel.",
+      "quickActions": "Acciones Rápidas",
+      "modulesLoadError": "Error al cargar módulos"
+    },
     "header": "Configuración de Encabezado",
     "banners": "Gestión de Banners",
     "categories": "Gestión de Categorías",

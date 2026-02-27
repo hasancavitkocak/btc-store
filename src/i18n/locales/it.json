@@ -241,6 +241,15 @@
   "admin": {
     "title": "Pannello di Amministrazione",
     "dashboard": "Dashboard",
+    "dashboardPage": {
+      "loading": "Caricamento...",
+      "refresh": "Aggiorna",
+      "refreshing": "Aggiornamento dati...",
+      "noAccess": "Nessun Permesso di Accesso",
+      "noAccessDescription": "Non hai il permesso di accedere a questo pannello.",
+      "quickActions": "Azioni Rapide",
+      "modulesLoadError": "Errore durante il caricamento dei moduli"
+    },
     "header": "Impostazioni Intestazione",
     "banners": "Gestione Banner",
     "categories": "Gestione Categorie",

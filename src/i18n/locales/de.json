@@ -196,6 +196,15 @@
   "admin": {
     "title": "Admin-Panel",
     "dashboard": "Dashboard",
+    "dashboardPage": {
+      "loading": "Wird geladen...",
+      "refresh": "Aktualisieren",
+      "refreshing": "Daten werden aktualisiert...",
+      "noAccess": "Keine Zugriffsberechtigung",
+      "noAccessDescription": "Sie haben keine Berechtigung, auf dieses Panel zuzugreifen.",
+      "quickActions": "Schnellaktionen",
+      "modulesLoadError": "Fehler beim Laden der Module"
+    },
     "header": "Header-Einstellungen",
     "banners": "Banner-Verwaltung",
     "categories": "Kategorie-Verwaltung",

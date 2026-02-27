@@ -196,6 +196,15 @@
   "admin": {
     "title": "Panneau d'Administration",
     "dashboard": "Tableau de Bord",
+    "dashboardPage": {
+      "loading": "Chargement...",
+      "refresh": "Actualiser",
+      "refreshing": "Actualisation des données...",
+      "noAccess": "Aucune Autorisation d'Accès",
+      "noAccessDescription": "Vous n'avez pas l'autorisation d'accéder à ce panneau.",
+      "quickActions": "Actions Rapides",
+      "modulesLoadError": "Erreur lors du chargement des modules"
+    },
     "header": "Paramètres d'En-tête",
     "banners": "Gestion des Bannières",
     "categories": "Gestion des Catégories",

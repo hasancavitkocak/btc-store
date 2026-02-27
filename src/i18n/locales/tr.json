@@ -241,6 +241,15 @@
   "admin": {
     "title": "Yönetim Paneli",
     "dashboard": "Kontrol Paneli",
+    "dashboardPage": {
+      "loading": "Yükleniyor...",
+      "refresh": "Yenile",
+      "refreshing": "Veriler yenileniyor...",
+      "noAccess": "Erişim Yetkiniz Bulunmuyor",
+      "noAccessDescription": "Bu panele erişim için yetkiniz bulunmamaktadır.",
+      "quickActions": "Hızlı İşlemler",
+      "modulesLoadError": "Modüller yüklenirken hata oluştu"
+    },
     "header": "Başlık Ayarları",
     "banners": "Banner Yönetimi",
     "categories": "Kategori Yönetimi",

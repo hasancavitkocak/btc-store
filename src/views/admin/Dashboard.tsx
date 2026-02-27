@@ -13,21 +13,21 @@ import {
   Unlock, Key, Home, Briefcase, Award, Target, TrendingUp, BarChart,
   PieChart, Activity, Zap, Cpu, Database, Server, Cloud, Wifi
 } from 'lucide-react';
-import { useStore } from '../../store/useStore';
 import Container from '../../components/Container';
 import Section from '../../components/Section';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Toast from '../../components/Toast';
 import { dashboardService, DashboardModule } from '../../services/admin.service';
+import { getLocalizedText, getCurrentLocale } from '../../lib/i18n-utils';
 
 export default function Dashboard() {
   const t = useTranslations();
-  const { resetToDefaults } = useStore();
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [cardModules, setCardModules] = useState<DashboardModule[]>([]);
   const [quickActionModules, setQuickActionModules] = useState<DashboardModule[]>([]);
   const [loading, setLoading] = useState(true);
+  const currentLocale = getCurrentLocale();
 
   // Icon mapping
   const iconMap: Record<string, LucideIcon> = {
@@ -129,7 +129,7 @@ export default function Dashboard() {
       setQuickActionModules(quickActionsData);
     } catch (error) {
       console.error('Failed to fetch authorized modules:', error);
-      setToast({ message: 'Modüller yüklenirken hata oluştu', type: 'error' });
+      setToast({ message: t('admin.dashboardPage.modulesLoadError'), type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -140,12 +140,12 @@ export default function Dashboard() {
   }, []);
 
   const handleRefresh = () => {
-    setToast({ message: 'Veriler yenileniyor...', type: 'success' });
+    setToast({ message: t('admin.dashboardPage.refreshing'), type: 'success' });
     fetchAuthorizedModules();
   };
 
   const stats = cardModules.map(module => {
-    const moduleName = module.name?.tr || module.name?.en || module.code;
+    const moduleName = getLocalizedText(module.name, currentLocale) || module.code;
     return {
       icon: iconMap[module.icon] || Package,
       label: moduleName,
@@ -155,8 +155,8 @@ export default function Dashboard() {
   });
 
   const quickActions = quickActionModules.map(module => {
-    const moduleName = module.name?.tr || module.name?.en || module.code;
-    const moduleDesc = module.description?.tr || module.description?.en || '';
+    const moduleName = getLocalizedText(module.name, currentLocale) || module.code;
+    const moduleDesc = getLocalizedText(module.description, currentLocale) || '';
     return {
       icon: iconMap[module.icon] || Settings,
       title: moduleName,
@@ -170,7 +170,7 @@ export default function Dashboard() {
       <Section>
         <Container>
           <div className="flex justify-center items-center min-h-[400px]">
-            <div className="text-gray-600">Yükleniyor...</div>
+            <div className="text-gray-600">{t('admin.dashboardPage.loading')}</div>
           </div>
         </Container>
       </Section>
@@ -182,8 +182,8 @@ export default function Dashboard() {
       <Section>
         <Container>
           <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Erişim Yetkiniz Bulunmuyor</h2>
-            <p className="text-gray-600">Bu panele erişim için yetkiniz bulunmamaktadır.</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('admin.dashboardPage.noAccess')}</h2>
+            <p className="text-gray-600">{t('admin.dashboardPage.noAccessDescription')}</p>
           </div>
         </Container>
       </Section>
@@ -207,7 +207,7 @@ export default function Dashboard() {
             className="flex items-center gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            Yenile
+            {t('admin.dashboardPage.refresh')}
           </Button>
         </div>
 
@@ -234,7 +234,7 @@ export default function Dashboard() {
 
         {quickActions.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Hızlı İşlemler</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('admin.dashboardPage.quickActions')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {quickActions.map((action) => {
                 const Icon = action.icon;

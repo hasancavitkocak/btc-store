@@ -241,6 +241,15 @@
   "admin": {
     "title": "Admin Panel",
     "dashboard": "Dashboard",
+    "dashboardPage": {
+      "loading": "Loading...",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing data...",
+      "noAccess": "No Access Permission",
+      "noAccessDescription": "You do not have permission to access this panel.",
+      "quickActions": "Quick Actions",
+      "modulesLoadError": "Error loading modules"
+    },
     "header": "Header Settings",
     "banners": "Banner Management",
     "categories": "Category Management",
