@@ -69,7 +69,8 @@ export default function ProductContact() {
 
   const loadPrivacyPolicy = async () => {
     try {
-      const response = await fetch('http://localhost:9090/webapp/api/v1/public/legal-documents/privacy-policy/current');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9090/webapp/api';
+      const response = await fetch(`${apiUrl}/v1/public/legal-documents/privacy-policy/current`);
       if (response.ok) {
         const result = await response.json();
         if (result.status === 'SUCCESS' && result.data) {
@@ -93,7 +94,8 @@ export default function ProductContact() {
     try {
       setSubmitting(true);
       
-      const response = await fetch(`http://localhost:9090/webapp/api/v1/public/products/${code}/contact`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9090/webapp/api';
+      const response = await fetch(`${apiUrl}/v1/public/products/${code}/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -9,12 +9,17 @@
     <pre id="result"></pre>
 
     <script>
+        // Get API URL from environment or use localhost as fallback
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:9090/webapp/api'
+            : `${window.location.protocol}//${window.location.hostname}/webapp/api`;
+
         async function testLogin() {
             const resultEl = document.getElementById('result');
             resultEl.textContent = 'Testing...';
 
             try {
-                const response = await fetch('http://localhost:9090/webapp/api/login', {
+                const response = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -37,7 +37,8 @@ export default function CallRequest() {
   useEffect(() => {
     const fetchPrivacyDocument = async () => {
       try {
-        const response = await fetch('http://localhost:9090/webapp/api/v1/public/legal-documents/privacy-policy/current');
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9090/webapp/api';
+        const response = await fetch(`${apiUrl}/v1/public/legal-documents/privacy-policy/current`);
         if (response.ok) {
           const result = await response.json();
           if (result.status === 'SUCCESS' && result.data) {
@@ -63,7 +64,8 @@ export default function CallRequest() {
 
     try {
       // Backend'e gönder
-      const response = await fetch('http://localhost:9090/webapp/api/v1/public/call-requests', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9090/webapp/api';
+      const response = await fetch(`${apiUrl}/v1/public/call-requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
