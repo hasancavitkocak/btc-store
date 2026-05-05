@@ -152,7 +152,7 @@ export default function TestApiPage() {
             <li>1. Backend çalışıyor mu? (http://localhost:8080)</li>
             <li>2. CORS ayarları doğru mu? (webapp-local.properties)</li>
             <li>3. .env.local dosyası var mı?</li>
-            <li>4. Browser console'da hata var mı? (F12)</li>
+            <li>4. Browser console&apos;da hata var mı? (F12)</li>
           </ul>
         </div>
       </div>

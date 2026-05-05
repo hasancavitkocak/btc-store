@@ -150,7 +150,7 @@ export const useStore = create<StoreState>()((set, get) => ({
             // Backend response'u kontrol et - data içinde data olabilir
             const bannerData = Array.isArray(response.data) 
               ? response.data 
-              : (response.data.data || []);
+              : ((response.data as any).data || []);
             
             // Backend'den gelen verileri frontend formatına çevir
             const mappedBanners: Banner[] = bannerData.map((banner: any, index: number) => ({
@@ -196,7 +196,7 @@ export const useStore = create<StoreState>()((set, get) => ({
             // Backend response'u kontrol et - data içinde data olabilir
             const categoryData = Array.isArray(response.data) 
               ? response.data 
-              : (response.data.data || []);
+              : ((response.data as any).data || []);
             
             // Backend'den gelen verileri frontend formatına çevir
             const mappedCategories: Category[] = categoryData.map((category: any, index: number) => ({
@@ -242,7 +242,7 @@ export const useStore = create<StoreState>()((set, get) => ({
           if (response.status === 'SUCCESS' && response.data) {
             const partnerData = Array.isArray(response.data) 
               ? response.data 
-              : (response.data.data || []);
+              : ((response.data as any).data || []);
             
             const mappedPartners: Partner[] = partnerData.map((partner: any, index: number) => ({
               id: partner.code,
@@ -274,7 +274,7 @@ export const useStore = create<StoreState>()((set, get) => ({
           if (response.status === 'SUCCESS' && response.data) {
             const referenceData = Array.isArray(response.data) 
               ? response.data 
-              : (response.data.data || []);
+              : ((response.data as any).data || []);
             
             const mappedReferences: Reference[] = referenceData.map((reference: any, index: number) => ({
               id: reference.code,
@@ -306,7 +306,7 @@ export const useStore = create<StoreState>()((set, get) => ({
           if (response.status === 'SUCCESS' && response.data) {
             const menuData = Array.isArray(response.data) 
               ? response.data 
-              : (response.data.data || []);
+              : ((response.data as any).data || []);
             
             set({ menuItems: menuData, menusFetched: true });
           }
@@ -346,7 +346,7 @@ export const useStore = create<StoreState>()((set, get) => ({
           if (response.status === 'SUCCESS' && response.data) {
             const storyData = Array.isArray(response.data) 
               ? response.data 
-              : (response.data.data || []);
+              : ((response.data as any).data || []);
             
             const mappedStories: Story[] = storyData.map((story: any, index: number) => ({
               id: story.code,

@@ -5,6 +5,7 @@
  * destekli, reusable bir autocomplete component'idir.
  */
 
+import { useState } from 'react';
 import SearchableAutocomplete from './SearchableAutocomplete';
 
 // ============================================

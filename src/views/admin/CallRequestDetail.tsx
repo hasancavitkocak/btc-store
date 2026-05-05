@@ -446,7 +446,7 @@ export default function CallRequestDetail({ requestId }: Props) {
                           <div className="pt-2 border-t border-gray-200">
                             <span className="text-gray-500 font-medium">{t('acceptedText')}:</span>
                             <p className="text-gray-700 italic mt-1 bg-gray-50 p-2 rounded">
-                              "{request.acceptedLegalDocument.shortText[locale]}"
+                              &quot;{request.acceptedLegalDocument.shortText[locale]}&quot;
                             </p>
                           </div>
                         )}

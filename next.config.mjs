@@ -4,6 +4,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // output: 'export' kaldırıldı - hybrid mode
   reactStrictMode: false,
   typescript: {
     ignoreBuildErrors: false,

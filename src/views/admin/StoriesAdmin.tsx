@@ -100,7 +100,7 @@ export default function StoriesAdmin() {
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg">{story.company}</h3>
                   <p className="text-sm text-gray-600">{story.industry}</p>
-                  <p className="text-sm text-gray-500 mt-2">{t(story.titleKey)}</p>
+                  <p className="text-sm text-gray-500 mt-2">{story.title?.tr || story.title?.en || ''}</p>
                 </div>
               </div>
               <div className="flex gap-2">

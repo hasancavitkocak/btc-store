@@ -89,14 +89,14 @@ class ProductService {
     if (categoryCode) {
       params.category = categoryCode;
     }
-    const response = await apiClient.get('/v1/public/products', { params });
+    const response = await apiClient.get<any>('/v1/public/products', { params });
     
     console.log('Full API Response:', response);
     
     // Backend response format: { status: "SUCCESS", data: { data: ProductFilterData, encryptedData: false } }
     if (response.status === 'SUCCESS' && response.data) {
       // Check if data has nested data property (encrypted response wrapper)
-      const actualData = response.data.data || response.data;
+      const actualData = (response.data as any).data || response.data;
       
       return {
         products: actualData.products || [],
@@ -121,11 +121,11 @@ class ProductService {
   }
 
   async getPublicProductByCode(code: string): Promise<ProductData | null> {
-    const response = await apiClient.get(`/v1/public/products/${code}`);
+    const response = await apiClient.get<any>(`/v1/public/products/${code}`);
     
     if (response.status === 'SUCCESS' && response.data) {
       // Check if data has nested data property
-      const actualData = response.data.data || response.data;
+      const actualData = (response.data as any).data || response.data;
       return actualData as ProductData;
     }
     
