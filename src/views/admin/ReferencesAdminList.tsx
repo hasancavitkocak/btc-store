@@ -62,7 +62,7 @@ export default function ReferencesAdminList() {
         sort: { name: 'order', direction: 'ASC' }
       };
 
-      const response = await searchService.search<Reference>('reference', searchFormData, page);
+      const response = await searchService.search<Reference>('store_reference', searchFormData, page);
       
       if (response.status === 'SUCCESS' && response.data) {
         const pageData = (response.data as any).data;
