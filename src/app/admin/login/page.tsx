@@ -142,13 +142,6 @@ export default function AdminLoginPage() {
                 )}
               </button>
             </form>
-
-            {/* Demo Info */}
-            <div className="mt-6 p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-xs text-gray-600 text-center">
-                <span className="font-medium">Demo:</span> admin / 123456
-              </p>
-            </div>
           </div>
         </div>
 
