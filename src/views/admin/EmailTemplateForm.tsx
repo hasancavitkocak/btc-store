@@ -343,11 +343,11 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                   <Input
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    placeholder={t('subjectPlaceholder')}
+                    placeholder={t.raw('subjectPlaceholder')}
                     required
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    {t('subjectNote')}
+                    {t.raw('subjectNote')}
                   </p>
                 </div>
 
@@ -371,7 +371,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                       <textarea
                         value={formData.body}
                         onChange={(e) => setFormData({ ...formData, body: e.target.value })}
-                        placeholder={t('bodyPlaceholder')}
+                        placeholder={t.raw('bodyPlaceholder')}
                         rows={showLivePreview ? 25 : 15}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm resize-none"
                         required
@@ -391,7 +391,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                     )}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    {t('bodyNote')}
+                    {t.raw('bodyNote')}
                   </p>
                 </div>
               </div>
@@ -483,7 +483,7 @@ export default function EmailTemplateForm({ templateCode }: Props) {
                 <li>{t('tip1')}</li>
                 <li>{t('tip2')}</li>
                 <li>{t('tip3')}</li>
-                <li>{t('tip4')}</li>
+                <li>{t.raw('tip4')}</li>
               </ul>
             </Card>
           </div>
