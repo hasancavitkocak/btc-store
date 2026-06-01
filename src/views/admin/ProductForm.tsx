@@ -161,15 +161,35 @@ export default function ProductForm({ productId }: ProductFormProps) {
       setLoading(true);
       const response = await productService.getByCode(productId!);
       
-      if (response.status === 'SUCCESS' && response.data) {
-        const productData = (response.data as any).data || response.data;
+      if (response.data) {
+        // Handle all possible response envelope structures:
+        // 1. { id, code, name, ... }  (direct)
+        // 2. { data: { id, code, ... } }  (single wrap)
+        // 3. { status: "SUCCESS", data: { id, code, ... } }  (backend envelope)
+        const raw = response.data as any;
+        const productData = raw?.data?.id
+          ? raw.data
+          : raw?.id
+          ? raw
+          : raw?.data?.data?.id
+          ? raw.data.data
+          : raw;
         
+        const extractLocalized = (field: any) => ({
+          tr: field?.tr || '',
+          en: field?.en || '',
+          de: field?.de || '',
+          fr: field?.fr || '',
+          es: field?.es || '',
+          it: field?.it || '',
+        });
+
         setFormData({
           id: productData.id,
           code: productData.code,
-          name: productData.name || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
-          description: productData.description || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
-          shortDescription: productData.shortDescription || { tr: '', en: '', de: '', fr: '', es: '', it: '' },
+          name: extractLocalized(productData.name),
+          description: extractLocalized(productData.description),
+          shortDescription: extractLocalized(productData.shortDescription),
           categories: productData.categories || [],
           responsibleUsers: productData.responsibleUsers || [],
           features: productData.features || [],
