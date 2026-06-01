@@ -106,12 +106,76 @@ export default function ProductForm({ productId }: ProductFormProps) {
   };
 
   useEffect(() => {
-    loadCategories();
-    loadUsers();
-    if (productId) {
-      loadProduct();
-    }
-  }, [productId]);
+    const loadLookups = async () => {
+      const [catRes, userRes] = await Promise.all([
+        categoryService.getActive(),
+        userService.getAll(),
+      ]);
+      if (catRes.status === 'SUCCESS' && catRes.data) {
+        const d = (catRes.data as any)?.data ?? catRes.data;
+        setCategories(Array.isArray(d) ? d : []);
+      }
+      if (userRes.status === 'SUCCESS' && userRes.data) {
+        const d = (userRes.data as any)?.data ?? userRes.data;
+        setUsers(Array.isArray(d) ? d : []);
+      }
+    };
+    loadLookups();
+  }, []);
+
+  useEffect(() => {
+    if (!productId) return;
+    let cancelled = false;
+
+    const loadProduct = async () => {
+      setLoading(true);
+      try {
+        const response = await productService.getByCode(productId);
+        if (cancelled || !response.data) return;
+
+        const raw = response.data as any;
+        const p = raw?.data ?? raw;
+
+        const loc = (f: any) => ({
+          tr: f?.tr || '', en: f?.en || '', de: f?.de || '',
+          fr: f?.fr || '', es: f?.es || '', it: f?.it || '',
+        });
+
+        setFormData({
+          id: p.id,
+          code: p.code,
+          name: loc(p.name),
+          description: loc(p.description),
+          shortDescription: loc(p.shortDescription),
+          categories: p.categories || [],
+          responsibleUsers: p.responsibleUsers || [],
+          features: p.features || [],
+          videoLink: p.videoLink || '',
+          active: p.active ?? true,
+          deleted: p.deleted ?? false,
+        });
+
+        if (p.images?.length > 0) {
+          setImageFiles(p.images.map((img: any) => img.absolutePath));
+          setExistingImages(p.images);
+          if (p.mainImage) {
+            const idx = p.images.findIndex((img: any) => img.code === p.mainImage.code);
+            if (idx !== -1) setMainImageIndex(idx);
+          }
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Error loading product:', error);
+          setToast({ message: t('admin.productForm.loadError'), type: 'error' });
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadProduct();
+    return () => { cancelled = true; };
+  }, [productId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -129,96 +193,6 @@ export default function ProductForm({ productId }: ProductFormProps) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isCategoryDropdownOpen, isUserDropdownOpen]);
-
-  const loadCategories = async () => {
-    try {
-      const response = await categoryService.getActive();
-      if (response.status === 'SUCCESS' && response.data) {
-        const categoriesData = (response.data as any).data || response.data;
-        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
-      }
-    } catch (error) {
-      console.error('Error loading categories:', error);
-      setCategories([]);
-    }
-  };
-
-  const loadUsers = async () => {
-    try {
-      const response = await userService.getAll();
-      if (response.status === 'SUCCESS' && response.data) {
-        const usersData = (response.data as any).data || response.data;
-        setUsers(Array.isArray(usersData) ? usersData : []);
-      }
-    } catch (error) {
-      console.error('Error loading users:', error);
-      setUsers([]);
-    }
-  };
-
-  const loadProduct = async () => {
-    try {
-      setLoading(true);
-      const response = await productService.getByCode(productId!);
-      
-      if (response.data) {
-        // Handle all possible response envelope structures:
-        // 1. { id, code, name, ... }  (direct)
-        // 2. { data: { id, code, ... } }  (single wrap)
-        // 3. { status: "SUCCESS", data: { id, code, ... } }  (backend envelope)
-        const raw = response.data as any;
-        const productData = raw?.data?.id
-          ? raw.data
-          : raw?.id
-          ? raw
-          : raw?.data?.data?.id
-          ? raw.data.data
-          : raw;
-        
-        const extractLocalized = (field: any) => ({
-          tr: field?.tr || '',
-          en: field?.en || '',
-          de: field?.de || '',
-          fr: field?.fr || '',
-          es: field?.es || '',
-          it: field?.it || '',
-        });
-
-        setFormData({
-          id: productData.id,
-          code: productData.code,
-          name: extractLocalized(productData.name),
-          description: extractLocalized(productData.description),
-          shortDescription: extractLocalized(productData.shortDescription),
-          categories: productData.categories || [],
-          responsibleUsers: productData.responsibleUsers || [],
-          features: productData.features || [],
-          videoLink: productData.videoLink || '',
-          active: productData.active ?? true,
-          deleted: productData.deleted ?? false
-        });
-        
-        if (productData.images && productData.images.length > 0) {
-          const imagePaths = productData.images.map((img: any) => img.absolutePath);
-          setImageFiles(imagePaths);
-          setExistingImages(productData.images);
-          
-          // Find main image index
-          if (productData.mainImage) {
-            const mainIndex = productData.images.findIndex((img: any) => img.code === productData.mainImage.code);
-            if (mainIndex !== -1) {
-              setMainImageIndex(mainIndex);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error loading product:', error);
-      setToast({ message: t('admin.productForm.loadError'), type: 'error' });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleImagesChange = (images: string[]) => {
     setImageFiles(images);
@@ -778,7 +752,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                   </div>
                   
                   <div className="p-4">
-                    <RichTextEditor value={formData.description[activeDescTab]} onChange={(value) => setFormData({...formData, description: { ...formData.description, [activeDescTab]: value }})} placeholder={t('admin.productForm.descriptionPlaceholder')} />
+                    <RichTextEditor value={formData.description[activeDescTab]} onChange={(value) => setFormData(prev => ({...prev, description: { ...prev.description, [activeDescTab]: value }}))} placeholder={t('admin.productForm.descriptionPlaceholder')} />
                   </div>
                 </div>
               </div>
