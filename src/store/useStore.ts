@@ -247,6 +247,7 @@ export const useStore = create<StoreState>()((set, get) => ({
             const mappedPartners: Partner[] = partnerData.map((partner: any, index: number) => ({
               id: partner.code,
               name: partner.name?.tr || partner.name?.en || partner.name || '',
+              description: partner.description?.tr || partner.description?.en || partner.description || '',
               logo: partner.media?.absolutePath || '/images/placeholder.jpg',
               active: partner.active,
               order: partner.order || index

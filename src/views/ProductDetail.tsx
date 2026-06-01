@@ -287,7 +287,7 @@ export default function ProductDetail() {
                 <h1 className="text-lg lg:text-xl font-bold text-gray-900 mb-3 break-words">
                   {getLocalizedText(product.name, locale)}
                 </h1>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-500 text-sm leading-relaxed mb-6 line-clamp-4">
                   {getLocalizedText(product.shortDescription, locale)}
                 </p>
 

@@ -150,17 +150,19 @@ export default function Home() {
             </div>
           ) : homePartners.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                 {homePartners.map((partner) => (
                   <div
                     key={partner.id}
-                    className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-center h-24 group"
+                    className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-start border border-gray-100 group"
                   >
-                    <img
-                      src={partner.logo}
-                      alt={partner.name}
-                      className="max-w-full max-h-full object-contain opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 group-hover:scale-105"
-                    />
+                    <div className="flex items-center justify-center w-full h-28">
+                      <img
+                        src={partner.logo}
+                        alt={partner.name}
+                        className="max-w-[180px] max-h-[100px] w-auto h-auto object-contain transition-all duration-300 group-hover:scale-105"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -299,29 +301,25 @@ export default function Home() {
             </div>
           ) : homeReferences.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                 {homeReferences.map((ref) => (
                   <div
                     key={ref.id}
-                    className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center h-32 group"
+                    className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-start border border-gray-100 group"
                   >
-                    {ref.logo ? (
-                      <img
-                        src={ref.logo}
-                        alt={ref.name}
-                        className="max-w-full max-h-full object-contain grayscale hover:grayscale-0 transition-all duration-300 group-hover:scale-110"
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          target.style.display = 'none';
-                          const parent = target.parentElement;
-                          if (parent) {
-                            parent.innerHTML = `<div class="text-gray-600 font-semibold text-center">${ref.name}</div>`;
-                          }
-                        }}
-                      />
-                    ) : (
-                      <div className="text-gray-600 font-semibold text-center">{ref.name}</div>
-                    )}
+                    <div className="flex items-center justify-center w-full h-28">
+                      {ref.logo ? (
+                        <img
+                          src={ref.logo}
+                          alt={ref.name}
+                          className="max-w-[180px] max-h-[100px] w-auto h-auto object-contain transition-all duration-300 group-hover:scale-105"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            target.style.display = 'none';
+                          }}
+                        />
+                      ) : null}
+                    </div>
                   </div>
                 ))}
               </div>
