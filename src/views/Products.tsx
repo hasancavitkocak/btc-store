@@ -44,6 +44,15 @@ export default function Products() {
     }
   }, []);
 
+  // Sync selectedCategory when URL searchParams change (e.g. navigating from menu)
+  useEffect(() => {
+    if (!mountedRef.current) return;
+    const urlCategory = searchParams?.get('category') || '';
+    if (urlCategory !== selectedCategory) {
+      setSelectedCategory(urlCategory);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     // Category changed - reset to page 1
     if (mountedRef.current && !loadingRef.current) {

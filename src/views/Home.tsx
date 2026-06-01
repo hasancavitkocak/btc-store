@@ -44,7 +44,7 @@ export default function Home() {
 
   // Ana sayfada gösterilecek maksimum sayılar
   const MAX_HOME_PARTNERS = 8;
-  const MAX_HOME_REFERENCES = 4;
+  const MAX_HOME_REFERENCES = 6;
   const homePartners = activePartners.slice(0, MAX_HOME_PARTNERS);
   const homeReferences = activeReferences.slice(0, MAX_HOME_REFERENCES);
   const hasMorePartners = activePartners.length > MAX_HOME_PARTNERS;
@@ -154,13 +154,13 @@ export default function Home() {
                 {homePartners.map((partner) => (
                   <div
                     key={partner.id}
-                    className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-start border border-gray-100 group"
+                    className="bg-white rounded-2xl p-4 md:p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center border border-gray-100 group"
                   >
-                    <div className="flex items-center justify-center w-full h-28">
+                    <div className="flex items-center justify-center w-full h-20 md:h-28">
                       <img
                         src={partner.logo}
                         alt={partner.name}
-                        className="max-w-[180px] max-h-[100px] w-auto h-auto object-contain transition-all duration-300 group-hover:scale-105"
+                        className="max-w-full max-h-full w-auto h-auto object-contain transition-all duration-300 group-hover:scale-105"
                       />
                     </div>
                   </div>
@@ -291,8 +291,8 @@ export default function Home() {
           </div>
 
           {isLoadingReferences ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {[...Array(4)].map((_, i) => (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
                   className="bg-gray-200 rounded-2xl h-32 animate-pulse"
@@ -305,14 +305,14 @@ export default function Home() {
                 {homeReferences.map((ref) => (
                   <div
                     key={ref.id}
-                    className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-start border border-gray-100 group"
+                    className="bg-white rounded-2xl p-4 md:p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center border border-gray-100 group"
                   >
-                    <div className="flex items-center justify-center w-full h-28">
+                    <div className="flex items-center justify-center w-full h-20 md:h-28">
                       {ref.logo ? (
                         <img
                           src={ref.logo}
                           alt={ref.name}
-                          className="max-w-[180px] max-h-[100px] w-auto h-auto object-contain transition-all duration-300 group-hover:scale-105"
+                          className="max-w-full max-h-full w-auto h-auto object-contain transition-all duration-300 group-hover:scale-105"
                           onError={(e) => {
                             const target = e.currentTarget;
                             target.style.display = 'none';

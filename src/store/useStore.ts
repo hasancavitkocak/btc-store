@@ -202,18 +202,18 @@ export const useStore = create<StoreState>()((set, get) => ({
             const mappedCategories: Category[] = categoryData.map((category: any, index: number) => ({
               id: category.code,
               // name ve description obje olarak geliyor (çoklu dil için)
-              nameKey: category.name?.tr || category.name?.en || category.name || '',
-              descriptionKey: category.description?.tr || category.description?.en || category.description || '',
+              nameKey: (typeof category.name === 'object' ? (category.name?.tr || category.name?.en) : category.name) || '',
+              descriptionKey: (typeof category.description === 'object' ? (category.description?.tr || category.description?.en) : category.description) || '',
               // media objesi içinde absolutePath var
-              image: category.media?.absolutePath || '/images/placeholder.jpg',
+              image: category.media?.absolutePath || '',
               showOnHome: category.showOnHomepage ?? true,
               active: category.active,
-              order: category.order || index,
+              order: category.order ?? index,
               // Backend'den gelen stil özellikleri
               bgColor: category.backgroundColor || '#F9FAFB',
               textColor: category.textColor || '#111827',
               showButton: category.showButton ?? true,
-              buttonText: category.buttonText?.tr || category.buttonText?.en || 'Detayları Gör',
+              buttonText: (typeof category.buttonText === 'object' ? (category.buttonText?.tr || category.buttonText?.en) : category.buttonText) || '',
               buttonLink: category.buttonLink || `/products?category=${category.code}`,
               buttonBgColor: category.buttonBackgroundColor || '#0EA5E9',
               buttonTextColor: category.buttonTextColor || '#FFFFFF',
@@ -246,11 +246,11 @@ export const useStore = create<StoreState>()((set, get) => ({
             
             const mappedPartners: Partner[] = partnerData.map((partner: any, index: number) => ({
               id: partner.code,
-              name: partner.name?.tr || partner.name?.en || partner.name || '',
-              description: partner.description?.tr || partner.description?.en || partner.description || '',
-              logo: partner.media?.absolutePath || '/images/placeholder.jpg',
+              name: (typeof partner.name === 'object' ? (partner.name?.tr || partner.name?.en) : partner.name) || '',
+              description: (typeof partner.description === 'object' ? (partner.description?.tr || partner.description?.en) : partner.description) || '',
+              logo: partner.media?.absolutePath || '',
               active: partner.active,
-              order: partner.order || index
+              order: partner.order ?? index
             }));
             set({ partners: mappedPartners, partnersFetched: true });
           }
@@ -279,11 +279,11 @@ export const useStore = create<StoreState>()((set, get) => ({
             
             const mappedReferences: Reference[] = referenceData.map((reference: any, index: number) => ({
               id: reference.code,
-              name: reference.name?.tr || reference.name?.en || reference.name || '',
-              logo: reference.media?.absolutePath || '/images/placeholder.jpg',
+              name: (typeof reference.name === 'object' ? (reference.name?.tr || reference.name?.en) : reference.name) || '',
+              logo: reference.media?.absolutePath || '',
               active: reference.active,
-              showOnHome: reference.showOnHome !== false,
-              order: reference.order || index
+              showOnHome: reference.showOnHomepage !== false,
+              order: reference.order ?? index
             }));
             set({ references: mappedReferences, referencesFetched: true });
           }

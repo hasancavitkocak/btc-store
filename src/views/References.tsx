@@ -43,7 +43,7 @@ export default function References() {
                   <img
                     src={ref.logo}
                     alt={ref.name}
-                    className="max-w-full max-h-full object-contain grayscale hover:grayscale-0 transition-all duration-300 group-hover:scale-110"
+                    className="max-w-full max-h-full object-contain transition-all duration-300 group-hover:scale-110"
                   />
                 </div>
               ))}

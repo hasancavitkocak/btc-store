@@ -44,7 +44,7 @@ export default function Partners() {
                   <img
                     src={partner.logo}
                     alt={partner.name}
-                    className="max-w-full max-h-full object-contain opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 group-hover:scale-110"
+                    className="max-w-full max-h-full object-contain transition-all duration-300 group-hover:scale-110"
                   />
                 </div>
               ))}
