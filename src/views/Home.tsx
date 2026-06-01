@@ -236,19 +236,23 @@ export default function Home() {
                 bgColor={category.bgColor || '#F9FAFB'}
               >
                 <div className="space-y-4">
-                  <h3 
-                    className="text-2xl md:text-3xl font-bold leading-tight"
-                    style={{ color: category.textColor || '#111827' }}
-                  >
-                    {category.nameKey}
-                  </h3>
-                  <p 
-                    className="text-base md:text-lg leading-relaxed"
-                    style={{ color: category.textColor || '#4B5563' }}
-                  >
-                    {category.descriptionKey}
-                  </p>
-                  {category.showButton !== false && (
+                  {category.nameKey && (
+                    <h3 
+                      className="text-2xl md:text-3xl font-bold leading-tight"
+                      style={{ color: category.textColor || '#111827' }}
+                    >
+                      {category.nameKey}
+                    </h3>
+                  )}
+                  {category.descriptionKey && (
+                    <p 
+                      className="text-base md:text-lg leading-relaxed"
+                      style={{ color: category.textColor || '#4B5563' }}
+                    >
+                      {category.descriptionKey}
+                    </p>
+                  )}
+                  {category.showButton !== false && (category.buttonText || t('common.learnMore')) && (
                     <div className="pt-1">
                       <Link href={category.buttonLink || `/products?category=${category.id}`}>
                         <button
