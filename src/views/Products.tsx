@@ -250,7 +250,7 @@ export default function Products() {
                   )}
                 </div>
                 <div className="p-8 flex flex-col flex-grow">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-800 transition-colors">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-800 transition-colors break-words">
                     {getLocalizedText(product.name, locale)}
                   </h3>
                   <p className="text-gray-600 mb-6 text-lg flex-grow">
