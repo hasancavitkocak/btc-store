@@ -2,8 +2,11 @@ export interface Category {
   id: string;
   nameKey: string;
   descriptionKey: string;
+  name?: { tr?: string; en?: string } | string;
+  description?: { tr?: string; en?: string } | string;
+  buttonTextMultiLang?: { tr?: string; en?: string } | string;
   image: string;
-  icon: string;
+  icon?: string;
   showOnHome: boolean;
   order: number;
   active?: boolean;

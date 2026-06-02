@@ -230,13 +230,13 @@ export default function Home() {
         <div className="space-y-0">
           {homeCategories.map((category, index) => {
             const catName = category.name 
-              ? getLocalizedText(category.name, locale) 
+              ? (typeof category.name === 'string' ? category.name : getLocalizedText(category.name, locale))
               : category.nameKey;
             const catDescription = category.description 
-              ? getLocalizedText(category.description, locale) 
+              ? (typeof category.description === 'string' ? category.description : getLocalizedText(category.description, locale))
               : category.descriptionKey;
             const catButtonText = category.buttonTextMultiLang
-              ? getLocalizedText(category.buttonTextMultiLang, locale)
+              ? (typeof category.buttonTextMultiLang === 'string' ? category.buttonTextMultiLang : getLocalizedText(category.buttonTextMultiLang, locale))
               : category.buttonText;
 
             return (
