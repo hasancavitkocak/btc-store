@@ -156,7 +156,11 @@ export const useStore = create<StoreState>()((set, get) => ({
             // Backend'den gelen verileri frontend formatına çevir
             const mappedBanners: Banner[] = bannerData.map((banner: any, index: number) => ({
               id: banner.code,
-              // title, subtitle, buttonText obje olarak geliyor (çoklu dil için)
+              // Multilang objects - stored for locale-based rendering
+              title: banner.title,
+              subtitle: banner.subtitle,
+              buttonText: banner.buttonText,
+              // Fallback keys (tr or en)
               titleKey: banner.title?.tr || banner.title?.en || banner.name || '',
               subtitleKey: banner.subtitle?.tr || banner.subtitle?.en || banner.description || '',
               buttonTextKey: banner.buttonText?.tr || banner.buttonText?.en || '',

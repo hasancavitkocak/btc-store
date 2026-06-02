@@ -83,27 +83,37 @@ export default function Home() {
       ) : activeBanners.length > 0 ? (
         <Carousel>
           {activeBanners.map((banner) => {
+            const bannerTitle = banner.title
+              ? getLocalizedText(banner.title, locale) || banner.titleKey
+              : banner.titleKey;
+            const bannerSubtitle = banner.subtitle
+              ? getLocalizedText(banner.subtitle, locale) || banner.subtitleKey
+              : banner.subtitleKey;
+            const bannerButtonText = banner.buttonText
+              ? getLocalizedText(banner.buttonText, locale) || banner.buttonTextKey
+              : banner.buttonTextKey;
+
             return (
               <div key={banner.id} className="relative h-[70vh] min-h-[600px] max-h-[900px]">
                 <img
                   src={banner.image}
-                  alt={banner.titleKey}
+                  alt={bannerTitle}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 flex items-center">
                   <Container>
                     <div className="max-w-3xl text-white">
-                      {banner.showTitle !== false && banner.titleKey && (
+                      {banner.showTitle !== false && bannerTitle && (
                         <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
-                          {banner.titleKey}
+                          {bannerTitle}
                         </h1>
                       )}
-                      {banner.showSubtitle !== false && banner.subtitleKey && (
+                      {banner.showSubtitle !== false && bannerSubtitle && (
                         <p className="text-xl sm:text-2xl md:text-3xl mb-10 text-gray-100 leading-relaxed">
-                          {banner.subtitleKey}
+                          {bannerSubtitle}
                         </p>
                       )}
-                      {banner.showButton !== false && banner.buttonTextKey && banner.buttonLink && (
+                      {banner.showButton !== false && bannerButtonText && banner.buttonLink && (
                         <Link href={banner.buttonLink}>
                           <button
                             className="text-lg px-8 py-6 rounded-lg font-semibold shadow-2xl hover:shadow-3xl transition-all hover:scale-105"
@@ -115,7 +125,7 @@ export default function Home() {
                               color: banner.buttonTextColor || '#FFFFFF'
                             }}
                           >
-                            {banner.buttonTextKey}
+                            {bannerButtonText}
                           </button>
                         </Link>
                       )}

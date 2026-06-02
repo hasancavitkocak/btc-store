@@ -105,14 +105,14 @@ export default function StoryDetail() {
 
         <article className="max-w-4xl mx-auto">
           {story.image && (
-            <div 
-              className="aspect-video overflow-hidden rounded-2xl shadow-xl mb-8 cursor-pointer hover:opacity-95 transition-opacity"
+            <div
+              className="mb-8 cursor-pointer hover:opacity-95 transition-opacity flex items-center justify-center"
               onClick={() => setLightbox({ isOpen: true, imageUrl: story.image! })}
             >
               <img
                 src={story.image}
                 alt={story.company}
-                className="w-full h-full object-cover"
+                className="max-w-full h-auto max-h-[600px] rounded-2xl shadow-xl"
               />
             </div>
           )}

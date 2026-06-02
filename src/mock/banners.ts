@@ -3,6 +3,10 @@ export interface Banner {
   titleKey: string;
   subtitleKey: string;
   buttonTextKey?: string;
+  // Multilang objects from backend
+  title?: Record<string, string>;
+  subtitle?: Record<string, string>;
+  buttonText?: Record<string, string>;
   buttonLink?: string;
   image: string;
   order: number;

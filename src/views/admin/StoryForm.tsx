@@ -26,6 +26,16 @@ interface Sector {
   active: boolean;
 }
 
+// Dil bilgileri
+const languageInfo: Record<SupportedLocale, { code: string; name: string }> = {
+  tr: { code: 'TR', name: 'Türkçe' },
+  en: { code: 'EN', name: 'English' },
+  de: { code: 'DE', name: 'Deutsch' },
+  fr: { code: 'FR', name: 'Français' },
+  es: { code: 'ES', name: 'Español' },
+  it: { code: 'IT', name: 'Italiano' }
+};
+
 export default function StoryForm({ storyId }: StoryFormProps) {
   const t = useTranslations();
   const locale = useLocale() as SupportedLocale;
@@ -47,6 +57,13 @@ export default function StoryForm({ storyId }: StoryFormProps) {
   const sectorsLoadedRef = useRef(false);
   
   const isEditing = !!storyId;
+
+  const getOrderedLanguages = (): SupportedLocale[] => {
+    const allLanguages: SupportedLocale[] = ['tr', 'en', 'de', 'fr', 'es', 'it'];
+    return [locale, ...allLanguages.filter(lang => lang !== locale)];
+  };
+
+  const orderedLanguages = getOrderedLanguages();
 
   const toggleField = (fieldName: string) => {
     const newExpanded = new Set(expandedFields);
@@ -75,7 +92,7 @@ export default function StoryForm({ storyId }: StoryFormProps) {
   const [sectorSearchTerm, setSectorSearchTerm] = useState('');
   const [isSectorDropdownOpen, setIsSectorDropdownOpen] = useState(false);
   const [resultInput, setResultInput] = useState('');
-  const [activeHtmlTab, setActiveHtmlTab] = useState<'tr' | 'en' | 'de' | 'fr' | 'es' | 'it'>('tr');
+  const [activeHtmlTab, setActiveHtmlTab] = useState<SupportedLocale>(locale);
 
   useEffect(() => {
     // Only load sectors once
@@ -97,17 +114,7 @@ export default function StoryForm({ storyId }: StoryFormProps) {
     }
   }, [storyId]);
 
-  // Debug: formData değişikliklerini izle (remove after debugging)
-  useEffect(() => {
-    console.log('=== FORM DATA CHANGED ===');
-    console.log('formData.company:', formData.company);
-    console.log('formData.sector:', formData.sector);
-    console.log('formData.title:', formData.title);
-    console.log('formData.videoUrl:', formData.videoUrl);
-    console.log('formData.results:', formData.results);
-    console.log('formData.order:', formData.order);
-    console.log('formData.active:', formData.active);
-  }, [formData]);
+
 
   // Dropdown dışına tıklandığında kapat
   useEffect(() => {
@@ -124,19 +131,14 @@ export default function StoryForm({ storyId }: StoryFormProps) {
   }, [isSectorDropdownOpen]);
 
   const loadSectors = async () => {
-    // Prevent multiple calls
     if (sectorsLoadedRef.current) {
-      console.log('Sectors already loaded, skipping...');
       return;
     }
     
     try {
-      console.log('=== LOADING SECTORS (ONCE) ===');
       const response = await sectorService.getActive();
-      console.log('Sectors response:', response);
       if (response.status === 'SUCCESS' && response.data) {
         const sectorsData = (response.data as any).data || response.data;
-        console.log('Parsed sectors:', sectorsData);
         setSectors(Array.isArray(sectorsData) ? sectorsData : []);
         sectorsLoadedRef.current = true;
       }
@@ -147,36 +149,17 @@ export default function StoryForm({ storyId }: StoryFormProps) {
   };
 
   const loadStory = async () => {
-    // Prevent multiple calls
     if (dataLoadedRef.current) {
-      console.log('Story already loaded, skipping...');
       return;
     }
     
     try {
-      console.log('=== LOADING STORY (ONCE) ===');
-      console.log('storyId:', storyId);
       setLoading(true);
       const response = await storyService.getByCode(storyId!);
-      
-      console.log('=== BACKEND RESPONSE ===');
-      console.log('Full response:', response);
-      console.log('response.data:', response.data);
       
       if (response.status === 'SUCCESS' && response.data) {
         const storyData = (response.data as any).data || response.data;
         
-        console.log('=== PARSED STORY DATA ===');
-        console.log('storyData:', storyData);
-        console.log('company:', storyData.company);
-        console.log('sector:', storyData.sector);
-        console.log('title:', storyData.title);
-        console.log('videoUrl:', storyData.videoUrl);
-        console.log('results:', storyData.results);
-        console.log('order:', storyData.order);
-        console.log('active:', storyData.active);
-        
-        // Clean taskStep from title and htmlContent objects
         const cleanTitle = storyData.title ? {
           tr: storyData.title.tr || '',
           en: storyData.title.en || '',
@@ -208,22 +191,8 @@ export default function StoryForm({ storyId }: StoryFormProps) {
           active: storyData.active ?? true
         };
         
-        console.log('=== NEW FORM DATA ===');
-        console.log('newFormData:', newFormData);
-        console.log('newFormData.company:', newFormData.company);
-        console.log('newFormData.sector:', newFormData.sector);
-        console.log('newFormData.title:', newFormData.title);
-        console.log('newFormData.videoUrl:', newFormData.videoUrl);
-        console.log('newFormData.results:', newFormData.results);
-        
         setFormData(newFormData);
-        
-        // Mark as loaded to prevent re-loading
         dataLoadedRef.current = true;
-        
-        console.log('=== AFTER setFormData ===');
-        console.log('Form data set successfully');
-        console.log('dataLoadedRef.current:', dataLoadedRef.current);
         
         if (storyData.media?.absolutePath) {
           setImageFiles([storyData.media.absolutePath]);
@@ -297,19 +266,7 @@ export default function StoryForm({ storyId }: StoryFormProps) {
         active: formData.active
       };
 
-      console.log('=== SENDING TO BACKEND ===');
-      console.log('storyData:', storyData);
-      console.log('company:', storyData.company);
-      console.log('sector:', storyData.sector);
-      console.log('title:', storyData.title);
-      console.log('videoUrl:', storyData.videoUrl);
-      console.log('results:', storyData.results);
-
       const response = await storyService.save(storyData, newMediaFile || undefined, shouldRemoveMedia);
-
-      console.log('=== BACKEND SAVE RESPONSE ===');
-      console.log('response:', response);
-      console.log('response.data:', response.data);
 
       if (response.status === 'ERROR') {
         setToast({ 
@@ -476,41 +433,22 @@ export default function StoryForm({ storyId }: StoryFormProps) {
                     </button>
                   </div>
                   <div className="p-4 space-y-3">
-                    {/* User's current locale first */}
                     <Input
-                      placeholder={`${locale.toUpperCase()} - ${
-                        locale === 'tr' ? 'Türkçe' :
-                        locale === 'en' ? 'English' :
-                        locale === 'de' ? 'Deutsch' :
-                        locale === 'fr' ? 'Français' :
-                        locale === 'es' ? 'Español' :
-                        'Italiano'
-                      }`}
+                      placeholder={`${languageInfo[locale].code} - ${languageInfo[locale].name}`}
                       value={formData.title[locale]}
                       onChange={(e) => setFormData({ ...formData, title: { ...formData.title, [locale]: e.target.value } })}
                     />
                     
                     {expandedFields.has('title') && (
                       <div className="space-y-3 pt-3 border-t border-gray-200">
-                        {/* Other languages */}
-                        {(['tr', 'en', 'de', 'fr', 'es', 'it'] as const)
-                          .filter(lang => lang !== locale)
-                          .map(lang => (
-                            <Input
-                              key={lang}
-                              placeholder={`${lang.toUpperCase()} - ${
-                                lang === 'tr' ? 'Türkçe' :
-                                lang === 'en' ? 'English' :
-                                lang === 'de' ? 'Deutsch' :
-                                lang === 'fr' ? 'Français' :
-                                lang === 'es' ? 'Español' :
-                                'Italiano'
-                              }`}
-                              value={formData.title[lang]}
-                              onChange={(e) => setFormData({ ...formData, title: { ...formData.title, [lang]: e.target.value } })}
-                            />
-                          ))
-                        }
+                        {orderedLanguages.slice(1).map(lang => (
+                          <Input
+                            key={lang}
+                            placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                            value={formData.title[lang]}
+                            onChange={(e) => setFormData({ ...formData, title: { ...formData.title, [lang]: e.target.value } })}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -602,118 +540,33 @@ export default function StoryForm({ storyId }: StoryFormProps) {
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
                   <div className="bg-gray-50 border-b border-gray-200">
                     <div className="flex overflow-x-auto">
-                      <button
-                        type="button"
-                        onClick={() => setActiveHtmlTab('tr')}
-                        className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-                          activeHtmlTab === 'tr'
-                            ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                        }`}
-                      >
-                        TR - Türkçe
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveHtmlTab('en')}
-                        className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-                          activeHtmlTab === 'en'
-                            ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                        }`}
-                      >
-                        EN - English
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveHtmlTab('de')}
-                        className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-                          activeHtmlTab === 'de'
-                            ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                        }`}
-                      >
-                        DE - Deutsch
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveHtmlTab('fr')}
-                        className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-                          activeHtmlTab === 'fr'
-                            ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                        }`}
-                      >
-                        FR - Français
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveHtmlTab('es')}
-                        className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-                          activeHtmlTab === 'es'
-                            ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                        }`}
-                      >
-                        ES - Español
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveHtmlTab('it')}
-                        className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-                          activeHtmlTab === 'it'
-                            ? 'bg-white text-blue-600 border-b-2 border-blue-600'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                        }`}
-                      >
-                        IT - Italiano
-                      </button>
+                      {orderedLanguages.map((lang) => (
+                        <button
+                          key={lang}
+                          type="button"
+                          onClick={() => setActiveHtmlTab(lang)}
+                          className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
+                            activeHtmlTab === lang
+                              ? 'bg-white text-blue-600 border-b-2 border-blue-600'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                          }`}
+                        >
+                          {languageInfo[lang].code} - {languageInfo[lang].name}
+                        </button>
+                      ))}
                     </div>
                   </div>
                   
                   <div className="p-4">
-                    {activeHtmlTab === 'tr' && (
-                      <RichTextEditor
-                        value={formData.htmlContent.tr}
-                        onChange={(value) => setFormData({...formData, htmlContent: { ...formData.htmlContent, tr: value }})}
-                        placeholder={t('admin.storyForm.contentPlaceholder')}
-                      />
-                    )}
-                    {activeHtmlTab === 'en' && (
-                      <RichTextEditor
-                        value={formData.htmlContent.en}
-                        onChange={(value) => setFormData({...formData, htmlContent: { ...formData.htmlContent, en: value }})}
-                        placeholder={t('admin.storyForm.contentPlaceholder')}
-                      />
-                    )}
-                    {activeHtmlTab === 'de' && (
-                      <RichTextEditor
-                        value={formData.htmlContent.de}
-                        onChange={(value) => setFormData({...formData, htmlContent: { ...formData.htmlContent, de: value }})}
-                        placeholder={t('admin.storyForm.contentPlaceholder')}
-                      />
-                    )}
-                    {activeHtmlTab === 'fr' && (
-                      <RichTextEditor
-                        value={formData.htmlContent.fr}
-                        onChange={(value) => setFormData({...formData, htmlContent: { ...formData.htmlContent, fr: value }})}
-                        placeholder={t('admin.storyForm.contentPlaceholder')}
-                      />
-                    )}
-                    {activeHtmlTab === 'es' && (
-                      <RichTextEditor
-                        value={formData.htmlContent.es}
-                        onChange={(value) => setFormData({...formData, htmlContent: { ...formData.htmlContent, es: value }})}
-                        placeholder={t('admin.storyForm.contentPlaceholder')}
-                      />
-                    )}
-                    {activeHtmlTab === 'it' && (
-                      <RichTextEditor
-                        value={formData.htmlContent.it}
-                        onChange={(value) => setFormData({...formData, htmlContent: { ...formData.htmlContent, it: value }})}
-                        placeholder={t('admin.storyForm.contentPlaceholder')}
-                      />
-                    )}
+                    {(['tr', 'en', 'de', 'fr', 'es', 'it'] as const).map((lang) => (
+                      <div key={lang} style={{ display: activeHtmlTab === lang ? 'block' : 'none' }}>
+                        <RichTextEditor
+                          value={formData.htmlContent[lang]}
+                          onChange={(value) => setFormData(prev => ({...prev, htmlContent: { ...prev.htmlContent, [lang]: value }}))}
+                          placeholder={t('admin.storyForm.contentPlaceholder')}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
                 
