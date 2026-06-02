@@ -253,7 +253,7 @@ export default function ProductDetail() {
               {product.videoLink && (
                 <div className="mt-6">
                   <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
-                    Ürün Tanıtım Videosu
+                    {t('product.videoIntroduction')}
                   </h3>
                   <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-xl shadow-lg">
                     <iframe
@@ -364,18 +364,18 @@ export default function ProductDetail() {
                 <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">Ürün Dokümanları</h3>
+                <h3 className="text-2xl font-bold text-gray-900">{t('product.productDocuments')}</h3>
               </div>
 
               {documentsLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Dokümanlar yükleniyor...</p>
+                  <p className="mt-4 text-gray-600">{t('product.documentsLoading')}</p>
                 </div>
               ) : documents.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {documents.map((doc) => {
-                    const title = getLocalizedText(doc.title, locale) || 'Doküman';
+                    const title = getLocalizedText(doc.title, locale) || t('product.document');
                     const description = getLocalizedText(doc.description, locale);
                     
                     return (
@@ -405,7 +405,7 @@ export default function ProductDetail() {
                                     className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
                                   >
                                     <Download className="w-4 h-4" />
-                                    <span className="truncate">{media.name || `Dosya ${idx + 1}`}</span>
+                                    <span className="truncate">{media.name || t('product.file', { number: idx + 1 })}</span>
                                     {media.size && (
                                       <span className="text-xs text-gray-500">
                                         ({(media.size / 1024 / 1024).toFixed(2)} MB)
@@ -424,7 +424,7 @@ export default function ProductDetail() {
               ) : (
                 <div className="text-center py-8 text-gray-600">
                   <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p>Bu ürün için henüz doküman eklenmemiş.</p>
+                  <p>{t('product.noDocuments')}</p>
                 </div>
               )}
             </div>

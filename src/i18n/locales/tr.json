@@ -92,7 +92,13 @@
     "viewDetails": "Detaylı İncele",
     "contactForProduct": "Ürün Hakkında İletişime Geçin",
     "contactDescription": "Ekibimizle iletişime geçin, bu ürün ve işletmenize nasıl fayda sağlayacağı hakkında daha fazla bilgi alın.",
-    "features": "Ürün Özellikleri"
+    "features": "Ürün Özellikleri",
+    "videoIntroduction": "Ürün Tanıtım Videosu",
+    "productDocuments": "Ürün Dokümanları",
+    "documentsLoading": "Dokümanlar yükleniyor...",
+    "noDocuments": "Bu ürün için henüz doküman eklenmemiş.",
+    "document": "Doküman",
+    "file": "Dosya {number}"
   },
   "home": {
     "categories": {
@@ -171,7 +177,8 @@
     "back": "Geri",
     "seeMore": "Daha Fazla Göster",
     "viewAll": "Tümünü Gör",
-    "products": "ürün"
+    "products": "ürün",
+    "productsFound": "ürün bulundu"
   },
   "components": {
     "searchableAutocomplete": {

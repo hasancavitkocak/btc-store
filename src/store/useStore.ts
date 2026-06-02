@@ -12,6 +12,7 @@ import { CallRequest, ProductContactForm } from '../mock/forms';
 import { sendEmail, createProductContactEmailBody, createCallRequestEmailBody } from '../lib/email';
 import { useAuthStore } from './useAuthStore';
 import { publicService, MenuItem } from '../services/public.service';
+import { MultiLangText } from '../lib/i18n-utils';
 
 export interface SiteConfiguration {
   id?: number;
@@ -201,19 +202,19 @@ export const useStore = create<StoreState>()((set, get) => ({
             // Backend'den gelen verileri frontend formatına çevir
             const mappedCategories: Category[] = categoryData.map((category: any, index: number) => ({
               id: category.code,
-              // name ve description obje olarak geliyor (çoklu dil için)
-              nameKey: (typeof category.name === 'object' ? (category.name?.tr || category.name?.en) : category.name) || '',
-              descriptionKey: (typeof category.description === 'object' ? (category.description?.tr || category.description?.en) : category.description) || '',
-              // media objesi içinde absolutePath var
+              nameKey: category.name?.tr || category.name?.en || category.name || '',
+              descriptionKey: category.description?.tr || category.description?.en || category.description || '',
+              name: category.name as MultiLangText,
+              description: category.description as MultiLangText,
               image: category.media?.absolutePath || '',
               showOnHome: category.showOnHomepage ?? true,
               active: category.active,
               order: category.order ?? index,
-              // Backend'den gelen stil özellikleri
               bgColor: category.backgroundColor || '#F9FAFB',
               textColor: category.textColor || '#111827',
               showButton: category.showButton ?? true,
-              buttonText: (typeof category.buttonText === 'object' ? (category.buttonText?.tr || category.buttonText?.en) : category.buttonText) || '',
+              buttonText: category.buttonText?.tr || category.buttonText?.en || category.buttonText || '',
+              buttonTextMultiLang: category.buttonText as MultiLangText,
               buttonLink: category.buttonLink || `/products?category=${category.code}`,
               buttonBgColor: category.buttonBackgroundColor || '#0EA5E9',
               buttonTextColor: category.buttonTextColor || '#FFFFFF',

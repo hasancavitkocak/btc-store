@@ -752,7 +752,11 @@ export default function ProductForm({ productId }: ProductFormProps) {
                   </div>
                   
                   <div className="p-4">
-                    <RichTextEditor value={formData.description[activeDescTab]} onChange={(value) => setFormData(prev => ({...prev, description: { ...prev.description, [activeDescTab]: value }}))} placeholder={t('admin.productForm.descriptionPlaceholder')} />
+                    {orderedLanguages.map((lang) => (
+                      <div key={lang} style={{ display: activeDescTab === lang ? 'block' : 'none' }}>
+                        <RichTextEditor value={formData.description[lang]} onChange={(value) => setFormData(prev => ({...prev, description: { ...prev.description, [lang]: value }}))} placeholder={t('admin.productForm.descriptionPlaceholder')} />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

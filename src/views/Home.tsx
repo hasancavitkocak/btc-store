@@ -229,32 +229,42 @@ export default function Home() {
       ) : homeCategories.length > 0 ? (
         <div className="space-y-0">
           {homeCategories.map((category, index) => {
+            const catName = category.name 
+              ? getLocalizedText(category.name, locale) 
+              : category.nameKey;
+            const catDescription = category.description 
+              ? getLocalizedText(category.description, locale) 
+              : category.descriptionKey;
+            const catButtonText = category.buttonTextMultiLang
+              ? getLocalizedText(category.buttonTextMultiLang, locale)
+              : category.buttonText;
+
             return (
               <ZigzagSection
                 key={category.id}
                 image={category.image}
-                imageAlt={category.nameKey}
+                imageAlt={catName}
                 reverse={index % 2 === 1}
                 bgColor={category.bgColor || '#F9FAFB'}
               >
                 <div className="space-y-4">
-                  {category.nameKey && (
+                  {catName && (
                     <h3 
                       className="text-2xl md:text-3xl font-bold leading-tight"
                       style={{ color: category.textColor || '#111827' }}
                     >
-                      {category.nameKey}
+                      {catName}
                     </h3>
                   )}
-                  {category.descriptionKey && (
+                  {catDescription && (
                     <p 
                       className="text-base md:text-lg leading-relaxed"
                       style={{ color: category.textColor || '#4B5563' }}
                     >
-                      {category.descriptionKey}
+                      {catDescription}
                     </p>
                   )}
-                  {category.showButton !== false && (category.buttonText || t('common.learnMore')) && (
+                  {category.showButton !== false && (catButtonText || t('common.learnMore')) && (
                     <div className="pt-1">
                       <Link href={category.buttonLink || `/products?category=${category.id}`}>
                         <button
@@ -267,7 +277,7 @@ export default function Home() {
                             borderColor: category.buttonBorderColor || '#0EA5E9'
                           }}
                         >
-                          {category.buttonText || t('common.learnMore')}
+                          {catButtonText || t('common.learnMore')}
                         </button>
                       </Link>
                     </div>

@@ -92,7 +92,13 @@
     "viewDetails": "Voir les Détails",
     "contactForProduct": "Contacter pour le Produit",
     "contactDescription": "Contactez notre équipe pour en savoir plus sur ce produit et comment il peut aider votre entreprise.",
-    "features": "Caractéristiques du Produit"
+    "features": "Caractéristiques du Produit",
+    "videoIntroduction": "Vidéo de Présentation du Produit",
+    "productDocuments": "Documents du Produit",
+    "documentsLoading": "Chargement des documents...",
+    "noDocuments": "Aucun document n'a encore été ajouté pour ce produit.",
+    "document": "Document",
+    "file": "Fichier {number}"
   },
   "home": {
     "categories": {
@@ -171,7 +177,8 @@
     "back": "Retour",
     "seeMore": "Voir Plus",
     "viewAll": "Voir Tout",
-    "products": "produits"
+    "products": "produits",
+    "productsFound": "produits trouvés"
   },
   "components": {
     "searchableAutocomplete": {

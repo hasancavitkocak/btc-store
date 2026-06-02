@@ -199,7 +199,7 @@ export default function Products() {
             {getLocalizedText(filterData.selectedCategory?.description, locale) || (!selectedCategory ? t('home.categories.subtitle') : '')}
           </p>
           <p className="text-sm text-gray-500 mt-4">
-            {filterData.totalProducts} {filterData.selectedCategory ? 'ürün bulundu' : t('common.products')}
+            {filterData.totalProducts} {filterData.selectedCategory ? t('common.productsFound') : t('common.products')}
           </p>
         </div>
 
