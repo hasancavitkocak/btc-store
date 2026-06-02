@@ -83,7 +83,7 @@ export default function StoryForm({ storyId }: StoryFormProps) {
     title: { tr: '', en: '', de: '', fr: '', es: '', it: '' },
     htmlContent: { tr: '', en: '', de: '', fr: '', es: '', it: '' },
     videoUrl: '',
-    results: [] as string[],
+    results: [] as Array<{ tr: string; en: string; de: string; fr: string; es: string; it: string }>,
     order: 0,
     active: true
   });
@@ -91,7 +91,11 @@ export default function StoryForm({ storyId }: StoryFormProps) {
   const [sectors, setSectors] = useState<Sector[]>([]);
   const [sectorSearchTerm, setSectorSearchTerm] = useState('');
   const [isSectorDropdownOpen, setIsSectorDropdownOpen] = useState(false);
-  const [resultInput, setResultInput] = useState('');
+  const [resultInput, setResultInput] = useState<Record<SupportedLocale, string>>({
+    tr: '', en: '', de: '', fr: '', es: '', it: ''
+  });
+  const [activeResultTab, setActiveResultTab] = useState<SupportedLocale>(locale);
+  const [expandedResultItems, setExpandedResultItems] = useState<Set<number>>(new Set());
   const [activeHtmlTab, setActiveHtmlTab] = useState<SupportedLocale>(locale);
 
   useEffect(() => {
@@ -186,7 +190,11 @@ export default function StoryForm({ storyId }: StoryFormProps) {
           title: cleanTitle,
           htmlContent: cleanHtmlContent,
           videoUrl: storyData.videoUrl || '',
-          results: storyData.results || [],
+          results: (storyData.results || []).map((r: any) =>
+            typeof r === 'string'
+              ? { tr: r, en: r, de: r, fr: r, es: r, it: r }
+              : { tr: r?.tr || '', en: r?.en || '', de: r?.de || '', fr: r?.fr || '', es: r?.es || '', it: r?.it || '' }
+          ),
           order: storyData.order || 0,
           active: storyData.active ?? true
         };
@@ -226,12 +234,13 @@ export default function StoryForm({ storyId }: StoryFormProps) {
   };
 
   const handleAddResult = () => {
-    if (resultInput.trim()) {
+    const hasValue = Object.values(resultInput).some(v => v.trim());
+    if (hasValue) {
       setFormData({
         ...formData,
-        results: [...formData.results, resultInput.trim()]
+        results: [...formData.results, { ...resultInput }]
       });
-      setResultInput('');
+      setResultInput({ tr: '', en: '', de: '', fr: '', es: '', it: '' });
     }
   };
 
@@ -240,6 +249,9 @@ export default function StoryForm({ storyId }: StoryFormProps) {
       ...formData,
       results: formData.results.filter((_, i) => i !== index)
     });
+    const newExpanded = new Set(expandedResultItems);
+    newExpanded.delete(index);
+    setExpandedResultItems(newExpanded);
   };
 
   const handleResultKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -247,6 +259,16 @@ export default function StoryForm({ storyId }: StoryFormProps) {
       e.preventDefault();
       handleAddResult();
     }
+  };
+
+  const toggleResultItem = (index: number) => {
+    const newExpanded = new Set(expandedResultItems);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedResultItems(newExpanded);
   };
 
   const handleSave = async () => {
@@ -483,48 +505,80 @@ export default function StoryForm({ storyId }: StoryFormProps) {
                   </div>
                 )}
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('admin.storyForm.results')}
-                  </label>
-                  <div className="space-y-3">
-                    <div className="flex gap-2">
-                      <Input
-                        value={resultInput}
-                        onChange={(e) => setResultInput(e.target.value)}
-                        onKeyDown={handleResultKeyDown}
-                        placeholder={t('admin.storyForm.resultsPlaceholder')}
-                      />
-                      <Button
-                        type="button"
-                        onClick={handleAddResult}
-                        className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
-                      >
-                        {t('admin.storyForm.addResult')}
-                      </Button>
-                    </div>
-                    
-                    {formData.results.length > 0 && (
-                      <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        {formData.results.map((result, index) => (
-                          <div
-                            key={index}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
-                          >
-                            <span>{result}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveResult(index)}
-                              className="hover:bg-blue-200 rounded-full p-0.5 transition-colors"
-                            >
-                              <X className="w-3.5 h-3.5" />
+                {/* Results - Localized */}
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="bg-gray-50 px-4 py-3">
+                    <label className="text-sm font-medium text-gray-700">{t('admin.storyForm.results')}</label>
+                  </div>
+                  <div className="p-4 space-y-4">
+                    {/* Input with language tabs */}
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="bg-gray-50 border-b border-gray-200">
+                        <div className="flex overflow-x-auto">
+                          {orderedLanguages.map((lang) => (
+                            <button key={lang} type="button" onClick={() => setActiveResultTab(lang)} className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${activeResultTab === lang ? 'bg-white text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}>
+                              {languageInfo[lang].code} - {languageInfo[lang].name}
                             </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="p-3 flex gap-2">
+                        <Input
+                          value={resultInput[activeResultTab]}
+                          onChange={(e) => setResultInput({ ...resultInput, [activeResultTab]: e.target.value })}
+                          onKeyDown={handleResultKeyDown}
+                          placeholder={`${languageInfo[activeResultTab].name} - ${t('admin.storyForm.resultsPlaceholder')}`}
+                        />
+                        <Button type="button" onClick={handleAddResult} className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap">
+                          {t('admin.storyForm.addResult')}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Result list */}
+                    {formData.results.length > 0 ? (
+                      <div className="space-y-2">
+                        {formData.results.map((result, index) => (
+                          <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
+                            <div className="flex items-center justify-between px-3 py-2 bg-blue-50">
+                              <span className="text-sm font-medium text-blue-800 flex-1 truncate">
+                                {result[locale] || result.tr || result.en || Object.values(result).find(v => v) || `(${index + 1})`}
+                              </span>
+                              <div className="flex items-center gap-1 ml-2">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleResultItem(index)}
+                                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50"
+                                >
+                                  🌍 {t('admin.storyForm.otherLanguages')}
+                                  <span className="text-gray-400 ml-1">{expandedResultItems.has(index) ? '▼' : '▶'}</span>
+                                </button>
+                                <button type="button" onClick={() => handleRemoveResult(index)} className="p-1 text-red-500 hover:bg-red-50 rounded">
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                            {expandedResultItems.has(index) && (
+                              <div className="p-3 space-y-2 border-t border-gray-200 bg-white">
+                                {orderedLanguages.map((lang) => (
+                                  <Input
+                                    key={lang}
+                                    value={result[lang]}
+                                    onChange={(e) => {
+                                      const updated = formData.results.map((r, i) =>
+                                        i === index ? { ...r, [lang]: e.target.value } : r
+                                      );
+                                      setFormData({ ...formData, results: updated });
+                                    }}
+                                    placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                                  />
+                                ))}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
-                    )}
-                    
-                    {formData.results.length === 0 && (
+                    ) : (
                       <div className="text-sm text-gray-500 italic p-3 bg-gray-50 rounded-lg border border-gray-200">
                         {t('admin.storyForm.noResults')}
                       </div>

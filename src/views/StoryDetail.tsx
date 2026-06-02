@@ -169,10 +169,10 @@ export default function StoryDetail() {
             <div className="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Sonuçlar</h2>
               <ul className="space-y-2">
-                {story.results.map((result: string, index: number) => (
+                {story.results.map((result: any, index: number) => (
                   <li key={index} className="flex items-start gap-2">
                     <span className="text-blue-600 mt-1">✓</span>
-                    <span className="text-gray-700">{result}</span>
+                    <span className="text-gray-700">{getLocalizedText(result, locale)}</span>
                   </li>
                 ))}
               </ul>

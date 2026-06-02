@@ -64,7 +64,11 @@ export default function ProductForm({ productId }: ProductFormProps) {
   
   const isEditing = !!productId;
   const [activeDescTab, setActiveDescTab] = useState<SupportedLocale>(locale);
-  const [featureInput, setFeatureInput] = useState('');
+  const [activeFeatureTab, setActiveFeatureTab] = useState<SupportedLocale>(locale);
+  const [featureInput, setFeatureInput] = useState<Record<SupportedLocale, string>>({
+    tr: '', en: '', de: '', fr: '', es: '', it: ''
+  });
+  const [expandedFeatureItems, setExpandedFeatureItems] = useState<Set<number>>(new Set());
 
   // Kullanıcının dilini en üste, diğerlerini sıraya koy
   const getOrderedLanguages = (): SupportedLocale[] => {
@@ -82,7 +86,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
     shortDescription: { tr: '', en: '', de: '', fr: '', es: '', it: '' },
     categories: [] as Array<{ code: string; name: { tr: string; en: string }; active: boolean }>,
     responsibleUsers: [] as Array<{ code: string; username: string; email: string; picture?: { absolutePath: string } }>,
-    features: [] as string[],
+    features: [] as Array<{ tr: string; en: string; de: string; fr: string; es: string; it: string }>,
     videoLink: '',
     active: true,
     deleted: false
@@ -149,7 +153,11 @@ export default function ProductForm({ productId }: ProductFormProps) {
           shortDescription: loc(p.shortDescription),
           categories: p.categories || [],
           responsibleUsers: p.responsibleUsers || [],
-          features: p.features || [],
+          features: (p.features || []).map((f: any) =>
+            typeof f === 'string'
+              ? { tr: f, en: f, de: f, fr: f, es: f, it: f }
+              : { tr: f?.tr || '', en: f?.en || '', de: f?.de || '', fr: f?.fr || '', es: f?.es || '', it: f?.it || '' }
+          ),
           videoLink: p.videoLink || '',
           active: p.active ?? true,
           deleted: p.deleted ?? false,
@@ -251,12 +259,13 @@ export default function ProductForm({ productId }: ProductFormProps) {
   };
 
   const handleAddFeature = () => {
-    if (featureInput.trim()) {
+    const hasValue = Object.values(featureInput).some(v => v.trim());
+    if (hasValue) {
       setFormData({
         ...formData,
-        features: [...formData.features, featureInput.trim()]
+        features: [...formData.features, { ...featureInput }]
       });
-      setFeatureInput('');
+      setFeatureInput({ tr: '', en: '', de: '', fr: '', es: '', it: '' });
     }
   };
 
@@ -265,6 +274,9 @@ export default function ProductForm({ productId }: ProductFormProps) {
       ...formData,
       features: formData.features.filter((_, i) => i !== index)
     });
+    const newExpanded = new Set(expandedFeatureItems);
+    newExpanded.delete(index);
+    setExpandedFeatureItems(newExpanded);
   };
 
   const handleFeatureKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -272,6 +284,16 @@ export default function ProductForm({ productId }: ProductFormProps) {
       e.preventDefault();
       handleAddFeature();
     }
+  };
+
+  const toggleFeatureItem = (index: number) => {
+    const newExpanded = new Set(expandedFeatureItems);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedFeatureItems(newExpanded);
   };
 
   const handleDragStart = (index: number) => {
@@ -550,31 +572,85 @@ export default function ProductForm({ productId }: ProductFormProps) {
                   )}
                 </div>
 
-                {/* Features */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('admin.productForm.features')}</label>
-                  <div className="space-y-3">
-                    <div className="flex gap-2">
-                      <Input value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} onKeyDown={handleFeatureKeyDown} placeholder={t('admin.productForm.featurePlaceholder')} />
-                      <Button type="button" onClick={handleAddFeature} className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap">
-                        {t('admin.productForm.add')}
-                      </Button>
-                    </div>
-                    
-                    {formData.features.length > 0 && (
-                      <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        {formData.features.map((feature, index) => (
-                          <div key={index} className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                            <span>{feature}</span>
-                            <button type="button" onClick={() => handleRemoveFeature(index)} className="hover:bg-green-200 rounded-full p-0.5 transition-colors">
-                              <X className="w-3.5 h-3.5" />
+                {/* Features - Localized */}
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="bg-gray-50 px-4 py-3">
+                    <label className="text-sm font-medium text-gray-700">{t('admin.productForm.features')}</label>
+                  </div>
+                  <div className="p-4 space-y-4">
+                    {/* Input area with language tabs */}
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="bg-gray-50 border-b border-gray-200">
+                        <div className="flex overflow-x-auto">
+                          {orderedLanguages.map((lang) => (
+                            <button key={lang} type="button" onClick={() => setActiveFeatureTab(lang)} className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${activeFeatureTab === lang ? 'bg-white text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}>
+                              {languageInfo[lang].code} - {languageInfo[lang].name}
                             </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="p-3 flex gap-2">
+                        <Input
+                          value={featureInput[activeFeatureTab]}
+                          onChange={(e) => setFeatureInput({ ...featureInput, [activeFeatureTab]: e.target.value })}
+                          onKeyDown={handleFeatureKeyDown}
+                          placeholder={`${languageInfo[activeFeatureTab].name} - ${t('admin.productForm.featurePlaceholder')}`}
+                        />
+                        <Button type="button" onClick={handleAddFeature} className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap">
+                          <Plus className="w-4 h-4 mr-1" />
+                          {t('admin.productForm.add')}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Feature list */}
+                    {formData.features.length > 0 ? (
+                      <div className="space-y-2">
+                        {formData.features.map((feature, index) => (
+                          <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
+                            <div className="flex items-center justify-between px-3 py-2 bg-green-50">
+                              <span className="text-sm font-medium text-green-800 flex-1 truncate">
+                                {feature[locale] || feature.tr || feature.en || Object.values(feature).find(v => v) || `(${index + 1})`}
+                              </span>
+                              <div className="flex items-center gap-1 ml-2">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleFeatureItem(index)}
+                                  className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50"
+                                >
+                                  🌍 {t('admin.productForm.otherLanguages')}
+                                  <span className="text-gray-400 ml-1">{expandedFeatureItems.has(index) ? '▼' : '▶'}</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveFeature(index)}
+                                  className="p-1 text-red-500 hover:bg-red-50 rounded"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                            {expandedFeatureItems.has(index) && (
+                              <div className="p-3 space-y-2 border-t border-gray-200 bg-white">
+                                {orderedLanguages.map((lang) => (
+                                  <Input
+                                    key={lang}
+                                    value={feature[lang]}
+                                    onChange={(e) => {
+                                      const updated = formData.features.map((f, i) =>
+                                        i === index ? { ...f, [lang]: e.target.value } : f
+                                      );
+                                      setFormData({ ...formData, features: updated });
+                                    }}
+                                    placeholder={`${languageInfo[lang].code} - ${languageInfo[lang].name}`}
+                                  />
+                                ))}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
-                    )}
-                    
-                    {formData.features.length === 0 && (
+                    ) : (
                       <div className="text-sm text-gray-500 italic p-3 bg-gray-50 rounded-lg border border-gray-200">
                         {t('admin.productForm.noFeatures')}
                       </div>

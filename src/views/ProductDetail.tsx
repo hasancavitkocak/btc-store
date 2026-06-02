@@ -338,7 +338,7 @@ export default function ProductDetail() {
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                       <Check className="w-5 h-5 text-green-600" />
                     </div>
-                    <span className="text-gray-700 font-medium">{feature}</span>
+                    <span className="text-gray-700 font-medium">{getLocalizedText(feature, locale)}</span>
                   </div>
                 ))}
               </div>

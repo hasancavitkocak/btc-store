@@ -28,7 +28,7 @@ export interface ProductData {
   mainImage?: { code: string; absolutePath?: string };
   images?: Array<{ code: string; absolutePath?: string }>;
   responsibleUser?: { code: string; username?: string; email?: string };
-  features?: string[];
+  features?: LocalizeData[];
   videoLink?: string;
   active: boolean;
   deleted?: boolean;

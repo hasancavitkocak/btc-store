@@ -6,7 +6,7 @@ export interface Story {
   image?: string;
   videoUrl?: string;
   htmlContent: { tr: string; en: string; de: string; fr: string; es: string; it: string };
-  results?: string[];
+  results?: { tr?: string; en?: string; de?: string; fr?: string; es?: string; it?: string }[];
   order: number;
   active: boolean;
 }

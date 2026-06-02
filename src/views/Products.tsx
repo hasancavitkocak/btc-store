@@ -269,12 +269,12 @@ export default function Products() {
                   {/* Features */}
                   {product.features && product.features.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-6">
-                      {product.features.slice(0, 3).map((feature: string, index: number) => (
+                      {product.features.slice(0, 3).map((feature: any, index: number) => (
                         <span
                           key={index}
                           className="text-sm bg-blue-900 text-white px-4 py-2 rounded-full font-medium"
                         >
-                          {feature}
+                          {getLocalizedText(feature, locale)}
                         </span>
                       ))}
                     </div>
