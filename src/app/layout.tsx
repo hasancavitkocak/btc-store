@@ -23,6 +23,18 @@ export default async function RootLayout({
     <html lang={locale} translate="no">
       <head>
         <meta name="google" content="notranslate" />
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-10PZJ13MY4"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-10PZJ13MY4');
+            `,
+          }}
+        />
       </head>
       <body className={inter.className}>
         <NextIntlClientProvider messages={messages} locale={locale}>
