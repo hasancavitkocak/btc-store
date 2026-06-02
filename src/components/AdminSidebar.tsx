@@ -256,8 +256,10 @@ export default function AdminSidebar() {
               });
             };
             
+            // For root menus with sub-items, only exact match counts (sub-items handle deeper paths)
+            // For root menus without sub-items, also match children paths
             const isActive = pathname === menuUrl || 
-                            (menuUrl !== '/admin' && pathname?.startsWith(menuUrl + '/'));
+                            (!hasSubItems && menuUrl !== '/admin' && pathname?.startsWith(menuUrl + '/'));
             const hasActiveSubItem = checkIfActive(subMenus);
             const isSubMenuOpen = openSubMenus.includes(menu.code);
 
@@ -265,9 +267,12 @@ export default function AdminSidebar() {
             const renderSubMenu = (items: MenuLinkItemData[], level: number = 1) => {
               return items.map((subItem) => {
                 const subUrl = getMenuUrl(subItem);
-                const isSubActive = pathname === subUrl || pathname?.startsWith(subUrl + '/');
-                const SubIcon = getIcon(subItem.icon);
                 const hasNestedItems = subItem.subMenuLinkItems && subItem.subMenuLinkItems.length > 0;
+                // Leaf items: exact match only. Items with children: also highlight if a child is active.
+                const isSubActive = hasNestedItems
+                  ? pathname === subUrl
+                  : pathname === subUrl;
+                const SubIcon = getIcon(subItem.icon);
                 
                 const nestedItems = hasNestedItems
                   ? subItem.subMenuLinkItems!
