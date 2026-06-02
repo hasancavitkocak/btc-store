@@ -169,12 +169,12 @@ export default function ProductDetail() {
             {/* Left Side - Large Product Image */}
             <div className="w-full lg:w-[70%] order-1 lg:order-1 relative z-0">
               {/* Main Large Image */}
-              <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl shadow-xl overflow-hidden group aspect-video lg:aspect-auto lg:h-[75vh] mb-6 flex items-center justify-center">
+              <div className={`relative rounded-2xl shadow-xl overflow-hidden group aspect-video lg:aspect-auto lg:h-[75vh] mb-6 flex items-center justify-center ${productImages.length > 0 ? 'bg-transparent' : 'bg-gradient-to-br from-blue-50 to-indigo-100'}`}>
                 {productImages.length > 0 ? (
                   <img
                     src={productImages[currentImageIndex]}
                     alt={getLocalizedText(product.name, locale)}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <svg
@@ -209,7 +209,7 @@ export default function ProductDetail() {
                     </button>
 
                     {/* Carousel Indicators */}
-                    <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 lg:gap-3">
+                    <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2 flex gap-2 lg:gap-3 bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm">
                       {productImages.map((_, index) => (
                         <button
                           key={index}
@@ -242,7 +242,7 @@ export default function ProductDetail() {
                       <img
                         src={img}
                         alt={`${getLocalizedText(product.name, locale)} ${index + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     </button>
                   ))}
