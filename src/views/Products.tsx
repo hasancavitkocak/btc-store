@@ -235,13 +235,23 @@ export default function Products() {
           {allProducts.map((product) => (
             <Link key={product.code} href={`/products/${product.code}`}>
               <Card hover className="group overflow-hidden h-full flex flex-col">
-                <div className="aspect-video overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center relative">
+                <div className="aspect-video overflow-hidden bg-gray-900 flex items-center justify-center relative">
                   {product.mainImage?.absolutePath ? (
-                    <img
-                      src={product.mainImage.absolutePath}
-                      alt={product.name?.tr || ''}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
+                    <>
+                      {/* blurred background */}
+                      <img
+                        src={product.mainImage.absolutePath}
+                        alt=""
+                        aria-hidden="true"
+                        className="absolute inset-0 w-full h-full object-cover scale-110 blur-lg opacity-60"
+                      />
+                      {/* actual image */}
+                      <img
+                        src={product.mainImage.absolutePath}
+                        alt={product.name?.tr || ''}
+                        className="relative w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </>
                   ) : (
                     <svg
                       className="w-32 h-32 text-blue-300"
