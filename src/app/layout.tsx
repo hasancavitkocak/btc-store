@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import '../index.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -23,23 +24,21 @@ export default async function RootLayout({
     <html lang={locale} translate="no">
       <head>
         <meta name="google" content="notranslate" />
-        {/* Google Analytics */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-10PZJ13MY4"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-10PZJ13MY4');
-            `,
-          }}
-        />
       </head>
       <body className={inter.className}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           {children}
         </NextIntlClientProvider>
+        {/* Google Analytics */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-10PZJ13MY4" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-10PZJ13MY4');
+          `}
+        </Script>
       </body>
     </html>
   );
