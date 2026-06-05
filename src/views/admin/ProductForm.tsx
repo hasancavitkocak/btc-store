@@ -696,7 +696,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                           >
                             <img 
                               src={img} 
-                              alt={`Görsel ${index + 1}`} 
+                              alt={t('admin.productForm.imageAlt', { number: index + 1 })} 
                               className={`w-full h-28 object-cover rounded-lg border-2 transition-all cursor-move ${
                                 mainImageIndex === index 
                                   ? 'border-yellow-500 ring-2 ring-yellow-300' 
@@ -709,7 +709,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                               <div className="bg-white bg-opacity-90 px-2 py-1 rounded text-xs text-gray-700 flex items-center gap-1">
                                 <span className="text-base">⋮⋮</span>
-                                <span>Sürükle</span>
+                                <span>{t('admin.productForm.drag')}</span>
                               </div>
                             </div>
                             
@@ -725,7 +725,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                                   ? 'bg-yellow-500 text-white shadow-lg'
                                   : 'bg-white bg-opacity-80 text-gray-400 hover:bg-yellow-500 hover:text-white opacity-0 group-hover:opacity-100'
                               }`}
-                              title={mainImageIndex === index ? 'Ana Görsel' : 'Ana Görsel Yap'}
+                              title={mainImageIndex === index ? t('admin.productForm.mainImage') : t('admin.productForm.setAsMainImage')}
                             >
                               <Star className={`w-4 h-4 ${mainImageIndex === index ? 'fill-current' : ''}`} />
                             </button>
@@ -738,7 +738,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                             {/* Main Image Label */}
                             {mainImageIndex === index && (
                               <div className="absolute bottom-2 right-2 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded font-semibold pointer-events-none">
-                                Ana Görsel
+                                {t('admin.productForm.mainImage')}
                               </div>
                             )}
                             
@@ -768,7 +768,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                                 }
                               }}
                               className="absolute top-2 left-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10"
-                              title="Görseli Sil"
+                              title={t('admin.productForm.deleteImage')}
                             >
                               <X className="w-3 h-3" />
                             </button>

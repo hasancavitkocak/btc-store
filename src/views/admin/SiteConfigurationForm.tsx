@@ -558,7 +558,7 @@ export default function SiteConfigurationForm() {
                             htmlFor={`menu-${menu.code}`}
                             className="flex-1 text-sm font-medium text-gray-700 cursor-pointer"
                           >
-                            {menu.name?.tr || menu.code}
+                            {getLocalizedText(menu.name, locale) || menu.code}
                           </label>
                           {menu.icon && (
                             <span className="text-gray-400 text-sm">{menu.icon}</span>
