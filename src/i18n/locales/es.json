@@ -194,6 +194,15 @@
       "searchEmoji": "Buscar emoji...",
       "searchIcon": "Buscar icono...",
       "noResults": "No se encontraron resultados"
+    },
+    "imageUpload": {
+      "addImage": "Agregar Imagen",
+      "mainImage": "Imagen Principal",
+      "uploadTips": "Consejos para subir imágenes:",
+      "tipFirstImage": "La primera imagen se usará como imagen principal",
+      "tipMaxImages": "Puede subir hasta {maxImages} imágenes",
+      "tipRecommendedSize": "Tamaño recomendado: 1200x800 píxeles",
+      "tipFormats": "Formatos soportados: JPG, PNG, WebP"
     }
   },
   "kvkk": {

@@ -194,6 +194,15 @@
       "searchEmoji": "Emoji ara...",
       "searchIcon": "İkon ara...",
       "noResults": "Sonuç bulunamadı"
+    },
+    "imageUpload": {
+      "addImage": "Görsel Ekle",
+      "mainImage": "Ana Görsel",
+      "uploadTips": "Görsel Yükleme İpuçları:",
+      "tipFirstImage": "İlk görsel ana görsel olarak kullanılacak",
+      "tipMaxImages": "En fazla {maxImages} görsel yükleyebilirsiniz",
+      "tipRecommendedSize": "Önerilen boyut: 1200x800 piksel",
+      "tipFormats": "Desteklenen formatlar: JPG, PNG, WebP"
     }
   },
   "kvkk": {

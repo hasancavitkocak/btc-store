@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
-import Button from './Button';
+import { useTranslations } from 'next-intl';
 
 interface ImageUploadProps {
   images: string[];
@@ -12,9 +12,10 @@ interface ImageUploadProps {
   onImageClick?: (imageUrl: string) => void;
 }
 
-export default function ImageUpload({ images, onChange, maxImages = 5, label = 'Görseller', onImageClick }: ImageUploadProps) {
+export default function ImageUpload({ images, onChange, maxImages = 5, label = '', onImageClick }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations('components.imageUpload');
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -90,7 +91,7 @@ export default function ImageUpload({ images, onChange, maxImages = 5, label = '
             </button>
             {index === 0 && (
               <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                Ana Görsel
+                {t('mainImage')}
               </div>
             )}
           </div>
@@ -109,7 +110,7 @@ export default function ImageUpload({ images, onChange, maxImages = 5, label = '
             ) : (
               <>
                 <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                <span className="text-sm text-gray-600">Görsel Ekle</span>
+                <span className="text-sm text-gray-600">{t('addImage')}</span>
               </>
             )}
           </button>
@@ -130,12 +131,12 @@ export default function ImageUpload({ images, onChange, maxImages = 5, label = '
       <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <ImageIcon className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
         <div className="text-sm text-blue-800">
-          <p className="font-medium mb-1">Görsel Yükleme İpuçları:</p>
+          <p className="font-medium mb-1">{t('uploadTips')}</p>
           <ul className="list-disc list-inside space-y-1 text-xs">
-            <li>İlk görsel ana görsel olarak kullanılacak</li>
-            <li>En fazla {maxImages} görsel yükleyebilirsiniz</li>
-            <li>Önerilen boyut: 1200x800 piksel</li>
-            <li>Desteklenen formatlar: JPG, PNG, WebP</li>
+            <li>{t('tipFirstImage')}</li>
+            <li>{t('tipMaxImages', { maxImages })}</li>
+            <li>{t('tipRecommendedSize')}</li>
+            <li>{t('tipFormats')}</li>
           </ul>
         </div>
       </div>
