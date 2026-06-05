@@ -30,13 +30,13 @@ export default async function RootLayout({
           {children}
         </NextIntlClientProvider>
         {/* Google Analytics */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-10PZJ13MY4" strategy="afterInteractive" />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-7SVZ8ZXZ94" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-10PZJ13MY4');
+            gtag('config', 'G-7SVZ8ZXZ94');
           `}
         </Script>
       </body>
